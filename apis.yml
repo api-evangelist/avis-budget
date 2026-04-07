@@ -1,7 +1,10 @@
 aid: avis-budget
-url: https://raw.githubusercontent.com/api-evangelist/avis-budget/refs/heads/main/apis.yml
+url: 
+  https://raw.githubusercontent.com/api-evangelist/avis-budget/refs/heads/main/apis.yml
 modified: '2026-03-21'
 apis: []
 common:
   - type: Website
     url: https://www.avis-budget.com
+description: >-
+  Sucre 1530 - Piso 3, Oficina 311 - CABA - Buenos Aires - Argentina.
