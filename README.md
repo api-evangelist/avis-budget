@@ -1,33 +1,26 @@
 # Avis Budget (avis-budget)
-Avis Budget is a Fortune 500 company. This repository captures the APIs, developer tools, and machine-readable API artifacts for Avis Budget.
+Avis Budget Group is a leading global provider of vehicle rental and mobility solutions with brands including Avis, Budget, Budget Truck, Payless, and Zipcar.
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/avis-budget/refs/heads/main/apis.yml)
+**URL:** [https://www.avisbudgetgroup.com](https://www.avisbudgetgroup.com)
 
-## Scope
+## Tags
 
-- **Type:** Contract
-- **Position:** Consuming
-- **Access:** 3rd-Party
-
-## Tags:
-
- - Fortune 500
+ - Car Rental, Travel, Mobility, Fleet Management, Transportation
 
 ## Timestamps
 
-- **Created:** 2026-03-21
-- **Modified:** 2026-03-21
-
-## APIs
-
-No public APIs have been documented yet. Contributions welcome.
+- **Created:** 2026-01-01
+- **Modified:** 2026-04-19
 
 ## Common Properties
 
-- [Website](https://www.avis-budget.com)
+- [Website](https://www.avisbudgetgroup.com)
+- [Portal](https://developer.avisbudgetgroup.com/)
+- [GitHubOrganization](https://github.com/avisbudgetgroup)
+- [LinkedIn](https://www.linkedin.com/company/avis-budget-group/)
 
 ## Maintainers
 
-**FN:** API Evangelist
+**FN:** Kin Lane
 
-**Email:** info@apievangelist.com
+**Email:** kin@apievangelist.com
