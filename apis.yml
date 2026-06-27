@@ -16,11 +16,11 @@ description: >-
 name: Avis Budget
 tags:
   - Fortune 500
-- Car Rental
-- Travel
-- Mobility
-- Fleet Management
-- Transportation
+  - Car Rental
+  - Travel
+  - Mobility
+  - Fleet Management
+  - Transportation
 created: '2026-01-01'
 type: Index
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
