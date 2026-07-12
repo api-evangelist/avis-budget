@@ -1,0 +1,23 @@
+generated: '2026-07-11'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.avis-budget.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  7 01:46:39 2026 GMT
+  hsts: false
+- host: developer.avisbudgetgroup.com
+  https: false
+domains:
+- domain: avis-budget.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: false
+- domain: avisbudgetgroup.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
