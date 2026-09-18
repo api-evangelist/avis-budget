@@ -1,0 +1,19 @@
+# Avis External Portal
+
+## Pages & Guides
+
+- [Docs](https://1c473acfbecd.us.kongportals.com/docs.md): Docs
+- [Getting Started](https://1c473acfbecd.us.kongportals.com/getting-started.md)
+- [White Label Solution](https://1c473acfbecd.us.kongportals.com/white-label-car-rental-solution.md): White label car rental solution information.
+- [Homepage](https://1c473acfbecd.us.kongportals.com/index.md)
+- [Contact Us](https://1c473acfbecd.us.kongportals.com/contact-us.md): Contact us page for API developer portal support.
+- [Support](https://1c473acfbecd.us.kongportals.com/support.md): Support page with overview, contact us, and report a bug cards.
+- [API Design Guide](https://1c473acfbecd.us.kongportals.com/guides.md)
+- [Report a Bug](https://1c473acfbecd.us.kongportals.com/report-bug.md): Submit a comprehensive report for technical issues.
+- [Change Log](https://1c473acfbecd.us.kongportals.com/changelog.md): Changelog
+
+## Rental Cars
+
+> The APIs provide endpoints that allow you access to the rental car product catalog, reservations and locations offered by Avis, Budget, and Payless.
+
+- [2.0.0](https://1c473acfbecd.us.kongportals.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903.md): API Specification

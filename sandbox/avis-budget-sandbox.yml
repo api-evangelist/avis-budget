@@ -1,0 +1,42 @@
+generated: '2026-09-18'
+method: searched
+source: https://developer.avis.com/getting-started
+checked: '2026-09-18'
+summary: >-
+  The entire documented API surface IS the sandbox. The portal states: "All of the endpoints referenced on this
+  website are executed in our staging or pre-prod environments. They do not make live, usable reservations for
+  customers." Sandbox and production are separated by CREDENTIALS and HOST, not by a key prefix or a test-mode
+  flag: "Your Client ID and Client Secret are valid in our sandbox and testing environments. You will need a new
+  Client ID/Secret when you are ready to deploy to our Production environment."
+environments:
+  - name: Stage / pre-prod (sandbox)
+    base_url: https://stage.abgapiservices.com
+    token_url: https://stage.abgapiservices.com/oauth/token/v2
+    credentials: Client ID / Client Secret issued per approved Client Application on the portal
+    live_effects: false
+    note: Reservations created here are not real bookings.
+  - name: Production
+    base_url: null
+    credentials: Separate Client ID / Client Secret issued after a launch request (Contact Us)
+    live_effects: true
+    note: Host not published on the portal.
+mode_separation:
+  mechanism: separate credentials and separate host
+  key_prefix: null
+  test_mode_header: null
+test_data:
+  published: false
+  note: >-
+    No test locations, test confirmation numbers, test payment cards or fixture triggers are published. The
+    spec's examples (e.g. keyword "Boston", brand "Avis", location code EWR) are illustrative, not guaranteed
+    fixtures. NEVER invent test values; use real location codes from the keyword search in staging.
+time_simulation:
+  supported: false
+console:
+  url: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  note: >-
+    The Kong portal renders the OpenAPI with a "Use this API" flow that registers a Client Application; interactive
+    try-it requires a logged-in, approved application. A public Postman documentation page
+    (https://documenter.getpostman.com/view/1524765/SzKWudFC) provides the request set for use with the
+    same credentials.
+docs: https://developer.avis.com/getting-started

@@ -1,0 +1,73 @@
+generated: '2026-09-18'
+method: searched
+source: https://developer.avis.com/guides#version-scheme + https://developer.avis.com/changelog + openapi/avis-budget-rental-cars-openapi.yml
+versioning:
+  scheme: path-segment major version (v2) with a prescribed vMajor.Minor.Patch policy
+  current: v2 (portal info.version 2.0.0)
+  notes: >-
+    The API Design Guide prescribes: first live major "v1", minor releases "v1.1", patches "v1.x.1"; additive-only
+    changes are minor, anything breaking (required request field, removal/rename, type change, URL change,
+    visible behaviour change) is a new major. Major versioning is gated on "value to customer must exceed
+    existing version", cost-benefit, customer impact and a communication/support plan. The live contract shows
+    only the major segment in paths; the Getting Started cURL still references /cars/locations/v1/, which the
+    v2 contract no longer lists.
+  docs: https://developer.avis.com/guides#version-scheme
+lifecycle_states:
+  docs: https://developer.avis.com/guides#api-product-lifecycle
+  states:
+    - name: Designed
+      description: API design is complete. Scheduled for development.
+      availability: 'No; mock service should be enabled.'
+    - name: Beta
+      description: Operational, available to select customers for testing.
+      availability: Select customers only.
+    - name: Live
+      description: Operational, fully-supported in staging and production.
+      availability: New and existing customers.
+    - name: Deprecated
+      description: Available to existing customers only. Fully supported.
+      availability: Existing customers only.
+    - name: Retired
+      description: Unpublished. No longer available at runtime.
+      availability: 'No.'
+deprecation:
+  policy_documented: true
+  policy_url: https://developer.avis.com/guides#api-product-lifecycle
+  policy_summary: >-
+    A deprecated API stays available and fully supported for existing customers (closed to new customers) until
+    it is retired and unpublished. No notice period, no sunset timeline and no RFC 8594 Deprecation/Sunset
+    header are stated — the policy names the states, not the clock.
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations: []
+  notes: >-
+    No operation in the 9-operation OpenAPI carries `deprecated: true`. A Deprecation pointer is emitted for the
+    published state policy; it is a weak policy (states without durations) and is recorded as such.
+changelog:
+  url: https://developer.avis.com/changelog
+  artifact: changelog/avis-budget-changelog.yml
+  notes: >-
+    The portal ships a Change Log page (linked from the Support section) that currently contains a heading and no
+    entries — 2026-09-18 capture of its markdown twin has zero dated items.
+status_page:
+  url: null
+  notes: >-
+    No status page found. status.avisbudgetgroup.com, status.avis.com and status.abgapiservices.com do not
+    resolve; nothing on the portal links to one. No StatusPage pointer is emitted.
+  probed:
+    - {url: 'https://status.avisbudgetgroup.com', status: 'no-dns', checked: '2026-09-18'}
+    - {url: 'https://status.avis.com', status: 'no-dns', checked: '2026-09-18'}
+    - {url: 'https://status.abgapiservices.com', status: 'no-dns', checked: '2026-09-18'}
+sla:
+  published: false
+  notes: No SLA, uptime commitment or support-response commitment is published on the portal; partner terms are contractual.
+environments:
+  - name: Stage / pre-prod
+    base: https://stage.abgapiservices.com
+    note: The only documented host. Reservations made here are not live.
+  - name: Production
+    base: null
+    note: Issued with separate credentials after a launch request via the Contact Us page; host not published.
+terms:
+  url: https://www.avisbudgetgroup.com/home/terms-of-use
+  note: Corporate Terms of Use (site-level); API partner terms are not published on the portal.

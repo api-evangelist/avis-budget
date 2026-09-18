@@ -1,0 +1,36 @@
+generated: '2026-09-18'
+method: searched
+source: https://documenter.getpostman.com/view/1524765/SzKWudFC
+checked: '2026-09-18'
+summary: >-
+  ABG's own public Postman documentation for the Reservation APIs states verbatim: "Currently we do not have any
+  rate limiting in place. This may change at our discretion." The developer-portal API Design Guide reserves
+  HTTP 429 with reason "throttled" ("Rate limit exceeded") in its status-code mapping, and the OpenAPI declares
+  no 429 response and no rate-limit headers on any operation. So: a documented 429 semantics with a documented
+  zero enforcement — limit_count is an honest 0, not an unknown.
+limit_count: 0
+limits: []
+scopes: []
+exhaustion:
+  status: 429
+  reason: throttled
+  docs: https://developer.avis.com/guides#_4xx-status-codes
+headers: []
+headers_note: >-
+  No X-RateLimit-*, RateLimit-* or Retry-After header is documented. Live unauthenticated probe of
+  https://stage.abgapiservices.com/cars/locations/v2/keyword on 2026-09-18 (HTTP 401) returned only
+  www-authenticate, cache-control, strict-transport-security and CloudFront headers — no rate-limit signal.
+probed:
+  - url: https://documenter.getpostman.com/view/1524765/SzKWudFC
+    status: 200
+    statement: Currently we do not have any rate limiting in place.  This may change at our discretion.
+  - url: https://developer.avis.com/guides
+    status: 200
+    statement: '429 | Too Many Requests | throttled | Rate limit exceeded'
+  - url: https://stage.abgapiservices.com/cars/locations/v2/keyword?keyword=Boston
+    status: 401
+    rate_limit_headers_observed: []
+agent_guidance: >-
+  Treat 429 + reason "throttled" as the only signal and back off exponentially; there is no header to read a
+  window from. Do not assume the absence of a documented limit is a licence to burst — the statement says the
+  policy may change at ABG's discretion.

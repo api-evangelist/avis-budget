@@ -1,0 +1,19 @@
+generated: '2026-09-18'
+method: searched
+source: openapi/avis-budget-rental-cars-openapi.yml
+docs: https://developer.avis.com/getting-started
+schemes:
+- name: ABG-Access-Token
+  source: openapi/avis-budget-rental-cars-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://stage.abgapiservices.com/oauth/token/v2
+  description: OAuth 2.0 client credentials flow used to authenticate all API requests in this package.
+scopes: []
+scope_count: 0
+note: >-
+  No scopes exist. The OpenAPI declares an empty `scopes` map on the clientCredentials flow, and the
+  Getting Started page documents the token exchange without any scope parameter; authorization is
+  per approved Client Application, not per scope. The Okta tenant named in the API's WWW-Authenticate
+  realm advertises only Okta's own platform scopes (okta.users.read etc.), which are not ABG API
+  scopes and are not recorded here.

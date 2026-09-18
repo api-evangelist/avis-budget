@@ -1,0 +1,304 @@
+generated: '2026-09-18'
+method: probed
+source: live probes of /.well-known/ (14 named paths + negative control) on every host the record knows, 2026-09-18
+summary: 'Three real discovery documents are served: RFC 8414 authorization-server metadata on developer.avis.com
+  (the Kong portal''s own login OAuth server) and OIDC Discovery + RFC 8414 metadata on the Okta tenant the API
+  gateway names as its bearer realm. No security.txt anywhere (no SecurityTxt pointer), no api-catalog, no ai-plugin.json,
+  no apis.json, no A2A agent card on any host.'
+pointer_basis: 'WellKnown pointer emitted on the strength of the three 200s carrying parseable JSON with the required
+  issuer field. SecurityTxt NOT emitted: RFC 9116 is unimplemented on every host (404/405/302-to-nowhere; the developer.avis.com
+  200 is the SPA shell).'
+false_positive_watch: developer.avis.com answers 200 with the same 2,226-byte HTML shell for EVERY /.well-known/*
+  path including the negative control. Those 200s are recorded as misses. Any future round that credits a developer.avis.com
+  /.well-known/ 200 without checking the body is wrong.
+hosts:
+- host: https://developer.avis.com
+  platform: Kong Konnect Developer Portal (kongportals.com)
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/openid-configuration
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: avis-budget-portal-oauth-authorization-server.json
+    content_type: application/json
+    bytes: 338
+    note: REAL RFC 8414 document (issuer, authorization_endpoint, token_endpoint, authorization_code + S256). It
+      describes the Kong Konnect developer-portal LOGIN authorization server (issuer 1c473acfbecd.us.kongportals.com),
+      not the Rental Cars API token endpoint (stage.abgapiservices.com/oauth/token/v2).
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/api-catalog
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/ucp.json
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/acp.json
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/aauth-resource.json
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/apis.json
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /apis.json
+    status: 404
+    note: 404 (portal router)
+  - path: /apis.yml
+    status: 404
+    note: 404 (portal router)
+  - path: /.well-known/agent-card.json
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  - path: /.well-known/agent.json
+    status: 200
+    note: 200 but body is the 2,226-byte Kong portal HTML shell (text/html) — a soft-404, NOT a document; not credited
+  soft_404_control:
+    path: /.well-known/avis-budget-negative-control-9c1e4f2a.json
+    status: 200
+    content_type: text/html; charset=UTF-8
+    bytes: 2226
+    verdict: 'catch-all: every unknown /.well-known/* path returns the same HTML shell'
+  path_echo_control: 'not-echoing: the shell body is identical for every path and carries no required field, so
+    it cannot masquerade as a document; only the application/json body with a distinct size and an `issuer` field
+    is credited'
+  hit_count: 1
+  other_documents:
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain
+    file: ../llms/avis-budget-llms.txt
+  - path: /robots.txt
+    status: 200
+    note: 'User-agent: * Disallow: / plus Content-Usage: ai-output=y, train-ai=n and Content-Signal: ai-input=yes,
+      ai-train=no'
+- host: https://stage.abgapiservices.com
+  platform: API gateway (CloudFront-fronted; "No Mapping Rule matched" 404s)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  soft_404_control:
+    path: /.well-known/avis-budget-negative-control-9c1e4f2a.json
+    status: 404
+  hit_count: 0
+  note: Every path returns a 74-byte JSON {"error":"invalid_request","error_description":"No Mapping Rule matched."}
+    — a clean, honest 404 from the gateway.
+- host: https://www.avisbudgetgroup.com
+  platform: Adobe Experience Manager (corporate site)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  soft_404_control:
+    path: /.well-known/avis-budget-negative-control-9c1e4f2a.json
+    status: 404
+  hit_count: 0
+- host: https://avisbudgetgroup.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 302
+  - path: /.well-known/openid-configuration
+    status: 302
+  - path: /.well-known/oauth-authorization-server
+    status: 302
+  - path: /.well-known/oauth-protected-resource
+    status: 302
+  - path: /.well-known/api-catalog
+    status: 302
+  - path: /.well-known/ai-plugin.json
+    status: 302
+  - path: /.well-known/ucp.json
+    status: 302
+  - path: /.well-known/acp.json
+    status: 302
+  - path: /.well-known/aauth-resource.json
+    status: 302
+  - path: /.well-known/apis.json
+    status: 302
+  - path: /apis.json
+    status: 302
+  - path: /apis.yml
+    status: 302
+  - path: /.well-known/agent-card.json
+    status: 302
+  - path: /.well-known/agent.json
+    status: 302
+  hit_count: 0
+  note: Apex 302s every path to https://www.avisbudgetgroup.com/ (not to the same path), so nothing is served here;
+    the www host was probed directly.
+- host: https://www.avis.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  hit_count: 0
+  other_documents:
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain
+    file: ../llms/avis-budget-avis-com-llms.txt
+    note: Genuine provider-published llms.txt for the Avis consumer site (rental content, not the API).
+- host: https://www.budget.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 302
+    note: 302 to https://www.budget.com/index.html.well-known/security.txt — a broken rewrite, not a document
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  hit_count: 0
+- host: https://abg-api-preprod.oktapreview.com
+  platform: Okta (preview tenant)
+  discovered_via: 'WWW-Authenticate: Bearer realm="abg-api-preprod.oktapreview.com" on an unauthenticated call to
+    stage.abgapiservices.com (2026-09-18)'
+  documents:
+  - path: /.well-known/security.txt
+    status: 405
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: avis-budget-okta-openid-configuration.json
+    content_type: application/json
+    bytes: 3003
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: avis-budget-okta-oauth-authorization-server.json
+    content_type: application/json
+    bytes: 4336
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 405
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  soft_404_control:
+    path: /.well-known/avis-budget-negative-control-9c1e4f2a.json
+    status: 404
+  hit_count: 2
+  note: Third-party-hosted Okta org named by the API gateway as its bearer realm. Both documents are Okta's standard
+    org-level OIDC/OAuth discovery (issuer https://abg-api-preprod.oktapreview.com; scopes_supported are Okta management
+    scopes, grant_types include client_credentials). They are real, served RFC 8414 / OIDC Discovery documents belonging
+    to ABG's tenant, but the documented API token endpoint is the gateway path /oauth/token/v2, not Okta's /oauth2/v1/token.

@@ -1,56 +1,197 @@
 aid: avis-budget
 url: https://raw.githubusercontent.com/api-evangelist/avis-budget/refs/heads/main/apis.yml
 deliveryModel:
-  model: unknown
+  model: saas
   open_source: false
-  commercial: false
+  commercial: true
   callable_host: false
-  label: Delivery model not determined — needs a product licence on record
-  confidence: low
+  label: Hosted service · you call their endpoint
+  confidence: medium
   source:
-  - none
-  generated: '2026-08-28'
+  - pricing
+  generated: '2026-09-18'
   method: derived
 specificationVersion: '0.23'
 accessModel:
   pricing: unknown
-  onboarding: unknown
+  onboarding: approval
   trial: false
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  label: Requires approval
+  confidence: medium
   source:
-  - {url: 'https://www.avis-budget.com', status: 302, note: 'declared website redirects to https://reps-group.com/ — a different registrable domain (avis-budget.com -> reps-group.com), possible rename or acquisition (probed 2026-09-03, roadmap#169)'}
-modified: '2026-04-19'
-apis: []
+  - plans
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  - sandbox
+  generated: '2026-09-18'
+  method: derived
+modified: '2026-09-18'
+apis:
+- name: Avis Budget Group Rental Cars API
+  description: 'REST API (v2) for the Avis, Budget and Payless rental car brands: keyword search of rental locations, vehicle
+    availability and rate shopping (including inclusive rates, coupons, memberships and secondary-currency pricing), reservation
+    create, view, update, partial-modify and cancel (including paperless-voucher processing), and location terms and conditions.
+    OAuth 2.0 client-credentials bearer tokens; every endpoint documented on the portal runs in the staging/pre-prod environment
+    and production credentials are issued after ABG approval.'
+  humanURL: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  baseURL: https://stage.abgapiservices.com
+  tags:
+  - Car Rental
+  - Reservations
+  - Travel
+  - Vehicle Rental
+  - Locations
+  - Rates
+  properties:
+  - type: OpenAPI
+    url: openapi/avis-budget-rental-cars-openapi.yml
+  - type: OpenAPI
+    url: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903.md
+    name: Provider-hosted spec (embedded in the portal markdown twin)
+  - type: Documentation
+    url: https://developer.avis.com/docs
+  - type: APIReference
+    url: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  - type: GettingStarted
+    url: https://developer.avis.com/getting-started
+  - type: Postman
+    url: https://documenter.getpostman.com/view/1524765/SzKWudFC
+  - type: Overlay
+    url: overlays/avis-budget-rental-cars-overlay.yaml
+  - type: ErrorCatalog
+    url: errors/avis-budget-problem-types.yml
+  - type: DataModel
+    url: data-model/avis-budget-data-model.yml
+  - type: Conventions
+    url: conventions/avis-budget-conventions.yml
+  - type: Authentication
+    url: authentication/avis-budget-authentication.yml
+  - type: OAuthScopes
+    url: scopes/avis-budget-scopes.yml
+  - type: RateLimits
+    url: rate-limits/avis-budget-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/avis-budget-sandbox.yml
+  - type: Lifecycle
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: Deprecation
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/avis-budget-changelog.yml
+  - type: X-MCPServerCandidate
+    url: mcp/avis-budget-mcp.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: AgentSkill
+    url: skills/avis-budget-shop-and-book-a-rental-car.md
+  - type: AgentSkill
+    url: skills/avis-budget-manage-a-reservation.md
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/avis-budget.png
 common:
-- type: DomainSecurity
-  url: security/avis-budget-domain-security.yml
 - type: Website
-  url: https://www.avis-budget.com
-- type: Portal
-  url: https://developer.avisbudgetgroup.com/
+  url: https://www.avisbudgetgroup.com/
+- type: DeveloperPortal
+  url: https://developer.avis.com/
+- type: Documentation
+  url: https://developer.avis.com/docs
+- type: APIReference
+  url: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+- type: GettingStarted
+  url: https://developer.avis.com/getting-started
+- type: Documentation
+  url: https://developer.avis.com/guides
+  name: API Design Guide
+- type: Support
+  url: https://developer.avis.com/support
+- type: Contact
+  url: https://developer.avis.com/contact-us
+- type: IssueTracker
+  url: https://developer.avis.com/report-bug
+  name: Report a Bug
+- type: ChangeLog
+  url: https://developer.avis.com/changelog
+- type: SignUp
+  url: https://developer.avis.com/register
+- type: Login
+  url: https://developer.avis.com/login
+- type: Postman
+  url: https://documenter.getpostman.com/view/1524765/SzKWudFC
+- type: LLMsTxt
+  url: https://developer.avis.com/llms.txt
+- type: LLMsTxt
+  url: https://www.avis.com/llms.txt
+- type: TermsOfService
+  url: https://www.avisbudgetgroup.com/home/terms-of-use
+- type: PrivacyPolicy
+  url: https://www.avisbudgetgroup.com/home/privacy-policy
+- type: PressReleases
+  url: https://www.avisbudgetgroup.com/home/news-and-media/press-release
 - type: GitHubOrganization
   url: https://github.com/avisbudgetgroup
 - type: LinkedIn
   url: https://www.linkedin.com/company/avis-budget-group/
-description: >-
-  Avis Budget Group is a leading global provider of vehicle rental and mobility solutions with brands including Avis, Budget, Budget Truck, Payless, and Zipcar.
-name: Avis Budget
+- type: DomainSecurity
+  url: security/avis-budget-domain-security.yml
+- type: WellKnown
+  url: well-known/avis-budget-well-known.yml
+- type: LLMsTxt
+  url: llms/avis-budget-llms.txt
+- type: LLMsTxt
+  url: llms/avis-budget-avis-com-llms.txt
+- type: Conformance
+  url: conformance/avis-budget-conformance.yml
+- type: Plans
+  url: plans/avis-budget-plans-pricing.yml
+- type: Components
+  url: components/avis-budget-components.yml
+- type: Sandbox
+  url: sandbox/avis-budget-sandbox.yml
+- type: RateLimits
+  url: rate-limits/avis-budget-rate-limits.yml
+- type: Deprecation
+  url: lifecycle/avis-budget-lifecycle.yml
+- type: Lifecycle
+  url: lifecycle/avis-budget-lifecycle.yml
+- type: ChangeLog
+  url: changelog/avis-budget-changelog.yml
+- type: Conventions
+  url: conventions/avis-budget-conventions.yml
+- type: Authentication
+  url: authentication/avis-budget-authentication.yml
+- type: OAuthScopes
+  url: scopes/avis-budget-scopes.yml
+- type: AgentSkill
+  url: skills/_index.yml
+description: 'Avis Budget Group (NASDAQ: CAR) is a global provider of vehicle rental and mobility solutions operating the
+  Avis, Budget, Budget Truck, Payless and Zipcar brands across roughly 11,000 rental locations in about 180 countries. The
+  Avis Budget Group Developer Portal (developer.avis.com, a Kong-hosted portal) publishes the Rental Cars 2.0.0 REST API —
+  location keyword search, vehicle availability and rate shopping, reservation create/view/modify/cancel, and location-specific
+  terms and conditions — for travel, airline, OTA and partner applications, secured with OAuth 2.0 client credentials and
+  gated behind partner sign-up and ABG approval. A white-label car rental booking solution is offered alongside the API.'
+name: Avis Budget Group
 tags:
-  - Fortune 500
-  - Car Rental
-  - Travel
-  - Mobility
-  - Fleet Management
-  - Transportation
+- Fortune 500
+- Car Rental
+- Travel
+- Mobility
+- Fleet Management
+- Transportation
+- Reservations
+- Vehicle Rental
+- Partner API
+- Hospitality
 created: '2026-01-01'
 type: Index
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/avis-budget.png
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-09-18'
+  status: enriched
+  artifacts_added: 22
+  pass: local-v3

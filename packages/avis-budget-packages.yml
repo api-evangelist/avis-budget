@@ -1,0 +1,24 @@
+generated: '2026-09-18'
+method: searched
+source: >-
+  npm search, PyPI, NuGet, RubyGems, Maven Central, pkg.go.dev, Packagist, crates.io (2026-09-18) +
+  https://developer.avis.com (Docs, Getting Started, Guides) + https://github.com/avisbudgetgroup
+checked: '2026-09-18'
+summary: >-
+  Avis Budget Group ships no client libraries. The portal documents the API with cURL only, no SDK page exists,
+  and no first-party package appears on any registry (npm results for "avis budget" are unrelated third-party
+  packages; pypi.org/pypi/{avis,avis-budget,avisbudget,abg-api}/json all 404; NuGet "avis" 404). The GitHub
+  account github.com/avisbudgetgroup is a user account holding a single 2020 repository, "Contactless"
+  (JavaScript, described only as "Custom Activity"), which is not an API client.
+package_count: 0
+official_sdk_count: 0
+packages: []
+probed:
+  - {registry: npm, query: 'avis budget', result: no first-party match}
+  - {registry: pypi, name: avis, status: 404}
+  - {registry: pypi, name: avis-budget, status: 404}
+  - {registry: pypi, name: avisbudget, status: 404}
+  - {registry: pypi, name: abg-api, status: 404}
+  - {registry: nuget, name: avis, status: 404}
+  - {url: 'https://github.com/avisbudgetgroup', status: 200, note: '1 repository (Contactless), not an SDK'}
+note: No Packages/SDKs pointer is wired — there is nothing to point at.

@@ -1,0 +1,59 @@
+# Avis Rent A Car
+
+> Avis is a leading global car rental company offering vehicle rentals for leisure and business travelers, with locations in airports, cities, and neighborhoods worldwide.
+
+This file describes the public pages on avis.com that are useful for large language models. It covers informational content about rental services, locations, loyalty programs, and policies. Pricing, vehicle availability, and reservation details are dynamic and not included here.
+
+## Rental
+
+- [Car Rental Deals](https://www.avis.com/en/offers/deals): current promotions and discount offers.
+- [Vehicle Guide](https://www.avis.com/en/cars/vehicle-guide): rental vehicle categories from economy through luxury and SUVs.
+- [Insurance & Protection](https://www.avis.com/en/products-and-services/protection-and-coverages): coverage options available at booking.
+- [Additional Products & Services](https://www.avis.com/en/products-and-services): GPS, child seats, roadside assistance, and other add-ons.
+
+## Locations
+
+- [Find a Location](https://www.avis.com/en/locations): search for rental locations by city, airport, or zip code.
+- [Airport Rentals](https://www.avis.com/en/locations/airport): airport-specific rental locations and information.
+- [One-Way Rentals](https://www.avis.com/en/products-and-services/one-way-car-rentals): policies and availability for one-way trips.
+
+## Loyalty
+
+- [Avis Preferred](https://www.avis.com/en/avis-preferred): loyalty program overview, tiers, and member benefits.
+- [Avis Preferred Points](https://www.avis.com/en/avis-preferred/points): how to earn and redeem loyalty points.
+
+## Business
+
+- [Avis for Business](https://www.avis.com/en/business): corporate accounts and business rental solutions.
+- [Long-Term Rentals](https://www.avis.com/en/offers/long-term-car-rental): extended rental options for 28+ days.
+
+## Support & Policies
+
+- [Customer Service](https://www.avis.com/en/customer-service): FAQs, contact information, and support resources.
+- [Claims & Accident Form](https://www.avis.com/en/customer-service/claims-and-accident-form): how to file a claim after an incident.
+- [Terms & Conditions](https://www.avis.com/en/customer-service/terms-and-conditions): rental agreement terms.
+- [Privacy Policy](https://www.avis.com/en/customer-service/privacy-policy): how Avis handles personal data.
+- [Accessibility](https://www.avis.com/en/customer-service/accessibility): accessibility services and adaptive vehicle options.
+
+
+## Rental Requirements
+
+[Rental Requirements](https://www.avis.com/en/customer-service/faqs/usa/requirement-for-renting ): age, driver’s license, payment, deposit, and renter eligibility requirements.
+
+[Debit Card Policy](https://www.avis.com/en/help/usa-faqs/debit-card-policy ): when debit cards are accepted and what restrictions apply.
+
+[Additional Driver Policy](https://www.avis.com/en/help/usa-faqs/additional-driver ): rules, fees, and eligibility for adding another driver.
+
+
+
+## Vehicle Types
+
+[Economy Car Rentals](https://www.avis.com/en/cars/vehicles/us/a ): affordable compact vehicles for budget-conscious renters.
+
+[SUV Rentals](https://www.avis.com/en/cars/suv-rental ): SUVs for families, groups, luggage, and road trips.
+
+[Minivan Rentals](https://www.avis.com/en/cars/van-rental ): minivans for families and larger passenger groups.
+
+[Luxury Car Rentals](https://www.avis.com/en/cars/luxury-car-rental ): premium and luxury rental vehicle options.
+
+[Electric Vehicle Rentals](https://www.avis.com/en/cars/electric-car-rentals ): EV rental options, charging guidance, and availability.

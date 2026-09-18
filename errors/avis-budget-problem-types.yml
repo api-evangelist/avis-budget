@@ -1,0 +1,815 @@
+generated: '2026-09-18'
+method: derived
+format: abg-status-envelope
+rfc9457: false
+source: Derived from the 4xx/5xx responses and their examples in openapi/avis-budget-rental-cars-openapi.yml (OpenAPI
+  3.0.2, 9 operations); status-code semantics and the reason vocabulary enriched from the API Design Guide https://developer.avis.com/guides#http-status-code-to-error-mapping
+  and the Getting Started auth errors https://developer.avis.com/getting-started#step-3-get-an-access-token.
+docs: https://developer.avis.com/guides#http-status-code-to-error-mapping
+envelope:
+  media_type: application/json
+  shape: '{ "status": { "request_time": <RFC 3339>, "request_errors": <int>, "errors": [ { "code": <string>, "message":
+    <HTTP status text>, "reason": <string>, "details": <string> } ] }, "transaction": { "transaction_id": <string>
+    } }'
+  schemas:
+  - error
+  - error_400
+  - error_401
+  - error_403
+  - reservation_error_404
+  - error_415
+  - error_500
+  - locations_error_response
+  - availability_error_response
+  - terms_error_response
+  note: 'Every error carries an errors[] array of {code, message, reason, details}; `code` is either the HTTP status
+    as a string (transport-level failures) or a numeric ABG business-rule code (e.g. 14528 invalid rate_code, 221
+    maximum 330 rental days), and `reason` is free text for business codes but a fixed slug (invalid_request, authentication_failure,
+    permissions_failure, no_results, timeout, throttled, unexpected_condition, supplier_failure, maintenance) at
+    the guide level. The 401 from the OAuth token endpoint itself uses a different flat body: {"error": "...", "error_description":
+    "..."} (schema unauthorized_error) — observed live 2026-09-18 as {"error":"invalid_grant","error_description":"token
+    not found, expired or invalid"}.'
+  request_id_field: transaction.transaction_id
+problems:
+- status: 400
+  title: Bad Request
+  media_type: application/json
+  guide_reason: invalid_request
+  guide_meaning: Required field missing or invalid
+  declared_on:
+  - GET /cars/catalog/v2/vehicles
+  - GET /cars/locations/v2/keyword
+  - GET /cars/reservation/v2
+  - GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}
+  - PATCH /cars/reservation/v2
+  - PATCH /cars/reservation/v2/partial-modify
+  - POST /cars/catalog/v2/vehicles/rates
+  - POST /cars/reservation/v2
+  - PUT /cars/reservation/v2
+  declared_on_count: 9
+  remediation: Read status.errors[].code and .details — most 400s are a specific business-rule code (invalid coupon/rate/discount/membership,
+    closed location, dates) rather than a schema failure; correct the named field and resubmit.
+- status: 401
+  title: Unauthorized
+  media_type: application/json
+  guide_reason: authentication_failure
+  guide_meaning: Invalid, missing or expired credentials
+  declared_on:
+  - GET /cars/catalog/v2/vehicles
+  - GET /cars/locations/v2/keyword
+  - GET /cars/reservation/v2
+  - PATCH /cars/reservation/v2
+  - PATCH /cars/reservation/v2/partial-modify
+  - POST /cars/catalog/v2/vehicles/rates
+  - POST /cars/reservation/v2
+  - PUT /cars/reservation/v2
+  declared_on_count: 8
+  remediation: 'Re-run the token exchange at /oauth/token/v2 (tokens expire; documented example expires_in 7140s)
+    and resend with Authorization: Bearer plus the client_id header.'
+- status: 403
+  title: Forbidden
+  media_type: application/json
+  guide_reason: permissions_failure
+  guide_meaning: Application not authorized
+  declared_on:
+  - GET /cars/catalog/v2/vehicles
+  - GET /cars/locations/v2/keyword
+  - GET /cars/reservation/v2
+  - PATCH /cars/reservation/v2
+  - PATCH /cars/reservation/v2/partial-modify
+  - POST /cars/catalog/v2/vehicles/rates
+  - POST /cars/reservation/v2
+  - PUT /cars/reservation/v2
+  declared_on_count: 8
+  remediation: The Client Application is not approved for this API or environment — no retry will help; request
+    access through the portal.
+- status: 404
+  title: Not Found
+  media_type: application/json
+  guide_reason: no_results
+  guide_meaning: No results for given input
+  declared_on:
+  - GET /cars/catalog/v2/vehicles
+  - GET /cars/locations/v2/keyword
+  - GET /cars/reservation/v2
+  - GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}
+  - PATCH /cars/reservation/v2
+  - PATCH /cars/reservation/v2/partial-modify
+  - POST /cars/catalog/v2/vehicles/rates
+  - POST /cars/reservation/v2
+  - PUT /cars/reservation/v2
+  declared_on_count: 9
+  remediation: Either a bad URI (resource_failure) or a business no-results (sold out, no locations near the address,
+    no vehicles for the filter, no T&C for the location) — inspect status.errors[].code; treat business 404s as
+    a valid empty result, not a bug.
+- status: 406
+  title: Not Acceptable
+  media_type: application/json
+  guide_reason: null
+  guide_meaning: null
+  declared_on:
+  - GET /cars/locations/v2/keyword
+  declared_on_count: 1
+  remediation: 'Send Accept: application/json.'
+- status: 415
+  title: Unsupported Media Type
+  media_type: application/json
+  guide_reason: null
+  guide_meaning: null
+  declared_on:
+  - GET /cars/catalog/v2/vehicles
+  - GET /cars/locations/v2/keyword
+  - GET /cars/reservation/v2
+  - GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}
+  - PATCH /cars/reservation/v2
+  - PATCH /cars/reservation/v2/partial-modify
+  - POST /cars/catalog/v2/vehicles/rates
+  - POST /cars/reservation/v2
+  - PUT /cars/reservation/v2
+  declared_on_count: 9
+  remediation: 'Send Content-Type: application/json (Spring HttpMediaTypeNotSupportedException).'
+- status: 500
+  title: Internal Server Error
+  media_type: application/json
+  guide_reason: unexpected_condition | supplier_failure
+  guide_meaning: Unexpected error prevented fulfillment | Supplier failed to fulfill request
+  declared_on:
+  - GET /cars/catalog/v2/vehicles
+  - GET /cars/locations/v2/keyword
+  - GET /cars/reservation/v2
+  - GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}
+  - PATCH /cars/reservation/v2
+  - PATCH /cars/reservation/v2/partial-modify
+  - POST /cars/catalog/v2/vehicles/rates
+  - POST /cars/reservation/v2
+  - PUT /cars/reservation/v2
+  declared_on_count: 9
+  remediation: Backend/supplier failure (e-com backend, IMS Connect socket timeout). Retry with backoff; the same
+    request may succeed. Do NOT assume a reservation was or was not created on a 500 to POST /cars/reservation/v2
+    — verify with GET /cars/reservation/v2 before retrying a booking.
+- status: 408
+  title: Request Timeout
+  media_type: application/json
+  guide_reason: timeout
+  guide_meaning: Server unable to respond in time
+  declared_on: []
+  declared_on_count: 0
+  note: Documented in the API Design Guide status-code mapping but declared on no operation in the OpenAPI.
+  remediation: Retry with backoff.
+- status: 429
+  title: Too Many Requests
+  media_type: application/json
+  guide_reason: throttled
+  guide_meaning: Rate limit exceeded
+  declared_on: []
+  declared_on_count: 0
+  note: Documented in the API Design Guide status-code mapping but declared on no operation in the OpenAPI.
+  remediation: Back off and retry; no Retry-After or X-RateLimit headers are documented (see rate-limits/).
+- status: 503
+  title: Service Unavailable
+  media_type: application/json
+  guide_reason: maintenance
+  guide_meaning: Server down for maintenance
+  declared_on: []
+  declared_on_count: 0
+  note: Documented in the API Design Guide status-code mapping but declared on no operation in the OpenAPI.
+  remediation: Maintenance window; retry later.
+business_error_codes:
+  count: 88
+  note: Every distinct (code, reason) pair that appears in the spec's response examples. These are examples, not
+    an exhaustive provider-published code list — ABG publishes no standalone error reference.
+  codes:
+  - code: '400'
+    reason: invalid_request
+    message: Bad Request
+    details: Required query parameter country_code not specified
+    http_status:
+    - 400
+    declared_on_operations: 7
+  - code: '403'
+    reason: Forbidden
+    message: Forbidden
+    details: Authentication was provided, but the authenticated user dosen't have access to requested resource
+    http_status:
+    - 403
+    declared_on_operations: 8
+  - code: '404'
+    reason: resource_failure
+    message: Resource Not Found
+    details: Server cannot find the requested resource. This may be due to incorrect URI or a resource that is not
+      available.
+    http_status:
+    - 404
+    declared_on_operations: 7
+  - code: '609'
+    reason: Location details are not found for the given search criteria.
+    message: Not Found
+    details: Avis failed to fulfill the request. Proximity search details are not available for the given input.
+    http_status:
+    - 404
+    declared_on_operations: 2
+  - code: '406'
+    reason: Not Acceptable
+    message: Not Acceptable
+    details: Invalid content type
+    http_status:
+    - 406
+    declared_on_operations: 1
+  - code: '415'
+    reason: Unsupported Media Type
+    message: Unsupported Media Type
+    details: org.springframework.web.HttpMediaTypeNotSupportedException
+    http_status:
+    - 415
+    declared_on_operations: 7
+  - code: '610'
+    reason: System exception from e-com backend.
+    message: Service exception
+    details: Avis failed to fulfill the request. System Exception occurred during location search.Please check the
+      log for details.
+    http_status:
+    - 500
+    declared_on_operations: 7
+  - code: '14528'
+    reason: Invalid rate_code.
+    message: Bad Request
+    details: Rate Code entered is invalid.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14184'
+    reason: Last name and customer id combination is invalid.
+    message: Bad Request
+    details: 'Last name does not match the wizard number '
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '1112'
+    reason: Invalid coupon_code and IATA number combination.
+    message: Bad Request
+    details: 'This coupon requires an IATA / ARC number.  Please enter your number below or remove the coupon from
+      this reservation. '
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '13213'
+    reason: Country Code is invalid
+    message: Bad Request
+    details: Please enter a valid Country Code.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14442'
+    reason: RENTAL DURATION LESS THAN MINIMUM
+    message: Bad Request
+    details: RENTAL DURATION LESS THAN MINIMUM
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '1103'
+    reason: Invalid Country/Coupon Code
+    message: Bad Request
+    details: This station does not participate.  Valid at corporate/participating licensees in the U.S. (excluding
+      Alaska, Hawaii and the New York Metro), Canada, Australia, New Zealand, France, Puerto Rico, United Kingdom
+      and U.S. Virgin Islands.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14372'
+    reason: Invalid coupon_code
+    message: Bad Request
+    details: The Coupon Number entered is invalid.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14374'
+    reason: coupon_code is invalid for the given time frame.
+    message: Bad Request
+    details: The Coupon Number entered does not meet the minimum days requirement. Please check the terms and conditions
+      or remove to continue this reservation.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '19076'
+    reason: loyalty_code/membership_code
+    message: Bad Request
+    details: Membership Number entered is invalid.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '235'
+    reason: loyalty_code and loyalty_company_id are required parameters for the selection of Frequent Travel Program.
+    message: Bad Request
+    details: If you have selected a Frequent Traveler Program, than you must enter a Membership Number
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14075'
+    reason: rate_code requires a valid discount_code in the request.
+    message: Bad Request
+    details: ' The rate code you entered requires a discount number. Please go back and enter your discount number
+      or remove the rate code you entered.'
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '1798'
+    reason: Invalid discount_code.
+    message: Bad Request
+    details: Invalid AWD
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '14022'
+    reason: Invalid vehicle_class_code
+    message: Bad Request
+    details: Requested Car Group is invalid.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '12012'
+    reason: Invalid city
+    message: Bad Request
+    details: MSGCD_E_WIZ_CITY_NAME_REQUIRED
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14105'
+    reason: Invalid rate_code.
+    message: Bad Request
+    details: Invalid Vehicle rate code and class code combination for the provided brand.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '208'
+    reason: Invalid membership_code.
+    message: Bad Request
+    details: Invalid Wizard number for the customer.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '205'
+    reason: Invalid dropoff_location.
+    message: Bad Request
+    details: Invalid Drop off location
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '203'
+    reason: Invalid pickup_location.
+    message: Bad Request
+    details: Invalid Pick up location
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '231'
+    reason: Invalid pickup_date.
+    message: Bad Request
+    details: You selected a date/time prior to the current time
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '232'
+    reason: dropoff_date is prior to pickup_date.
+    message: Bad Request
+    details: Return Date cannot be prior or same to the Pick-Up Date
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '237'
+    reason: Invalid flight carrier_name.
+    message: Bad Request
+    details: Please select valid Airline
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '239'
+    reason: Invalid filght carrier_code.
+    message: Bad Request
+    details: Please enter a valid flight number. Flight Number format is a maximum 4 numbers. Please omit letters
+      from your flight number
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '234'
+    reason: Invalid loyalty_code.
+    message: Bad Request
+    details: If you have entered a Membership Number, then you must select a Frequent Traveler Program.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '209'
+    reason: Invalid coupon_code.
+    message: Bad Request
+    details: Please enter a valid Coupon Number.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '216'
+    reason: Invalid discount_code.
+    message: Bad Request
+    details: The discount number is invalid for the given <brand>.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '1122'
+    reason: coupon_code is invalid for the given time frame.
+    message: Bad Request
+    details: Coupon requires a minimum length of 3 days. Please select a rate to continue (coupon will be removed).
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '300100'
+    reason: PrePayReservationCurrency must be required
+    message: Bad Request
+    details: PrePayReservationCurrency must be required
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '300101'
+    reason: PrePayReservationAmount must be required
+    message: Bad Request
+    details: PrePayReservationAmount must be required
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '300111'
+    reason: Prepay information details are required for the Prepay type.
+    message: Bad Request
+    details: Prepay Information must be required.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '900909'
+    reason: cvv is invalid for the provided Credit Card.
+    message: Bad Request
+    details: cvv is invalid for the provided Credit Card.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '215'
+    reason: Invalid email.
+    message: Bad Request
+    details: Invalid email address
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '19001'
+    reason: country_code,state_name and postal_code combination is invalid.
+    message: Bad Request
+    details: Invalid zip code.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14126'
+    reason: dropoff_date and pickup_date combination is invalid.
+    message: Bad Request
+    details: Pick-up Date can not be after Return Date.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14441'
+    reason: Bad Request
+    message: Bad Request
+    details: Bad Request
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14299'
+    reason: Bad Request
+    message: Bad Request
+    details: Invalid insurance details
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '14129'
+    reason: Invalid pickup_date.
+    message: Bad Request
+    details: pickup_date is less than the current date.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '219'
+    reason: Missing partner_country_code.
+    message: Bad Request
+    details: Country of residence is required.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '19074'
+    reason: Invalid rate_code and vehicle_class_code combination for the provided brand.
+    message: Bad Request
+    details: ' Rate Code entered is invalid.'
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '1109'
+    reason: Coupon is applicable only for certain discount types.
+    message: Bad Request
+    details: 'This coupon requires one of the following discount number types: {0}.'
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '1203'
+    reason: Invalid coupon and discount combination.
+    message: Bad Request
+    details: This coupon {0} may only be used with a specific AWD number (see offer terms). Please enter this AWD
+      number to continue or select from available cars to continue without the coupon.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '1124'
+    reason: Invalid coupon and brand combination.
+    message: Bad Request
+    details: This coupon may only be used on  W G car groups. Please select from one of these groups or select a
+      different one to proceed without the coupon.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '22224'
+    reason: A One-Way Rental between given pickup_location and dropoff_location is not available
+    message: Bad Request
+    details: A One-Way Rental between these 2  locations cannot be booked online.
+    http_status:
+    - 400
+    declared_on_operations: 5
+  - code: '242'
+    reason: The Rental Location you have selected is closed during the hours requested
+    message: Bad Request
+    details: The Rental Location you have selected is closed during the hours requested
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '60010'
+    reason: Incorrect coupon_code.
+    message: Bad Request
+    details: This type of coupon cannot be applied online. Paper coupons must be presented at the rental counter
+      and may require proper credentials. Some location restrictions apply, please check complete coupon Terms &
+      Conditions
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '14261'
+    reason: The Rental Location you have selected is closed during the return hour requested.
+    message: Bad Request
+    details: The Rental Location you have selected is closed during the return hour requested.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '1102'
+    reason: Invalid coupon_code.
+    message: Bad Request
+    details: Input is not a valid coupon number. You may modify the coupon number under Rental Information on this
+      page or select a vehicle   to proceed with your reservation (coupon will be removed).
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '319'
+    reason: Business exception.
+    message: Bad Request
+    details: SYS_WIZ_NO_TSRS_AVAILABLE.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '221'
+    reason: Maximum number of days limit exceeded.
+    message: Bad Request
+    details: Sorry, 330 days is the maximum number of days that can be reserved.
+    http_status:
+    - 400
+    declared_on_operations: 2
+  - code: '401'
+    reason: unauthorized_client
+    message: unauthorized
+    details: Invalid Client Credentials
+    http_status:
+    - 401
+    declared_on_operations: 7
+  - code: '223'
+    reason: Invalid pickup_location.
+    message: Not Found
+    details: The pick-up location entered is Sold Out for the dates you have entered
+    http_status:
+    - 404
+    declared_on_operations: 5
+  - code: '14381'
+    reason: 'A One-Way Rental between given pickup_location and dropoff_location is not available '
+    message: Not Found
+    details: 'A One-Way Rental between given pickup_location and dropoff_location is not available '
+    http_status:
+    - 404
+    declared_on_operations: 5
+  - code: '226'
+    reason: Invalid dropoff_location.
+    message: Not Found
+    details: There are no locations available for your Return address.
+    http_status:
+    - 400
+    - 404
+    declared_on_operations: 5
+  - code: '225'
+    reason: Invalid pickup_location.
+    message: Not Found
+    details: There are no locations available for your Pick-up address.
+    http_status:
+    - 400
+    - 404
+    declared_on_operations: 5
+  - code: '227'
+    reason: Invalid pickup_location and dropoff_location.
+    message: Not Found
+    details: Sorry! No <brand> locations are available in address provided.
+    http_status:
+    - 400
+    - 404
+    declared_on_operations: 5
+  - code: '500708'
+    reason: No vehicles are available for the given filtering criteria
+    message: Not Found
+    details: Sorry! No vehicles are available for the given filtering criteria.
+    http_status:
+    - 404
+    declared_on_operations: 1
+  - code: '40018'
+    reason: Service exception
+    message: Service exception
+    details: Socket timeout from IMS Connect
+    http_status:
+    - 500
+    declared_on_operations: 5
+  - code: '19076'
+    reason: Invalid loyalty_code membership_code
+    message: Bad Request
+    details: Membership Number entered is invalid.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '14075'
+    reason: RateCode requires a valid discount number in the request.
+    message: Bad Request
+    details: ' The rate code you entered requires a discount number. Please go back and enter your discount number
+      or remove the rate code you entered.'
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '1798'
+    reason: Invalid discount_number.
+    message: Bad Request
+    details: Invalid AWD
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '208'
+    reason: Invalid customer_id.
+    message: Bad Request
+    details: Invalid Wizard number for the customer.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '234'
+    reason: Invalid frequent_flyer_number.
+    message: Bad Request
+    details: If you have entered a Membership Number, then you must select a Frequent Traveler Program.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '209'
+    reason: Invalid coupon_number.
+    message: Bad Request
+    details: Please enter a valid Coupon Number.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '216'
+    reason: Invalid discount_number.
+    message: Bad Request
+    details: The discount number is invalid for the given Avis.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '150004'
+    reason: last_name and confirmation_number combination is invalid.
+    message: Bad Request
+    details: Last name entered does not match with the confirmation number
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '19082'
+    reason: Bad Request
+    message: Bad Request
+    details: Bad Request from e-Com backend.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '1122'
+    reason: Coupon_code is expired.
+    message: Bad Request
+    details: Coupon requires a minimum length of 3 days. Please select a rate to continue (coupon will be removed).
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '300102'
+    reason: Credit Card details are mandatory.
+    message: Bad Request
+    details: Valid Credit Card Details must be required
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '14220'
+    reason: Payment details are invalid.
+    message: Bad Request
+    details: The number either doesn't match the card type or is the wrong length. Please check your entries and
+      try again
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '14025'
+    reason: Bad Request.
+    message: Bad Request
+    details: Bad Request from e-Com backend.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '212'
+    reason: last_name is required.
+    message: Bad Request
+    details: Last Name is required
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '210'
+    reason: first_name is mandatory.
+    message: Bad Request
+    details: First Name is required
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '19074'
+    reason: Invalid Vehicle rate code and class code combination for the provided brand.
+    message: Bad Request
+    details: ' Rate Code entered is invalid.'
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '1005'
+    reason: 'e-Com rejected the request due to data issue. '
+    message: Bad Request
+    details: Request is invalid.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '200'
+    reason: Brand is a required field.
+    message: Bad Request
+    details: Brand is a required field.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '202'
+    reason: pickup_location is a required field.
+    message: Bad Request
+    details: pickup_location is a required field.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '206'
+    reason: pickup_location is a required field.
+    message: Bad Request
+    details: pickup_location is a required field.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '204'
+    reason: dropoff_location is a required field.
+    message: Bad Request
+    details: dropoff_location is a required field.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '207'
+    reason: dropoff_location is a required field.
+    message: Bad Request
+    details: dropoff_location is a required field.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '217'
+    reason: vehicle_class_code is a required field.
+    message: Bad Request
+    details: vehicle_class_code is a required field and it is associated with rate_code.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '218'
+    reason: rate_code is a required field.
+    message: Bad Request
+    details: rate_code is a required field and it is associated with the vehicle_class_code.
+    http_status:
+    - 400
+    declared_on_operations: 3
+  - code: '220'
+    reason: Confirmation Number is required field.
+    message: Bad Request
+    details: Confirmation Number is required field.
+    http_status:
+    - 400
+    declared_on_operations: 3

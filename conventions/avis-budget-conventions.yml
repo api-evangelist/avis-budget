@@ -1,0 +1,157 @@
+generated: '2026-09-18'
+method: searched
+source: >-
+  https://developer.avis.com/guides (API Design Guide) + https://developer.avis.com/getting-started +
+  openapi/avis-budget-rental-cars-openapi.yml (Rental Cars 2.0.0, 9 operations). The guide is explicit that it
+  "represents the best-practices that our product development teams follow" and "does not represent the current
+  state of all ABG APIs", so every convention below is cross-checked against what the contract actually declares.
+description: >-
+  How the Avis Budget Group Rental Cars API behaves across every operation: OAuth client-credentials auth with a
+  paired client_id header, a /v2 path-segment version, a status.errors[] envelope, a transaction_id for tracing,
+  no idempotency key, no pagination, no documented rate limit, and a cancel path for reservations with no
+  published cancellation window.
+
+base_url: https://stage.abgapiservices.com
+base_url_note: >-
+  The only server the contract and docs name is the staging/pre-prod host. The portal states that every endpoint
+  it documents "executes in our staging or pre-prod environments" and that production credentials are issued
+  separately after launch approval; no production base URL is published. api.abgapiservices.com answers
+  (Kong 3.13 enterprise, 404 "No Mapping Rule matched") but is not documented and is not recorded as a base.
+api_style: REST over HTTPS, JSON requests and responses (application/json only; 406/415 on anything else)
+
+authentication:
+  scheme: OAuth 2.0 client credentials -> Bearer access token, plus a mandatory client_id request header on every call
+  token_endpoint: https://stage.abgapiservices.com/oauth/token/v2
+  docs: https://developer.avis.com/getting-started#step-3-get-an-access-token
+  detail: authentication/avis-budget-authentication.yml
+
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  scope: []
+  note: >-
+    No Idempotency-Key or equivalent client-supplied replay key is documented anywhere — not in the guide, not in
+    the getting-started flow, and the string "idempot" appears nowhere in the 575 KB contract. The guide's own
+    HTTP-method section says "The POST method is generally non-idempotent". The mutating surface is POST
+    /cars/reservation/v2 (create), PATCH /cars/reservation/v2 and PATCH /cars/reservation/v2/partial-modify
+    (update), and PUT /cars/reservation/v2 (cancel, which the guide would have as DELETE). A network failure on
+    the create call therefore cannot be safely retried blind: verify with GET /cars/reservation/v2
+    (confirmation_number + last_name) before re-posting, or the agent can double-book.
+
+pagination:
+  style: none
+  note: >-
+    No paged collection exists. Keyword location search returns a bounded result set ("the top three search
+    results" per the guide's example), vehicle availability returns the full vehicles[] array for the request, and
+    reservations are addressed one at a time by confirmation number. The guide reserves query parameters on POST
+    for hypermedia next-page links "in cases where POST provides paged results", but no current operation does.
+
+field_expansion:
+  supported: false
+  note: Responses are fixed-shape; there is no expand/fields/sparse-fieldset parameter on any operation.
+
+metadata:
+  supported: false
+
+request_tracing:
+  request_id_header: null
+  response_field: transaction.transaction_id
+  note: >-
+    Success and error bodies carry a transaction object with a transaction_id (UUID or numeric) that identifies
+    the request for support; no request-id HTTP header is documented or observed (an unauthenticated probe
+    returned only CloudFront x-amz-cf-id).
+
+versioning:
+  scheme: path-segment major version (/cars/locations/v2, /cars/reservation/v2, /terms/v2)
+  policy: >-
+    The guide prescribes vMajor.Minor.Patch, additive-only minor changes (new method, optional parameter, response
+    attribute, enum value, output-only field) and a major version for any breaking change (required request field,
+    removal/rename, type change, URL change, visible behaviour change). The contract exposes major only (v2); the
+    portal's info.version is 2.0.0.
+  current: v2
+  docs: https://developer.avis.com/guides#version-scheme
+  detail: lifecycle/avis-budget-lifecycle.yml
+  changelog: changelog/avis-budget-changelog.yml
+
+error_envelope:
+  media_type: application/json
+  rfc9457: false
+  shape: '{ "status": { "request_time", "request_errors", "errors": [ { "code", "message", "reason", "details" } ] }, "transaction": { "transaction_id" } }'
+  reasons: [invalid_request, authentication_failure, permissions_failure, no_results, timeout, throttled, unexpected_condition, supplier_failure, maintenance]
+  detail: errors/avis-budget-problem-types.yml
+  docs: https://developer.avis.com/guides#http-status-code-to-error-mapping
+
+rate_limits:
+  signal_status: 429
+  reason: throttled
+  headers: []
+  note: >-
+    The guide maps 429 to reason "throttled"; the provider's public Postman documentation states "Currently we do
+    not have any rate limiting in place. This may change at our discretion." No X-RateLimit-* / RateLimit /
+    Retry-After header is documented.
+  detail: rate-limits/avis-budget-rate-limits.yml
+
+dry_run_mode:
+  supported: false
+  note: >-
+    No dry-run / validate-only flag exists. The whole documented surface runs in staging, where reservations "do
+    not make live, usable reservations for customers" — that environment separation (see sandbox/) is the
+    rehearsal path, not a per-request mode.
+
+reversibility:
+  grade: documented
+  docs: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  note: >-
+    A reversal operation exists for the one thing an agent can commit (a reservation) but NO window is stated
+    anywhere in the contract or portal — no free-cancellation period, no cut-off before pickup, no fee schedule.
+    Cancellation terms for a given location live in the Terms and Conditions endpoint's free text, which is
+    rendered for humans, not structured. Graded `documented` (reversal path, no stated window), not `verified`.
+  write_surfaces:
+    - operation: POST /cars/reservation/v2
+      operationId: null
+      action: Create a reservation (optionally with prepay / paperless-voucher payment details)
+      reversal: PUT /cars/reservation/v2 (Cancel Reservation)
+      reversal_operationId: null
+      window: null
+      window_note: >-
+        Not stated. The spec's cancel description says only that the response "will contain basic cancellation
+        details that indicate the request was successful". Prepaid reservations carry PrePayReservationAmount and
+        credit-card fields, so a cancellation may have a monetary consequence the API does not describe — an
+        agent must read GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale} before committing
+        a prepaid booking.
+      grade: documented
+    - operation: PATCH /cars/reservation/v2 and PATCH /cars/reservation/v2/partial-modify
+      operationId: null
+      action: Update / partially update an existing reservation
+      reversal: A further PATCH (re-modify) or PUT cancel; no undo-to-previous-state operation
+      window: null
+      grade: documented
+    - operation: PUT /cars/reservation/v2
+      operationId: null
+      action: Cancel a reservation
+      reversal: none documented — a cancelled reservation cannot be un-cancelled; re-book with POST
+      window: null
+      grade: none
+  read_only_surfaces:
+    - GET /cars/locations/v2/keyword
+    - GET /cars/catalog/v2/vehicles (operationId Car Availability)
+    - POST /cars/catalog/v2/vehicles/rates (a POST that only prices; creates nothing)
+    - GET /cars/reservation/v2
+    - GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}
+
+operation_ids:
+  note: >-
+    Only one of nine operations carries an operationId ("Car Availability" on GET /cars/catalog/v2/vehicles).
+    Every other operation is addressed here by method + path. overlays/avis-budget-rental-cars-overlay.yaml
+    proposes stable operationIds without mutating the provider's spec.
+
+other_conventions:
+  - name: Naming
+    detail: lower-case, underscore-separated resources and query parameters; plural collections (/cars, /cars/locations), singular created resources (/cars/reservation) — per the guide.
+  - name: Brands
+    detail: Avis, Budget and Payless only (brand is a required field); Budget Truck and other ABG brands are not served.
+  - name: Environments
+    detail: Sandbox/staging credentials are distinct from production credentials; the same Client ID/Secret does not carry across. See sandbox/avis-budget-sandbox.yml.
+  - name: Sensitive data
+    detail: The guide forbids credentials, keys, passwords, SSNs or card numbers in URLs; payment fields travel in the reservation request body.

@@ -1,0 +1,80 @@
+generated: '2026-09-18'
+method: derived
+source: >-
+  Derived from the object relationships in openapi/avis-budget-rental-cars-openapi.yml (OpenAPI 3.0.2,
+  146 components.schemas): the request/response schema $ref links on the 9 operations and the id/code
+  reference fields they share (pickup_location_code, dropoff_location_code, vehicle_class_code, sipp_code,
+  rate_code, confirmation_number, iata_number, membership_code, transaction_id). Car rental is a
+  shop-then-book graph: Location -> Availability (Vehicle x Rate) -> Reservation, with Terms attached to
+  a Location.
+docs: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+notation: >-
+  Entities are addressed by CODES, not opaque ids: locations by a location_code (e.g. EWR) scoped to brand +
+  country_code, vehicles by an ACRISS/SIPP code (e.g. MBMR) and a vehicle_class_code (e.g. A), rates by a
+  rate_code paired with a vehicle_class_code, reservations by a confirmation_number + last_name. Every
+  response carries transaction.transaction_id for tracing. Relationships use has_one / has_many /
+  belongs_to with the reference field in `via`.
+
+identifier_grammar:
+  - {field: brand, values: [Avis, Budget, Payless], scope: required on every request}
+  - {field: location_code, example: EWR, scope: 'unique within brand + country_code; obtained from keyword search'}
+  - {field: sipp_code, example: MBMR, standard: ACRISS/SIPP 4-letter vehicle classification}
+  - {field: vehicle_class_code, example: A, scope: brand-specific car group letter, paired with rate_code}
+  - {field: rate_code, scope: 'brand-specific; often requires a discount_code (AWD/BCD) — business codes 14075/19074'}
+  - {field: confirmation_number, scope: 'reservation identity; addressed together with last_name (business code 150004)'}
+  - {field: iata_number, standard: IATA/ARC travel-agency number; enables coupons and paperless-voucher billing}
+  - {field: membership_code, scope: loyalty (Wizard / Avis Preferred / Budget Fastbreak) member number}
+  - {field: transaction_id, scope: per-request trace id returned in every response}
+
+entities:
+  - {name: Location, schema: rental_location, keys: [brand, country_code, location_code], domain: locations, description: A rental location (airport or neighbourhood) with address, hours and coordinates; found by keyword search.}
+  - {name: LocationSearchResult, schema: car_location_v2_response, domain: locations, description: 'Response of GET /cars/locations/v2/keyword — status, transaction, locations[].'}
+  - {name: Vehicle, schema: vehicle, keys: [sipp_code, vehicle_class_code], domain: catalog, description: An available vehicle category (make/model or similar, SIPP code, class, transmission, image) with its base rate and applied discounts/coupons.}
+  - {name: Availability, schema: best_buy_response, domain: catalog, description: 'Response of GET /cars/catalog/v2/vehicles ("Best Buy"): product, vehicles[] for a pickup/dropoff/date request, influenced by driver age.'}
+  - {name: Rate, schema: rate_request_response, keys: [rate_code, vehicle_class_code], domain: catalog, description: Detailed pricing for one vehicle — distance limits, coverages, ancillary products, totals (vehicle_total, taxes_fees_total, reservation_total), insurance excess, optional secondary-currency pricing.}
+  - {name: RateRequest, schema: car_availability_rate_request, domain: catalog, description: 'Body of POST /cars/catalog/v2/vehicles/rates — the vehicle + rate qualifiers (discount, coupon, membership, IATA) to price.'}
+  - {name: Reservation, schema: reservation, keys: [confirmation_number, last_name], domain: reservations, description: A booked rental — customer, vehicle, pickup/dropoff location and times, rate, totals, payment/prepay/voucher details.}
+  - {name: ReservationRequest, schema: create_modify_request, domain: reservations, description: 'Body of POST and PATCH /cars/reservation/v2 — full customer + rental details.'}
+  - {name: PartialModifyRequest, schema: partial_modify_request, domain: reservations, description: 'Body of PATCH /cars/reservation/v2/partial-modify — a subset of reservation fields to change.'}
+  - {name: CancelRequest, schema: cancel_reservation_v2_request, domain: reservations, description: 'Body of PUT /cars/reservation/v2 — brand + confirmation to cancel.'}
+  - {name: Customer, schema: reservation_customer_response, domain: reservations, description: Renter identity and contact — first/last name, email, address, age or date_of_birth, driver licence.}
+  - {name: Loyalty, schema: availability_loyalty, domain: reservations, description: Frequent-traveler program and member number attached to a rate or reservation.}
+  - {name: Membership, schema: availability_membership, domain: reservations, description: Brand loyalty membership (membership_code) whose profile date of birth overrides age parameters.}
+  - {name: Coupon, keys: [coupon_code], domain: pricing, description: Promotional coupon applied to a rate; validity depends on brand, rental length, discount type and IATA number.}
+  - {name: Discount, keys: [discount_code], domain: pricing, description: Corporate/partner discount number (AWD/BCD) required by some rate codes.}
+  - {name: Payment, keys: [card_number], domain: reservations, description: Credit-card / prepay (PrePayReservationAmount, PrePayReservationCurrency) / paperless-voucher details on a reservation.}
+  - {name: Terms, schema: terms_and_conditions_v2_response, keys: [brand, country_code, location_code, locale], domain: terms, description: Location-specific rental terms and conditions as text.}
+  - {name: Transaction, schema: transaction, keys: [transaction_id], domain: envelope, description: Per-request trace object present on every success and error response.}
+  - {name: Status, schema: [success_status, partial_success_status, error_400], domain: envelope, description: 'Envelope status — request_time plus success[] or errors[].'}
+
+relationships:
+  - {from: LocationSearchResult, to: Location, type: has_many, via: 'locations[]'}
+  - {from: Location, to: Terms, type: has_one, via: 'brand + country_code + location_code (+ locale)'}
+  - {from: Availability, to: Location, type: belongs_to, via: pickup_location_code}
+  - {from: Availability, to: Location, type: belongs_to, via: dropoff_location_code}
+  - {from: Availability, to: Vehicle, type: has_many, via: 'vehicles[]'}
+  - {from: Vehicle, to: Rate, type: has_one, via: 'rate_code + vehicle_class_code -> POST /cars/catalog/v2/vehicles/rates'}
+  - {from: RateRequest, to: Vehicle, type: belongs_to, via: 'vehicle_class_code / sipp_code'}
+  - {from: RateRequest, to: Discount, type: belongs_to, via: discount_code}
+  - {from: RateRequest, to: Coupon, type: belongs_to, via: coupon_code}
+  - {from: RateRequest, to: Membership, type: belongs_to, via: membership_code}
+  - {from: Reservation, to: Location, type: belongs_to, via: pickup_location_code}
+  - {from: Reservation, to: Location, type: belongs_to, via: dropoff_location_code}
+  - {from: Reservation, to: Vehicle, type: has_one, via: 'vehicle.category.sipp_code / vehicle_class_code'}
+  - {from: Reservation, to: Rate, type: has_one, via: rate_code}
+  - {from: Reservation, to: Customer, type: has_one, via: customer}
+  - {from: Reservation, to: Loyalty, type: has_one, via: loyalty}
+  - {from: Reservation, to: Membership, type: has_one, via: membership_code}
+  - {from: Reservation, to: Coupon, type: belongs_to, via: coupon_code}
+  - {from: Reservation, to: Discount, type: belongs_to, via: discount_code}
+  - {from: Reservation, to: Payment, type: has_one, via: payment / prepay}
+  - {from: Reservation, to: Transaction, type: has_one, via: transaction.transaction_id}
+  - {from: ReservationRequest, to: Reservation, type: creates, via: 'POST -> confirmation_number'}
+  - {from: PartialModifyRequest, to: Reservation, type: belongs_to, via: confirmation_number}
+  - {from: CancelRequest, to: Reservation, type: belongs_to, via: 'confirmation_number + brand'}
+
+flows:
+  - name: Shop and book
+    steps: [Location (keyword search), Availability (vehicles for dates), Rate (detailed price), Reservation (create), Terms (read before booking)]
+  - name: Manage a booking
+    steps: [Reservation (view by confirmation_number + last_name), Reservation (update or partial-modify), Reservation (cancel)]

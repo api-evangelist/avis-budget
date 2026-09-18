@@ -1,0 +1,85 @@
+generated: '2026-09-18'
+method: derived
+source: >-
+  openapi/avis-budget-rental-cars-openapi.yml + https://developer.avis.com/guides + live /.well-known/ probes
+  (well-known/avis-budget-well-known.yml) + https://developer.avis.com/getting-started
+standards:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      components.securitySchemes.ABG-Access-Token is type oauth2 with a clientCredentials flow
+      (tokenUrl https://stage.abgapiservices.com/oauth/token/v2) applied globally via top-level security[].
+    caveat: >-
+      The documented token exchange sends client_id/client_secret as request HEADERS on a GET, not the RFC 6749
+      §4.4 form-encoded POST with client authentication — interoperable OAuth client libraries will not work
+      unmodified.
+  - id: oauth2-client-credentials
+    conforms: true
+    evidence: the only flow declared; docs step 3 documents the exchange and Bearer token_type.
+  - id: oauth2-pkce
+    conforms: false
+    evidence: No authorization-code flow on the API; PKCE (S256) is advertised only by the portal's own login server metadata on developer.avis.com.
+  - id: rfc8414-authorization-server-metadata
+    conforms: true
+    evidence: >-
+      https://developer.avis.com/.well-known/oauth-authorization-server returns a valid document (portal login
+      server) and https://abg-api-preprod.oktapreview.com/.well-known/oauth-authorization-server (the bearer realm
+      the API gateway names) returns Okta's; neither describes the documented API token endpoint.
+  - id: oidc-discovery
+    conforms: true
+    evidence: https://abg-api-preprod.oktapreview.com/.well-known/openid-configuration (200, issuer present) — the Okta tenant behind the API's WWW-Authenticate realm; OIDC is not used by API consumers.
+  - id: openapi-3.0
+    conforms: true
+    evidence: openapi 3.0.2 document, 9 operations, 146 component schemas, published at https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: All errors are application/json with an ABG status.errors[] envelope; application/problem+json appears nowhere in the spec.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt is absent on every host (404 on www.avisbudgetgroup.com and stage.abgapiservices.com, SPA shell on developer.avis.com, broken 302 on www.budget.com).
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: Lifecycle states are documented but no Deprecation/Sunset header and no operation marked deprecated.
+  - id: pagination
+    conforms: false
+    evidence: No paged collection; see conventions/avis-budget-conventions.yml.
+  - id: idempotency
+    conforms: false
+    evidence: No idempotency key on the mutating reservation operations; the guide calls POST "generally non-idempotent".
+  - id: llms-txt
+    conforms: true
+    evidence: https://developer.avis.com/llms.txt (200, text/plain) and https://www.avis.com/llms.txt (200) both served and saved under llms/.
+  - id: content-signal
+    conforms: true
+    evidence: 'https://developer.avis.com/robots.txt carries "Content-Usage: ai-output=y, train-ai=n" and "Content-Signal: ai-input=yes, ai-train=no" alongside a blanket Disallow: /.'
+  - id: rest-design-guide
+    conforms: true
+    evidence: Provider publishes an API Design Guide (naming, HTTP methods, query parameters, backward compatibility, versioning, status-code mapping) at https://developer.avis.com/guides.
+domain_standards:
+  note: >-
+    Car rental has no regulatory regime in scoring.yml; these are reward-only observations of standards the
+    CONTRACT itself declares, with the exact location in the spec.
+  standards:
+    - id: acriss-sipp-vehicle-codes
+      conforms: true
+      evidence: >-
+        GET /cars/catalog/v2/vehicles declares query parameter `sipp_codes` ("comma-separated sipp_codes used for
+        vehicle filtering ... a compact 4 door manual air conditioned car will have a SIPP Code CMDR") and every
+        vehicle in availability/rate/reservation responses carries category.sipp_code (e.g. MBMR). SIPP is the
+        ACRISS industry car-classification code — the interline vehicle standard a travel integrator already speaks.
+      spec_location: paths./cars/catalog/v2/vehicles.get.parameters[name=sipp_codes]; components.schemas.*.category.sipp_code
+    - id: iata-agency-number
+      conforms: true
+      evidence: >-
+        Rate and reservation requests accept an IATA/ARC agency number (21 mentions; e.g. business code 1112 "This
+        coupon requires an IATA / ARC number") and paperless-voucher billing is enabled per IATA number.
+      spec_location: paths./cars/catalog/v2/vehicles/rates.post.requestBody + paths./cars/reservation/v2.post.requestBody (iata_number)
+    - id: iso-3166-country-codes
+      conforms: true
+      evidence: country_code parameters documented as ISO 3166 (9 mentions) on location search, terms and reservation requests.
+    - id: iso-8601-datetimes
+      conforms: true
+      evidence: pickup_date / dropoff_date / request_time documented as ISO 8601 date-time (12 mentions).
+    - id: opentravel-ota
+      conforms: false
+      evidence: No OTA_VehAvailRate / OTA_VehRes message shapes; the contract is a bespoke JSON design, not OpenTravel XML.

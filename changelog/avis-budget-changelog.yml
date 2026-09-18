@@ -1,0 +1,38 @@
+generated: '2026-09-18'
+method: searched
+source: https://developer.avis.com/changelog
+checked: '2026-09-18'
+summary: >-
+  The developer portal ships a Change Log page under Support, but it is empty: the 2026-09-18 capture of its
+  markdown twin (https://1c473acfbecd.us.kongportals.com/changelog.md, 1,592 bytes) contains the navigation, a
+  "## Changelog" heading and the footer — no dated entries, no versions, no feed. The API's only version signal
+  is the /v2 path segment and the portal's declared 2.0.0.
+scheme:
+  api_versioning: path-segment major (v2)
+  policy: vMajor.Minor.Patch per the API Design Guide (see lifecycle/avis-budget-lifecycle.yml)
+current_version:
+  spec_declared: 2.0.0
+  source: openapi/_original/avis-budget-rental-cars-openapi.json
+  portal_version_id: 2fd66e15-44a2-4bc2-a96e-84b56a19c903
+feeds:
+  rss: null
+  atom: null
+  json: null
+  probed:
+    - url: https://developer.avis.com/changelog
+      status: 200
+      body: Change Log page (HTML) with no entries
+    - url: https://1c473acfbecd.us.kongportals.com/changelog.md
+      status: 200
+      body: markdown twin, heading only
+entries: []
+entries_note: >-
+  Deliberately empty — the provider publishes a changelog surface with nothing in it. Recorded so the next
+  capture can show movement.
+observed_change:
+  - detected: '2026-09-18'
+    method: docs-vs-contract
+    note: >-
+      The Getting Started page's example calls /cars/locations/v1/ (with country_code, brand, keyword); the
+      published 2.0.0 contract lists only /cars/locations/v2/keyword. Evidence that v1 location search was
+      superseded, with no changelog entry recording it.

@@ -1,0 +1,61 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancement overlay for the Avis Budget Group Rental Cars API 2.0.0
+  version: 1.0.0
+extends: openapi/_original/avis-budget-rental-cars-openapi.json
+x-generated: '2026-09-18'
+x-method: generated
+x-source: openapi/_original/avis-budget-rental-cars-openapi.json
+x-rationale: >-
+  The provider's spec is strong on examples and schemas but ships (a) an operationId on only one of nine
+  operations, (b) no info.contact although x-api-owner names the Partner API Team mailboxes, (c) no
+  externalDocs pointing at the portal, and (d) no tag descriptions. This overlay proposes stable snake_case
+  operationIds (used by skills/ and mcp/), surfaces the contact and docs the provider publishes elsewhere on the
+  same page, and adds a server-level note that the only documented host is staging. It never changes a path,
+  parameter, schema or response. Apply with any Overlay 1.0.0 processor against
+  openapi/_original/avis-budget-rental-cars-openapi.json.
+actions:
+  - target: $.info
+    description: Add the contact the spec's own x-api-owner block names, and a link to the portal.
+    update:
+      contact:
+        name: Avis Budget Group Partner API Team
+        email: partner-api@avisbudget.com
+        url: https://developer.avis.com/contact-us
+  - target: $
+    description: Point at the developer portal.
+    update:
+      externalDocs:
+        description: Avis Budget Group Developer Portal — Rental Cars 2.0.0
+        url: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  - target: $.servers[0]
+    description: Make the environment scope explicit (the portal says all documented endpoints run in staging/pre-prod).
+    update:
+      description: Stage Environment — every documented endpoint executes here; reservations are not live. Production host and credentials are issued separately after ABG approval.
+  - target: $.paths['/cars/locations/v2/keyword'].get
+    update: {operationId: searchRentalLocationsByKeyword}
+  - target: $.paths['/cars/catalog/v2/vehicles'].get
+    description: The provider's own operationId "Car Availability" contains a space; keep it, add nothing. (No-op recorded for completeness.)
+    update: {}
+  - target: $.paths['/cars/catalog/v2/vehicles/rates'].post
+    update: {operationId: getVehicleRate}
+  - target: $.paths['/cars/reservation/v2'].get
+    update: {operationId: viewReservation}
+  - target: $.paths['/cars/reservation/v2'].put
+    update: {operationId: cancelReservation}
+  - target: $.paths['/cars/reservation/v2'].post
+    update: {operationId: createReservation}
+  - target: $.paths['/cars/reservation/v2'].patch
+    update: {operationId: updateReservation}
+  - target: $.paths['/cars/reservation/v2/partial-modify'].patch
+    update: {operationId: partialUpdateReservation}
+  - target: $.paths['/terms/v2/location/{brand}/{country_code}/{location_code}/{locale}'].get
+    update: {operationId: getLocationTermsAndConditions}
+  - target: $.tags[?(@.name=='Car Locations')]
+    update: {description: Find Avis, Budget and Payless rental locations by keyword (autocomplete-friendly).}
+  - target: $.tags[?(@.name=='Car Availability')]
+    update: {description: Shop vehicles and rates for a pickup/dropoff/date request; age-sensitive; supports inclusive rates, coupons, discounts, memberships and secondary-currency pricing.}
+  - target: $.tags[?(@.name=='Car Reservation')]
+    update: {description: Create, view, update, partially modify and cancel reservations, including prepay and paperless-voucher processing.}
+  - target: $.tags[?(@.name=='Terms_and_Conditions')]
+    update: {description: Location-specific rental terms and conditions as text.}

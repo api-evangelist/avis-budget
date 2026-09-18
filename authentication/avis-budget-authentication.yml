@@ -1,0 +1,74 @@
+generated: '2026-09-18'
+method: searched
+source: https://developer.avis.com/getting-started
+docs: https://developer.avis.com/getting-started
+spec: openapi/avis-budget-rental-cars-openapi.yml
+summary:
+  types:
+  - oauth2
+  oauth2_flows:
+  - clientCredentials
+  note: >-
+    One scheme, OAuth 2.0 client credentials. The Getting Started page documents the exact exchange: a
+    request to https://stage.abgapiservices.com/oauth/token/v2 carrying the application's Client ID and
+    Client Secret as `client_id` / `client_secret` REQUEST HEADERS (the docs' own cURL uses GET, not a
+    form-encoded POST as RFC 6749 §4.4 would), returning {access_token, token_type: Bearer, expires_in}
+    with a documented example expiry of 7140 seconds. Every API call then sends BOTH
+    `Authorization: Bearer <token>` AND the `client_id` header (the spec declares `client_id` as a
+    required header parameter on every operation). Credentials are issued per Client Application after
+    ABG approval; sandbox/staging credentials are separate from production credentials.
+schemes:
+- name: ABG-Access-Token
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://stage.abgapiservices.com/oauth/token/v2
+    scopes: 0
+    scopes_note: The spec declares an empty scopes map and the docs name no scopes; access is governed by application approval, not by scope.
+  description: OAuth 2.0 client credentials flow used to authenticate all API requests in this package.
+  token_request:
+    method: GET
+    url: https://stage.abgapiservices.com/oauth/token/v2
+    headers: [client_id, client_secret]
+    docs: https://developer.avis.com/getting-started#step-3-get-an-access-token
+  token_response:
+    fields: [access_token, token_type, expires_in]
+    token_type: Bearer
+    documented_expires_in_seconds: 7140
+  api_request_headers:
+    - name: Authorization
+      value: Bearer <access_token>
+    - name: client_id
+      value: <client_id>
+      note: Declared as a required header parameter on all 9 operations in the OpenAPI.
+  error_responses:
+    - status: 400
+      reason: invalid_request
+      details: Invalid credentials were provided in the request.
+    - status: 401
+      reason: authentication_failure
+      details: Missing or expired credentials were provided in the request.
+  sources:
+  - openapi/avis-budget-rental-cars-openapi.yml
+  - https://developer.avis.com/getting-started
+onboarding:
+  steps:
+    - Sign up for a portal account at https://developer.avis.com/register (email confirmation, then ABG review — typically 1-2 business days).
+    - Create a Client Application against the Rental Cars API ("Use this API" > "+ New application"); the Client Secret is shown once.
+    - ABG administrator approves the application; approval email confirms it is ready.
+    - Exchange Client ID/Secret for a Bearer access token; call the API with the token and client_id header.
+    - Contact ABG to launch in production; production credentials are separate.
+  self_serve: false
+  approval_required: true
+  docs: https://developer.avis.com/getting-started
+observed:
+  - url: https://stage.abgapiservices.com/cars/locations/v2/keyword?keyword=Boston
+    status: 401
+    checked: '2026-09-18'
+    www_authenticate: Bearer realm="abg-api-preprod.oktapreview.com", error="invalid_token"
+    body: '{"error_description":"token not found, expired or invalid","error":"invalid_grant"}'
+    note: >-
+      An unauthenticated call is rejected at the gateway with a WWW-Authenticate realm naming an Okta
+      tenant (abg-api-preprod.oktapreview.com), which serves standard OIDC/OAuth discovery documents
+      (recorded in well-known/). The documented token endpoint remains the gateway-fronted
+      /oauth/token/v2, not Okta's /oauth2/v1/token.

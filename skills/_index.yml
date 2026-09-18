@@ -1,0 +1,18 @@
+generated: '2026-09-18'
+method: generated
+source: >-
+  Packaged Agent Skills generated from openapi/avis-budget-rental-cars-openapi.yml (Rental Cars 2.0.0,
+  OpenAPI 3.0.2, 9 operations). Only one operation in the provider's spec carries an operationId
+  ("Car Availability"); every other step is grounded in the verbatim method + path, and the operationIds
+  in brackets are the ones overlays/avis-budget-rental-cars-overlay.yaml PROPOSES — they do not exist in
+  the provider's spec. Cross-cutting rules cite ../authentication/, ../conventions/, ../errors/,
+  ../data-model/ and ../sandbox/. Searched first for provider-published skills / AGENTS.md: none.
+skills:
+  - file: avis-budget-shop-and-book-a-rental-car.md
+    name: Shop and book a rental car
+    api: openapi/avis-budget-rental-cars-openapi.yml
+    operations: ['GET /cars/locations/v2/keyword', 'Car Availability', 'POST /cars/catalog/v2/vehicles/rates', 'GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}', 'POST /cars/reservation/v2']
+  - file: avis-budget-manage-a-reservation.md
+    name: View, modify or cancel a reservation
+    api: openapi/avis-budget-rental-cars-openapi.yml
+    operations: ['GET /cars/reservation/v2', 'PATCH /cars/reservation/v2', 'PATCH /cars/reservation/v2/partial-modify', 'PUT /cars/reservation/v2']

@@ -1,0 +1,248 @@
+generated: '2026-09-18'
+method: derived
+status: candidate
+source: openapi/avis-budget-rental-cars-openapi.yml
+summary: No official MCP server exists. Web search (2026-09-18) for an Avis Budget Group / ABG MCP server, the developer
+  portal, its llms.txt and the GitHub account found none. This is a DERIVED candidate tool list projected from the
+  9 OpenAPI operations; nobody ships it and nothing here is reachable.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: oauth
+  verified: derived
+  note: 'mode: none — candidate only. auth records what a real server would need (OAuth client credentials + client_id
+    header, see authentication/).'
+server:
+  name: avis-budget-rental-cars (candidate)
+  base_url: https://stage.abgapiservices.com
+  auth: OAuth 2.0 client credentials Bearer token + client_id header
+tools:
+- name: search_rental_locations
+  description: Keyword Search
+  rest:
+    method: GET
+    path: /cars/locations/v2/keyword
+    operationId: null
+    tag: Car Locations
+  parameters: []
+  request_body_schema: null
+  mutating: false
+  note: null
+- name: get_vehicle_availability
+  description: Best Buy
+  rest:
+    method: GET
+    path: /cars/catalog/v2/vehicles
+    operationId: Car Availability
+    tag: Car Availability
+  parameters:
+  - name: brand
+    in: query
+    required: true
+    type: string
+  - name: pickup_date
+    in: query
+    required: true
+    type: string
+  - name: pickup_location
+    in: query
+    required: true
+    type: string
+  - name: age
+    in: query
+    required: false
+    type: number
+  - name: date_of_birth
+    in: query
+    required: false
+    type: string
+  - name: membership_code
+    in: query
+    required: false
+    type: string
+  - name: dropoff_date
+    in: query
+    required: true
+    type: string
+  - name: dropoff_location
+    in: query
+    required: true
+    type: string
+  - name: country_code
+    in: query
+    required: true
+    type: string
+  - name: discount_code
+    in: query
+    required: false
+    type: string
+  - name: coupon_code
+    in: query
+    required: false
+    type: string
+  - name: iata_number
+    in: query
+    required: false
+    type: string
+  - name: requested_rate_currency
+    in: query
+    required: false
+    type: string
+  - name: transaction_id
+    in: query
+    required: false
+    type: string
+  - name: partner_membership_code
+    in: query
+    required: false
+    type: string
+  - name: vehicle_sipp_codes
+    in: query
+    required: false
+    type: string
+  - name: vehicle_class_codes
+    in: query
+    required: false
+    type: string
+  - name: inclusive
+    in: query
+    required: false
+    type: boolean
+  - name: paperless
+    in: query
+    required: false
+    type: boolean
+  - name: central_billing_membership_code
+    in: query
+    required: false
+    type: string
+  - name: rate_code
+    in: query
+    required: false
+    type: string
+  - name: rate_type
+    in: query
+    required: false
+    type: string
+  - name: partner_membership_loyalty_level
+    in: query
+    required: false
+    type: string
+  - name: last_name
+    in: query
+    required: false
+    type: string
+  request_body_schema: null
+  mutating: false
+  note: null
+- name: get_vehicle_rate
+  description: Rate request
+  rest:
+    method: POST
+    path: /cars/catalog/v2/vehicles/rates
+    operationId: null
+    tag: Car Availability
+  parameters: []
+  request_body_schema: car_availability_rate_request
+  mutating: false
+  note: POST that only prices — not mutating
+- name: view_reservation
+  description: view reservation
+  rest:
+    method: GET
+    path: /cars/reservation/v2
+    operationId: null
+    tag: Car Reservation
+  parameters:
+  - name: brand
+    in: query
+    required: true
+    type: string
+  - name: confirmation_number
+    in: query
+    required: true
+    type: string
+  - name: last_name
+    in: query
+    required: true
+    type: string
+  - name: transaction_id
+    in: query
+    required: false
+    type: string
+  - name: modify
+    in: query
+    required: false
+    type: boolean
+  - name: requested_rate_currency
+    in: query
+    required: false
+    type: string
+  request_body_schema: null
+  mutating: false
+  note: null
+- name: cancel_reservation
+  description: Cancel Reservation
+  rest:
+    method: PUT
+    path: /cars/reservation/v2
+    operationId: null
+    tag: Car Reservation
+  parameters: []
+  request_body_schema: cancel_reservation_v2_request
+  mutating: true
+  note: null
+- name: create_reservation
+  description: Create Reservation
+  rest:
+    method: POST
+    path: /cars/reservation/v2
+    operationId: null
+    tag: Car Reservation
+  parameters: []
+  request_body_schema: create_modify_request
+  mutating: true
+  note: null
+- name: update_reservation
+  description: Update Reservation
+  rest:
+    method: PATCH
+    path: /cars/reservation/v2
+    operationId: null
+    tag: Car Reservation
+  parameters: []
+  request_body_schema: create_modify_request
+  mutating: true
+  note: null
+- name: partial_update_reservation
+  description: Partial Update Reservation
+  rest:
+    method: PATCH
+    path: /cars/reservation/v2/partial-modify
+    operationId: null
+    tag: Car Reservation
+  parameters: []
+  request_body_schema: partial_modify_request
+  mutating: true
+  note: null
+- name: get_location_terms
+  description: Location Terms and Conditions (V2)
+  rest:
+    method: GET
+    path: /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}
+    operationId: null
+    tag: Terms_and_Conditions
+  parameters: []
+  request_body_schema: null
+  mutating: false
+  note: null
+agent_safety:
+  mutating_tools:
+  - cancel_reservation
+  - create_reservation
+  - update_reservation
+  - partial_update_reservation
+  idempotency: 'none — see conventions/ (coverage: none); verify with view_reservation before retrying create_reservation'
+  reversibility: 'cancel_reservation exists; no cancellation window is published (conventions/ reversibility: documented)'

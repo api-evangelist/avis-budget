@@ -1,0 +1,32 @@
+generated: '2026-09-18'
+method: searched
+source: https://developer.avis.com/getting-started
+checked: '2026-09-18'
+summary: >-
+  Avis Budget Group publishes no API pricing and no plan tiers. The developer program is a partner program:
+  portal sign-up is free, every account and every Client Application is reviewed and approved by ABG (typically
+  1-2 business days), all documented endpoints run in staging, and production access is granted through a
+  "send us a note" launch request. The white-label booking solution is likewise "contact us". No price, currency,
+  quota, overage or rate card appears anywhere on the portal or the corporate site.
+plan_count: 0
+prices_published: false
+currency: null
+billing_period: null
+public_signup_pricing: false
+onboarding: approval
+self_serve_signup: false
+model: partner-program
+self_serve_note: >-
+  Portal registration is self-service but yields nothing until ABG approves the account and then the Client
+  Application; production requires a further launch request. Recorded as not self-serve (roadmap#241 verdict field).
+plans: []
+probed:
+  - url: https://developer.avis.com/getting-started
+    status: 200
+    note: sign-up + application approval flow; no pricing section anywhere on the page
+  - url: https://developer.avis.com/white-label-car-rental-solution
+    status: 200
+    note: '"please send us the information on this form. An Avis Budget Group representative will contact you" — contact-us only'
+  - url: https://developer.avis.com/docs
+    status: 200
+    note: single API product (Rental Cars 2.0.0), no tiering

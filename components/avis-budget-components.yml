@@ -1,0 +1,33 @@
+generated: '2026-09-18'
+method: searched
+source: https://developer.avis.com/white-label-car-rental-solution
+checked: '2026-09-18'
+summary: >-
+  One hosted, prebuilt surface: a white-label car rental booking solution "that can easily and seamlessly be
+  integrated into your website", customised with the partner's logo, header, colours, fonts, buttons and
+  messaging. It is a partner-provisioned hosted experience (request via form, ABG sets it up), not a
+  self-serve embeddable library — no script tag, web component, npm package or iframe snippet is published.
+families:
+  - name: White-Label Car Rental Booking
+    kind: hosted / prebuilt surface
+    docs: https://developer.avis.com/white-label-car-rental-solution
+    provisioning: contact form; an ABG representative confirms details and sets it up
+    brands: [Avis, Budget, Payless]
+    capabilities:
+      - Create, View, Modify, Cancel reservations
+      - Multi- or single-company configuration across Avis, Budget and Payless
+      - 11,000+ locations in ~180 countries
+      - Multilingual booking (English, French, German, Italian, Portuguese, Chinese, Japanese, Korean, Russian)
+      - Discount codes, coupons, profiles and frequent-traveler program fields
+      - All available vehicles by location including specialty vehicles; sorting
+      - Ancillary products (special equipment, insurances)
+      - Responsive / mobile
+      - Email notifications
+      - Google Analytics performance data
+    customisation: [logo, header, colors, fonts, buttons, messaging]
+    loader_library: null
+    embed_snippet_published: false
+loader_libraries: []
+note: >-
+  Recorded because it is a genuine prebuilt integration surface the provider offers alongside the API; it is
+  distinct from SDKs (none exist — see packages/).
