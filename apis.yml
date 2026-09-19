@@ -44,6 +44,13 @@ apis:
   - Reservations
   - Travel
   - Vehicle Rental
+  - Location
+  - Rates
+  tags_raw:
+  - Car Rental
+  - Reservations
+  - Travel
+  - Vehicle Rental
   - Locations
   - Rates
   properties:
