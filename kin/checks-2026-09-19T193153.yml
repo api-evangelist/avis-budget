@@ -2,16 +2,16 @@
 kin_checks:
   slug: avis-budget
   schema_version: 0.22.0
-  scored_at: '2026-09-18'
-  run_ts: 2026-09-18T231945
+  scored_at: '2026-09-19'
+  run_ts: 2026-09-19T193153
   note: Actionable checks (missed + partial) in `checks`, plus the ids that did not
     apply in `na`. Everything else in rubric/scoring-0.22.0.yml was earned; counts
     below let you verify that.
   counts:
     total: 136
-    earned: 46
-    partial: 7
-    missed: 57
+    earned: 39
+    partial: 8
+    missed: 63
     na: 26
   checks:
   - id: multiple_apis
@@ -67,6 +67,9 @@ kin_checks:
     status: missed
   - id: overlay_published
     status: missed
+  - id: change_log_present
+    status: missed
+    detail: pointer liveness 0.0
   - id: status_page_present
     status: missed
   - id: rate_limits_documented
@@ -81,12 +84,27 @@ kin_checks:
     status: missed
   - id: examples_published
     status: missed
+  - id: portal_present
+    status: missed
+    detail: pointer liveness 0.0
+  - id: documentation_present
+    status: missed
+    detail: pointer liveness 0.0
+  - id: api_reference_present
+    status: missed
+    detail: pointer liveness 0.0
+  - id: getting_started_present
+    status: missed
+    detail: pointer liveness 0.0
   - id: sdk_count_1
     status: missed
   - id: sdk_count_3
     status: missed
   - id: cli_present
     status: missed
+  - id: support_channel
+    status: missed
+    detail: pointer liveness 0.0
   - id: blog_present
     status: missed
   - id: plans_present
@@ -145,6 +163,10 @@ kin_checks:
   - id: agent_skill_present
     status: partial
     earned: 0.75
+  - id: sign_up_present
+    status: partial
+    earned: 2.5
+    detail: pointer liveness 0.5
   - id: reversibility_documented
     status: partial
     earned: 2.4
