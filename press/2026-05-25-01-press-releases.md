@@ -1,7 +1,9 @@
 ---
 title: Press Releases
 url: https://ir.avisbudgetgroup.com/press-releases?mobile=1&page=20
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Avis Budget Group" press release artificial intelligence'
 position: 1
 source: serpapi-google
