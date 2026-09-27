@@ -1,0 +1,352 @@
+openapi: 3.2.0
+info:
+  title: Avis Budget Terms And Conditions API
+  version: 2.0.0
+  x-short-description: 'Combined ABG Rental Cars API package: vehicle availability & rates, reservations, location search, and terms & conditions.'
+  description: 'Operations tagged Terms_and_Conditions across 2 of this provider''s published API definitions: avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://stage.abgapiservices.com
+  description: Stage Environment
+security:
+- ABG-Access-Token: []
+tags:
+- name: Terms_and_Conditions
+  description: Terms and Conditions API
+paths:
+  /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}:
+    parameters:
+    - name: brand
+      description: Brand
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - Avis
+        - Budget
+        - Payless
+    - name: country_code
+      description: Country Code
+      in: path
+      required: true
+      x-example: US
+      schema:
+        type: string
+    - name: location_code
+      description: Location Code
+      in: path
+      required: true
+      x-example: EWR
+      schema:
+        type: string
+    - name: locale
+      description: Locale
+      in: path
+      required: true
+      x-example: en_US
+      schema:
+        type: string
+    - $ref: '#/components/parameters/client_id'
+    - name: format
+      description: Get the term and condition in text or html format in response
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - text
+        - html
+    get:
+      tags:
+      - Terms_and_Conditions
+      responses:
+        '200':
+          description: The location terms and condition was successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/terms_and_conditions_v2_response'
+              example:
+                status:
+                  request_time: '2018-10-25T12:01:54Z'
+                  success:
+                  - code: '200'
+                    message: Success
+                    details: The location terms and condition was successfully retrieved.
+                transaction:
+                  transaction_id: '12313'
+                terms:
+                - header: Optional Coverages
+                  content_type: text/plain
+                  content: Acceptance of the Loss Damage Waiver relieves the renter and authorized additional drivers of responsibility for loss of, or damage to the Avis car, when they comply with the terms and conditions listed on the rental document jacket. At the time of rental, the customer must initial whether he/she accepts or declines the LDW and optional services. LDW and optional services must be signed for at the rental counter.
+                - header: Credit Card Policies
+                  content_type: text/plain
+                  content: 'Avis accepts most major credit cards as credit identification at the time of rental.Â  The renters name must be on the credit card.Â  NOTE: Specialty or Signature Series Vehicles - 2 CREDIT CARDS in the renters name are required to rent ALL Specialty or Signature Series Vehicles.Accepted credit card list:Â  Avis Charge Card, American Express, AT&T Capital, Diner''s Club Int''l, Discover, China UnionPay, GE Capital, JCB, MasterCard, PHH, Sears and Visa.Some locations may not accept each of the referenced cards.At the time of rental, we will request an authorization on your charge card for the estimated rental charges.Â  While this hold is in place, the funds will not be available for your use.Â  When the rental is over, we will process the reversal, but the bank may take time to post it back to the account.'
+                - header: Debit Card Policies
+                  content_type: text/plain
+                  content: This location does accept bank debit cards with the MasterCard or Visa logo at the time of rental if you have arrived by air into the metro area. The renter <strong>must</strong> present a return airline ticket with a return date at the time of rental.Â  The renter must be at least 25 years of age. You will be subject to a credit check to determine and ensure credit worthiness before releasing the car to you.Currently, at all U.S. and Canada locations, debit cards are not acceptable as credit identification at the time of rental for all makes and models identified in the Avis will generally request an authorization hold against your account for the estimated charges of the rental but reserves the right, in its sole discretion, to request extra value based on certain factors as we deem appropriate. <strong>THESE FUNDS WILL NOT BE AVAILABLE FOR YOUR USE. When the rental is over we will process the reversal but the bank may take time to post it back to the account.If you fail to return the vehicle as agreed, Avis will obtain additional authorizations from your account to cover the rental charges.Avis is not responsible for any returned checks or over-drafts based on this policy.Positive identification in addition to your driver's license may be required.In the United States, Debit or Check cards can be used at the end for payment of rental charges. For acceptable credit identification and payment methods in countries outside of the United States, please consult the Renter's Guide and search for the specific location.Prepaid Debit/Gift cards are not acceptable methods of credit identification to pick up a car at any location. One of the above mentioned cards must be presented. Prepaid Debit/Gift cards are accepted at time of return only.
+        '400':
+          description: 400 Bad Request is returned when the request could not be understood by the server. 400 includes missing required values, invalid data types, minimum/maximum values, ranges and format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/terms_error_response'
+              example:
+                status:
+                  request_time: '2019-01-04T15:15:30Z'
+                  request_errors: 1
+                  errors:
+                  - code: '400'
+                    message: Bad Request
+                    reason: invalid_request
+                    details: Required query parameter country_code not specified
+        '404':
+          description: 404 Not Found is returned when server cannot find the matching request URI (either due to no results, or because of a non-existent endpoint or resource). Server may also respond with this status code when there is 401 or 403, which the service wants to mask for security reasons.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/terms_error_response'
+              example:
+                status:
+                  request_time: '2019-01-04T15:15:30Z'
+                  request_errors: 1
+                  errors:
+                  - code: '404'
+                    message: Resource Not Found
+                    reason: resource_failure
+                    details: Server cannot find the requested resource. This may be due to incorrect URI or a resource that is not available.
+                  - code: '609'
+                    message: Not Found
+                    reason: Location details are not found for the given search criteria.
+                    details: Avis failed to fulfill the request. Proximity search details are not available for the given input.
+        '415':
+          description: The request entity has a media type which the server or resource does not support. For example, the client uploads an image as image/svg+xml, but the server requires that images use a different format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/terms_error_response'
+              example:
+                status:
+                  request_time: '2018-10-17T13:05:10Z'
+                  request_errors: 1
+                  errors:
+                  - code: '415'
+                    message: Unsupported Media Type
+                    reason: Unsupported Media Type
+                    details: org.springframework.web.HttpMediaTypeNotSupportedException
+        '500':
+          description: 500 Internal Server Error is returned when a system or application error has occurred. It generally indicates that something unexpected has gone wrong on the server. This is used for a standard server side exception for a persistent error on the server side.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/terms_error_response'
+              example:
+                status:
+                  request_time: '2019-01-04T15:15:30Z'
+                  request_errors: 1
+                  errors:
+                  - code: '610'
+                    message: Service exception
+                    reason: System exception from e-com backend.
+                    details: Avis failed to fulfill the request. System Exception occurred during location search.Please check the log for details.
+      summary: Location Terms and Conditions (V2)
+      operationId: getTermsV2LocationByBrandByCountryCodeByLocationCodeByLocale
+      x-operation-id-source: derived
+    servers:
+    - url: https://stage.abgapiservices.com
+      description: Stage Environment
+components:
+  schemas:
+    date_time:
+      title: Date Time
+      format: date-time
+      description: ISO 8601 representation of the date time.
+      type: string
+      example: '2015-07-04T21:00:00.000Z'
+    transaction_id:
+      title: Transaction Identifier
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      type: string
+      example: 391117cf-4470-4353-8b51-f00c3c098943
+    transaction:
+      title: Request Transaction
+      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
+      type: object
+      properties:
+        transaction_id:
+          $ref: '#/components/schemas/transaction_id'
+        system_id:
+          title: Internal Correlation Identifier
+          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
+          type: string
+          example: i9332ffa-5250-11e9-8647-d663bd873d78
+      example:
+        transaction_id: test56
+    terms_term:
+      title: Terms Content
+      description: Terms and Condition.
+      type: array
+      items:
+        required:
+        - header
+        - content_type
+        - content
+        type: object
+        properties:
+          header:
+            description: Terms type
+            type: string
+            example: Optional Coverages
+          content_type:
+            description: text/html is supported by V1 and both text/plain and text/html is supported by V2 based on format query parameter.
+            enum:
+            - text/html
+            - text/plain
+            type: string
+            example: text/html
+          content:
+            type: string
+        additionalProperties: true
+    error:
+      title: Error
+      description: The following describes the elements that can appear in the response body of an error.
+      required:
+      - code
+      - details
+      - message
+      - reason
+      properties:
+        code:
+          description: The error code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        reason:
+          description: The reason the request has failed
+          type: string
+        details:
+          description: Description of the error
+          type: string
+    success_status:
+      title: Success Status
+      description: Success Status object
+      required:
+      - request_time
+      - success
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        success:
+          description: Success Details
+          type: array
+          items:
+            $ref: '#/components/schemas/success_detail'
+    terms_and_conditions_v2_response:
+      title: Terms and Conditions Response
+      description: The following demonstrates an example of successful request for this endpoint.
+      required:
+      - status
+      - transaction
+      - locations
+      - terms
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/success_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+        terms:
+          $ref: '#/components/schemas/terms_term'
+      example:
+        status:
+          request_time: '2018-10-25T12:01:54Z'
+          success:
+          - code: '200'
+            message: Success
+            details: The location terms and condition was successfully retrieved.
+        transaction:
+          transaction_id: '12313'
+        terms:
+        - header: Optional Coverages
+          content_type: text/html
+          content: <div class=helpCMS>    <a name=Optional Coverages id=Optional Coverages></a><b>Optional Coverages</b><br/>         <p align=left><font size=1>Acceptance of the Loss Damage Waiver relieves the renter and authorized additional drivers of responsibility for loss of, or damage to the Avis car, when they comply with the terms and conditions listed on the rental document jacket. At the time of rental, the customer must initial whether he/she accepts or declines the LDW and optional services. LDW and optional services must be signed for at the rental counter.<br />\nLDW is taxable.</font></p>\n<p align=left><font size=1>If LDW is not accepted, the customer is financially responsible for the full value of:</font></p>\n<ul>\n    <li><font size=1>Accident damage </font></li>\n    <li><font size=1>Glass damage </font></li>\n    <li><font size=1>Stolen items (radio, battery, etc.) </font></li>\n    <li><font size=1>Vandalism </font></li>\n    <li><font size=1>Theft of the car </font></li>\n</ul>\n<p><font size=1><strong><u>Exceptions:</u></strong></font></p>\n<p align=left><font size=1>In <strong>Wisconsin</strong>, if LDW is not accepted, the renter is liable for all loss or damage to the Avis car due to an accident or reckless, wanton behavior.</font></p>\n<p align=left><font size=1>In <strong>Illinois</strong>, if LDW is not accepted, the customer is financially responsible for the following types of damage, up to a maximum of $16,000.00 for rentals :</font></p>\n<ul>\n    <li><font size=1>Accident damage </font></li>\n    <li><font size=1>Glass damage </font></li>\n    <li><font size=1>Stolen items (radio, battery, etc.) </font></li>\n    <li><font size=1>Vandalism </font></li>\n    <li><font size=1>Theft of the car </font></li>\n</ul>\n<p align=left><font size=1><strong>Canceling LDW</strong><br />\nOnce LDW has been purchased, it must remain on the contract. The customer has the option to return the car & close the rental agreement; however, this could change the rate for the rental agreement and a different, possibly higher, rate could apply for a new rental.</font></p>\n<p align=left><font size=1><strong><u>Exceptions:</u></strong><br />\nCustomers who rent in<strong> New York</strong> and purchase LDW in New York can decide to cancel this service at no charge, within specific guidelines:</font></p>\n<ul>\n    <li><font size=1>Rental must be 2 days or more. </font></li>\n    <li><font size=1>The cancellation must be within the first 24 hours of the rental. </font></li>\n    <li><font size=1>The actual renter must take the car to an Avis location for inspection & must sign a cancellation notice. </font></li>\n</ul>\n<p align=left><font size=1><strong>Loss of Use</strong><br />\nThe customer may also be responsible for reimbursing Avis for the revenue lost by not being able to use the car while it is being repaired or not recovered due to theft (referred to as Loss of Use).</font></p>\n<p align=left><strong><font size=1>Global insurance coverages are always subject to change. Please verify at time of rental.</font></strong></p> </div><div align=right><a href=#top><img src=/car-rental/images/global/en/common/backto_top.gif width=16 height=10 border=0></a><b>Top</b></div><br/>
+        - header: Credit Card Policies
+          content_type: text/html
+          content: '<div class=helpCMS>      <a name=Credit Card Policies id=Credit Card Policies></a><b>Credit Card Policies</b><br/>        <p><font size=2>Avis accepts most major credit cards as credit identification at the time of rental.Â  The renters name must be on the credit card.Â  NOTE: Specialty or Signature Series Vehicles - 2 CREDIT CARDS in the renters name are required to rent ALL Specialty or Signature Series Vehicles.<br />\r\nAccepted credit card list:Â  Avis Charge Card, American Express, AT&T Capital, Diner''s Club Int''l, Discover, China UnionPay, GE Capital, JCB, MasterCard, PHH, Sears and Visa.<br />\r\nSome locations may not accept each of the referenced cards.</font><br />\r\nAt the time of rental, we will request an authorization on your charge card for the estimated rental charges.Â  While this hold is in place, the funds will not be available for your use.Â  When the rental is over, we will process the reversal, but the bank may take time to post it back to the account.</p>  </div><div align=right><a href=#top><img src=/car-rental/images/global/en/common/backto_top.gif width=16 height=10 border=0></a><b>Top</b></div><br/>'
+        - header: Debit Card Policies
+          content_type: text/html
+          content: <div class=helpCMS>     <a name=Debit Card Policies id=Debit Card Policies></a><b>Debit Card Policies</b><br/>       <p><font size=2>This location does accept bank debit cards with the MasterCard or Visa logo at the time of rental if you have arrived by air into the metro area. The renter <strong>must</strong> present a return airline ticket with a return date at the time of rental.Â  The renter must be at least 25 years of age. You will be subject to a credit check to determine and ensure credit worthiness before releasing the car to you.</font></p>\r\n<p><font size=2>Currently, at all U.S. and Canada locations, debit cards are not acceptable as credit identification at the time of rental for all makes and models identified in the <strong>Specialty</strong> or <strong><a href=https://www.avis.com/car-rental/content/display.ac?contentId=avis-signature-US_en-042413&MID=sigvan><font color=#0000ff>Avis Signature Series</font></a> </strong>and <strong>for certain other premium vehicles</strong>.</font></p>\r\n<p><font size=2>Avis will generally request an authorization hold against your account for the estimated charges of the rental but reserves the right, in its sole discretion, to request extra value based on certain factors as we deem appropriate. <strong>THESE FUNDS WILL NOT BE AVAILABLE FOR YOUR USE.</strong> When the rental is over we will process the reversal but the bank may take time to post it back to the account.</font></p>\r\n<p><font size=2>If you fail to return the vehicle as agreed, Avis will obtain additional authorizations from your account to cover the rental charges.</font></p>\r\n<p><font size=2>Avis is not responsible for any returned checks or over-drafts based on this policy.</font></p>\r\n<p><font size=2>Positive identification in addition to your driver's license may be required.</font></p>\r\n<p><font size=2>In the United States, Debit or Check cards can be used at the end for payment of rental charges. For acceptable credit identification and payment methods in countries outside of the United States, please consult the Renter's Guide and search for the specific location.</font></p>\r\n<p><font size=2><strong>Note:</strong> Prepaid Debit/Gift cards are not acceptable methods of credit identification to pick up a car at any location. One of the above mentioned cards must be presented. Prepaid Debit/Gift cards are accepted at time of return only.</font></p> </div><div align=right><a href=#top><img src=/car-rental/images/global/en/common/backto_top.gif width=16 height=10 border=0></a><b>Top</b></div><br/>
+    success_detail:
+      title: Success Detail
+      description: A container for the success/error details.
+      required:
+      - code
+      - message
+      - details
+      properties:
+        code:
+          description: The HTTP status code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        details:
+          description: Description of the success status
+          type: string
+    terms_error_response:
+      title: Terms Error Response
+      description: A container for the error details
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/terms_error_details'
+    terms_error_details:
+      title: Terms Error Status
+      description: A container for the error details
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          $ref: '#/components/schemas/date_time'
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+  parameters:
+    client_id:
+      name: client_id
+      description: Your client identifier.
+      schema:
+        maxLength: 50
+        minLength: 8
+        type: string
+      in: header
+      required: true
+  securitySchemes:
+    ABG-Access-Token:
+      type: oauth2
+      description: OAuth 2.0 client credentials flow used to authenticate all API requests in this package.
+      flows:
+        clientCredentials:
+          tokenUrl: https://stage.abgapiservices.com/oauth/token/v2
+          scopes: {}
+x-refined-from:
+- avis-budget-rental-cars-openapi.json
+- avis-budget-rental-cars-openapi.yml
+x-api-owner:
+  team: Partner API Team
+  email:
+  - EnterpriseAPISupport@avisbudget.com
+  - partner-api@avisbudget.com

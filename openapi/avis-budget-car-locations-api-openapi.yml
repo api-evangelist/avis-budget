@@ -1,0 +1,3183 @@
+openapi: 3.2.0
+info:
+  title: Avis Budget Car Locations API
+  version: 2.0.0
+  x-short-description: 'Combined ABG Rental Cars API package: vehicle availability & rates, reservations, location search, and terms & conditions.'
+  description: 'Operations tagged Car Locations across 2 of this provider''s published API definitions: avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://stage.abgapiservices.com
+  description: Stage Environment
+security:
+- ABG-Access-Token: []
+tags:
+- name: Car Locations
+  description: Keyword Search API
+paths:
+  /cars/locations/v2/keyword:
+    summary: Keyword Search
+    parameters:
+    - name: brand
+      description: The Avis, Budget, or Payless brand name.
+      schema:
+        enum:
+        - Avis
+        - Budget
+        - Payless
+        - ALL
+        type: string
+      in: query
+      required: true
+    - name: country_code
+      description: 2-letter ISO 3166 country code representing the Point Of Sale and fetch results accordlingly.
+      schema:
+        maxLength: 2
+        minLength: 2
+        type: string
+      in: query
+    - name: keyword
+      description: The location keyword you would like to search.
+      schema:
+        type: string
+      in: query
+      required: true
+    - $ref: '#/components/parameters/transaction_id'
+    - $ref: '#/components/parameters/client_id'
+    get:
+      tags:
+      - Car Locations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/car_location_v2_response'
+              examples:
+                Success:
+                  value:
+                    status:
+                      request_time: '2020-09-23T05:24:06Z'
+                      success:
+                      - code: '200'
+                        message: Success
+                        details: The locations were retrieved successfully.
+                    transaction:
+                      transaction_id: locationdetails123
+                      system_id: fb0173f2-cd2d-4d5c-87aa-f428882866b5
+                    locations:
+                    - brand: Avis
+                      code: OR1
+                      name: Downtown Orlando
+                      telephone: (1) 407-245-8059
+                      airport_location: false
+                      address:
+                        address_line_1: 306 North Rosalind Avenue
+                        address_line_2: NA
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32801'
+                        country_code: US
+                        lat: '28.546322'
+                        long: '-81.376289'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: WP3
+                      name: Winter Park
+                      telephone: (1) 407-599-1907
+                      airport_location: false
+                      address:
+                        address_line_1: 501 North Orlando Avenue
+                        address_line_2: NA
+                        city: Winter Park
+                        state_name: FL
+                        postal_code: '32789'
+                        country_code: US
+                        lat: '28.60545'
+                        long: '-81.36827'
+                      skip_the_queue: false
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: O8R
+                      name: Orlando Downtown
+                      telephone: (1) 407-249-1621
+                      airport_location: false
+                      address:
+                        address_line_1: 6363 East Colonial Drive
+                        address_line_2: NA
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32807'
+                        country_code: US
+                        lat: '28.56488'
+                        long: '-81.30118'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: O4F
+                      name: DoubleTree Hotel at Universal Entrance
+                      telephone: (1) 407-264-4220
+                      airport_location: false
+                      address:
+                        address_line_1: 5780 Major Boulevard
+                        address_line_2: DoubleTree Hotel
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.478787'
+                        long: '-81.457263'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: LR7
+                      name: Loews Portofino Bay Hotel
+                      telephone: (1) 407-503-1156
+                      airport_location: false
+                      address:
+                        address_line_1: 5601 Universal Boulevard
+                        address_line_2: Loews Hotel
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.480853'
+                        long: '-81.460315'
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: N2F
+                      name: Maitland - Sheraton Orlando North
+                      telephone: (1) 407-660-1950
+                      airport_location: false
+                      address:
+                        address_line_1: 600 North Lake Destiny Road
+                        address_line_2: Sheraton Hotel
+                        city: Maitland
+                        state_name: FL
+                        postal_code: '32751'
+                        country_code: US
+                        lat: '28.63242'
+                        long: '-81.391133'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: H1A
+                      name: Hard Rock Hotel Universal Studios
+                      telephone: (1) 407-503-2156
+                      airport_location: false
+                      address:
+                        address_line_1: 5800 Universal Boulevard
+                        address_line_2: NA
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.47707'
+                        long: '-81.464648'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: RL7
+                      name: Loews Royal Pacific Resort
+                      telephone: (1) 407-503-3156
+                      airport_location: false
+                      address:
+                        address_line_1: 6300 Hollywood Way
+                        address_line_2: Loews Hotel
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.468493'
+                        long: '-81.467139'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: O4R
+                      name: Orlando - Landstreet Road
+                      skip_the_queue: true
+                      telephone: (1) 407-851-4656
+                      airport_location: false
+                      address:
+                        address_line_1: 2125 West Landstreet Road
+                        address_line_2: NA
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32809'
+                        country_code: US
+                        lat: '28.436263'
+                        long: '-81.407345'
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: LG5
+                      name: Loews Sapphire Falls Resort
+                      telephone: (1) 407-503-5156
+                      airport_location: false
+                      address:
+                        address_line_1: 6601 Adventure Way
+                        address_line_2: Loews Hotel
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.466052'
+                        long: '-81.469279'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: U2N
+                      name: Endless Summer Resort - Surfside Inn
+                      telephone: (1) 407-503-7156
+                      airport_location: false
+                      address:
+                        address_line_1: 7000 Universal Boulevard
+                        address_line_2: NA
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.461693'
+                        long: '-81.464608'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: UH5
+                      name: Universal Aventura Hotel
+                      telephone: (1) 407-503-6156
+                      airport_location: false
+                      address:
+                        address_line_1: 6725 Adventure Way
+                        address_line_2: NA
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.46619'
+                        long: '-81.471975'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: U2S
+                      name: Universal's Cabana Bay Beach Resort
+                      telephone: (1) 407-503-4156
+                      airport_location: false
+                      address:
+                        address_line_1: 6550 Adventure Way
+                        address_line_2: NA
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.465887'
+                        long: '-81.473378'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: E2F
+                      name: Embassy Suites Hotel Orlando
+                      telephone: (1) 407-370-3231
+                      airport_location: false
+                      address:
+                        address_line_1: 8250 Jamaican Court
+                        address_line_2: Embassy Suites
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32819'
+                        country_code: US
+                        lat: '28.44695'
+                        long: '-81.472894'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: MCO
+                      name: Orlando Intl Airport
+                      telephone: (1) 407-825-3700
+                      airport_location: true
+                      address:
+                        address_line_1: 1 Jeff Fuqua Boulevard
+                        address_line_2: (Term A & B)
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32827'
+                        country_code: US
+                        lat: '28.431094'
+                        long: '-81.308004'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: A3S
+                      name: Orlando North - Embassy Suites
+                      telephone: (1) 407-767-0380
+                      airport_location: false
+                      address:
+                        address_line_1: 225 Shorecrest Drive
+                        address_line_2: Embassy Suites
+                        city: Altamonte Springs
+                        state_name: FL
+                        postal_code: '32701'
+                        country_code: US
+                        lat: '28.664391'
+                        long: '-81.385807'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: OR8
+                      name: Orlando - La Quinta Hotel
+                      telephone: (1) 407-249-9111
+                      airport_location: false
+                      address:
+                        address_line_1: 11805 Research Parkway
+                        address_line_2: (at Alafaya Trail)
+                        city: Orlando
+                        state_name: FL
+                        postal_code: '32826'
+                        country_code: US
+                        lat: '28.588354'
+                        long: '-81.207343'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: LB3
+                      name: Hilton Hotel at Disney World
+                      telephone: (1) 407-827-2847
+                      airport_location: false
+                      address:
+                        address_line_1: 1751 Hotel Plaza Boulevard
+                        address_line_2: Hilton Hotel
+                        city: Lake Buena Vista
+                        state_name: FL
+                        postal_code: '32830'
+                        country_code: US
+                        lat: '28.372648'
+                        long: '-81.510893'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: K5K
+                      name: Kissimmee Korners
+                      telephone: (1) 407-343-6094
+                      airport_location: false
+                      address:
+                        address_line_1: 1621 North John Young Parkway
+                        address_line_2: (north of Hwy 192)
+                        city: Kissimmee
+                        state_name: FL
+                        postal_code: '34741'
+                        country_code: US
+                        lat: '28.307155'
+                        long: '-81.41582'
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: K6K
+                      name: Old Town Amusement Park
+                      telephone: (1) 321-219-7041
+                      airport_location: false
+                      address:
+                        address_line_1: 5770 West Irlo Bronson Memorial Highway
+                        address_line_2: Suite 434
+                        city: Kissimmee
+                        state_name: FL
+                        postal_code: '34746'
+                        country_code: US
+                        lat: '28.32846'
+                        long: '-81.516093'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: Q2S
+                      name: Sanford
+                      telephone: (1) 407-302-1399
+                      airport_location: false
+                      address:
+                        address_line_1: 3098 South Orlando Drive
+                        address_line_2: (south of Airport Boulevard)
+                        city: Sanford
+                        state_name: FL
+                        postal_code: '32773'
+                        country_code: US
+                        lat: '28.768359'
+                        long: '-81.281845'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: WH3
+                      name: Westin Hotel-Lake Mary
+                      telephone: (1) 407-804-9733
+                      airport_location: false
+                      address:
+                        address_line_1: 2974 International Parkway
+                        address_line_2: Westin Hotel
+                        city: Lake Mary
+                        state_name: FL
+                        postal_code: '32746'
+                        skip_the_queue: true
+                        country_code: US
+                        lat: '28.788055'
+                        long: '-81.358754'
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: SFB
+                      name: Sanford Orlando Intl Airport
+                      telephone: (1) 407-585-4421
+                      hours: Sun - Mon 8:00 AM - 11:00 PM; Tue - Wed 8:00 AM - 4:00 PM; Thu - Sat 8:00 AM - 11:00 PM
+                      airport_location: true
+                      address:
+                        address_line_1: 1178 Red Cleveland Boulevard
+                        address_line_2: NA
+                        city: Sanford
+                        state_name: FL
+                        postal_code: '32773'
+                        country_code: US
+                        lat: '28.775188'
+                        long: '-81.243677'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: K3F
+                      name: Days Hotel by Wyndham
+                      telephone: (1) 407-390-7220
+                      hours: Sun 8:00 AM - 12:00 PM; Mon - Fri 8:00 AM - 4:00 PM; Sat 8:00 AM - 12:00 PM
+                      airport_location: false
+                      address:
+                        address_line_1: 3011 Maingate Lane
+                        address_line_2: NA
+                        city: Kissimmee
+                        state_name: FL
+                        postal_code: '34747'
+                        country_code: US
+                        lat: '28.336889'
+                        long: '-81.588045'
+                      skip_the_queue: true
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                    - brand: Avis
+                      code: QP0
+                      name: Clermont Regional Shopping Center
+                      telephone: (1) 352-404-9771
+                      hours: Sun 9:00 AM - 1:00 PM; Mon - Fri 8:00 AM - 4:00 PM; Sat 9:00 AM - 1:00 PM
+                      airport_location: false
+                      address:
+                        address_line_1: 1008 East Highway 50
+                        address_line_2: Clermont Regional Shopping Center
+                        city: Clermont
+                        state_name: FL
+                        postal_code: '34711'
+                        country_code: US
+                        lat: '28.549197'
+                        long: '-81.737994'
+                      skip_the_queue: false
+                      afterhours_return: true
+                      hours_of_operation:
+                      - day: Sun
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Mon
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Tue
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Wed
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Thu
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Fri
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      - day: Sat
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '2300'
+                        second_slot_close_time: '0'
+                        season_open_time: '0'
+                      holiday_hours:
+                      - description: NEW YEARS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: NEW YEARS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS DAY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: CHRISTMAS EVE
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+                      - description: THANKSGIVING DY
+                        first_slot_open_time: '800'
+                        first_slot_close_time: '1600'
+                        second_slot_open_time: '0'
+                        second_slot_close_time: '0'
+          description: Success Response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations_error_response'
+              example:
+                status:
+                  request_time: '2019-01-04T15:15:30Z'
+                  request_errors: 1
+                  errors:
+                  - code: '400'
+                    message: Bad Request
+                    reason: invalid_request
+                    details: Required query parameter country_code not specified
+          description: 400 Bad Request is returned when the request could not be understood by the server. 400 includes missing required values, invalid data types, minimum/maximum values, ranges and format.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+              examples:
+                unauthorized:
+                  value:
+                    error: invalid_grant
+                    error_description: token not found, expired or invalid
+          description: 401 unauthorized error is a client-side error. Usually, this means the provided client credentials aren’t working or incorrect credentials.
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations_error_response'
+              examples:
+                forbidden:
+                  value:
+                    status:
+                      request_time: '2022-03-07T12:00:30Z'
+                      request_errors: 1
+                      errors:
+                      - code: '403'
+                        message: Forbidden
+                        reason: Forbidden
+                        details: Authentication was provided, but the authenticated user dosen't have access to requested resource
+                    transaction:
+                      system_id: C56a1700-43e1-11e9-95ce-e6a7a0e31bec
+                      transaction_id: vir-56a1700-43e1-11e9-95ce-e6a7a0e31bec
+          description: 403 Forbidden is returned when the is not authorized to access the requested resource.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations_error_response'
+              example:
+                status:
+                  request_time: '2019-01-04T15:15:30Z'
+                  request_errors: 1
+                  errors:
+                  - code: '404'
+                    message: Resource Not Found
+                    reason: resource_failure
+                    details: Server cannot find the requested resource. This may be due to incorrect URI or a resource that is not available.
+                  - code: '609'
+                    message: Not Found
+                    reason: Location details are not found for the given search criteria.
+                    details: Avis failed to fulfill the request. Proximity search details are not available for the given input.
+          description: 404 Not Found is returned when server cannot find the matching request URI (either due to no results, or because of a non-existent endpoint or resource). Server may also respond with this status code when there is 401 or 403, which the service wants to mask for security reasons.
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations_error_response'
+              examples:
+                not_acceptable:
+                  value:
+                    status:
+                      request_time: '2019-01-04T15:15:30Z'
+                      request_errors: 1
+                      errors:
+                      - code: '406'
+                        message: Not Acceptable
+                        reason: Not Acceptable
+                        details: Invalid content type
+                    transaction:
+                      system_id: C56a1700-43e1-11e9-95ce-e6a7a0e31bec
+                      transaction_id: 48373839390309c
+          description: 406 Method Not Acceptable is an HTTP response status code indicating that the client has requested a response using Accept- headers that the server cannot fulfill.
+        '415':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations_error_response'
+              example:
+                status:
+                  request_time: '2018-10-17T13:05:10Z'
+                  request_errors: 1
+                  errors:
+                  - code: '415'
+                    message: Unsupported Media Type
+                    reason: Unsupported Media Type
+                    details: org.springframework.web.HttpMediaTypeNotSupportedException
+          description: The request entity has a media type which the server or resource does not support. For example, the client uploads an image as image/svg+xml, but the server requires that images use a different format.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations_error_response'
+              example:
+                status:
+                  request_time: '2019-01-04T15:15:30Z'
+                  request_errors: 1
+                  errors:
+                  - code: '610'
+                    message: Service exception
+                    reason: System exception from e-com backend.
+                    details: Avis failed to fulfill the request. System Exception occurred during location search.Please check the log for details.
+          description: 500 Internal Server Error is returned when a system or application error has occurred. It generally indicates that something unexpected has gone wrong on the server. This is used for a standard server side exception for a persistent error on the server side.
+      summary: Keyword Search
+      operationId: getCarsLocationsV2Keyword
+      x-operation-id-source: derived
+    servers:
+    - url: https://stage.abgapiservices.com
+      description: Stage Environment
+components:
+  schemas:
+    date_time:
+      title: Date Time
+      format: date-time
+      description: ISO 8601 representation of the date time.
+      type: string
+      example: '2015-07-04T21:00:00.000Z'
+    transaction_id:
+      title: Transaction Identifier
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      type: string
+      example: 391117cf-4470-4353-8b51-f00c3c098943
+    hours_of_operation:
+      title: Detailed Operation Hours
+      description: The detailed hours of operation with opening slots.
+      type: array
+      items:
+        $ref: '#/components/schemas/hours_of_operation_day'
+    locations_locations:
+      title: Location Search Result
+      description: The list of available locations within a certain radius of the specified latitude/longitude
+      required:
+      - brand
+      - address
+      type: object
+      properties:
+        brand:
+          description: ABG brand name
+          type: string
+          example: Avis
+        code:
+          description: 3-5 character alphanumeric location or airport code.
+          type: string
+          example: BOS
+        name:
+          description: Name of the product location.
+          type: string
+          example: Boston Logan Intl Airport
+        telephone:
+          description: Phone number of the product location.
+          type: string
+          example: 617-568-6600
+        airport_location:
+          description: Indicates whether the product location is an airport.
+          type: boolean
+        distance:
+          description: Distance from the specified location for the distance unit. Applicable to proximity search only.
+          type: number
+        address:
+          $ref: '#/components/schemas/location_address'
+        skip_the_queue:
+          title: Skip the Queue Indicator
+          description: Indicator to check whether the location is enabled for the skip the queue feature.
+          type: boolean
+        hours_of_operation:
+          $ref: '#/components/schemas/hours_of_operation'
+        holiday_hours:
+          $ref: '#/components/schemas/holiday_hours'
+        dual_branded_location_mnemonic:
+          description: Dual branded location mnemonic, used to perform Multi-branded search.
+          type: string
+    transaction:
+      title: Request Transaction
+      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
+      type: object
+      properties:
+        transaction_id:
+          $ref: '#/components/schemas/transaction_id'
+        system_id:
+          title: Internal Correlation Identifier
+          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
+          type: string
+          example: i9332ffa-5250-11e9-8647-d663bd873d78
+      example:
+        transaction_id: test56
+    car_location_v2_response:
+      title: Location Search Response
+      description: The following demonstrates an example of successful request for this endpoint.
+      required:
+      - status
+      - transaction
+      - locations
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/success_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+        locations:
+          title: Location Results
+          description: The list of available locations within a certain radius of the specified latitude/longitude.
+          type: array
+          items:
+            $ref: '#/components/schemas/locations_locations'
+      example:
+        status:
+          request_time: '2019-01-09T12:45:41Z'
+          errors:
+          - code: 609
+            message: Not Found
+            reason: Location details are not found for the given search criteria.
+            details: Payless failed to fulfill the request. Proximity search details are not available for the given input.
+        transaction:
+          transaction_id: locationdetails123
+        locations:
+        - brand: Avis
+          location_code: E43
+          location_name: Midtown Manhattan E 43rd Street
+          telephone: '(1) 212-682-1860              '
+          hours: Sun - Sat open 24 hrs
+          airport_location: false
+          address:
+            address_line_1: 225 East 43rd Street
+            address_line_2: (Between 2nd Ave & 3rd Ave)
+            city: New York City
+            state_name: NY
+            postal_code: '10017'
+            country_code: US
+            lat: '40.751039'
+            long: '-73.972496'
+        - brand: Avis
+          location_code: W54
+          location_name: Midtown (between 6th & 7th Avenues)
+          telephone: '(1) 212-593-8470              '
+          hours: Sun - Sat 6:30 AM - 11:00 PM
+          airport_location: false
+          address:
+            address_line_1: 153 West 54th Street
+            address_line_2: NA
+            city: New York City
+            state_name: NY
+            postal_code: '10019'
+            country_code: US
+            lat: '40.763462'
+            long: '-73.980885'
+        - brand: Avis
+          location_code: E64
+          location_name: Uptown (between 1st & 2nd Avenues)
+          telephone: '(1) 212-593-8363              '
+          hours: Sun 6:30 AM - 3:00 PM; Mon - Fri 6:30 AM - 11:00 PM; Sat 6:30 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 310 East 64th Street
+            address_line_2: NA
+            city: New York City
+            state_name: NY
+            postal_code: '10021'
+            country_code: US
+            lat: '40.763236'
+            long: '-73.961608'
+        - brand: Avis
+          location_code: M1H
+          location_name: Midtown (between 7th and 8th Avenues)
+          telephone: '(1) 646-733-5995              '
+          hours: Sun 6:30 AM - 3:00 PM; Mon - Fri 6:30 AM - 5:00 PM; Sat 6:30 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 220 West 31st Street
+            address_line_2: NA
+            city: New York City
+            state_name: NY
+            postal_code: '10001'
+            country_code: US
+            lat: '40.749543'
+            long: '-73.993403'
+        - brand: Avis
+          location_code: W42
+          location_name: Midtown (between 10th & 11th Avenues)
+          telephone: '(1) 646-473-0088              '
+          hours: Sun 7:00 AM - 10:00 PM; Mon - Fri 6:30 AM - 10:00 PM; Sat 7:00 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 515 West 43rd Street
+            address_line_2: NA
+            city: New York City
+            state_name: NY
+            postal_code: '10036'
+            country_code: US
+            lat: '40.760819'
+            long: '-73.995946'
+        - brand: Avis
+          location_code: E11
+          location_name: Greenwich Village
+          telephone: '(1) 212-593-8396              '
+          hours: Sun - Sat 6:30 AM - 11:00 PM
+          airport_location: false
+          address:
+            address_line_1: 68 East 11th Street
+            address_line_2: (between University Place & Broadway)
+            city: New York City
+            state_name: NY
+            postal_code: '10003'
+            country_code: US
+            lat: '40.732603'
+            long: '-73.992212'
+        - brand: Avis
+          location_code: N2Y
+          location_name: Uptown (W 76th Street & Broadway)
+          telephone: '(1) 212-595-0358              '
+          hours: Sun - Sat 6:30 AM - 11:00 PM
+          airport_location: false
+          address:
+            address_line_1: 216 West 76th Street (at Broadway)
+            address_line_2: NA
+            city: New York City
+            state_name: NY
+            postal_code: '10023'
+            country_code: US
+            lat: '40.781396'
+            long: '-73.980553'
+        - brand: Avis
+          location_code: E90
+          location_name: Uptown (btwn 1st & York)
+          telephone: '(1) 212-593-8368              '
+          hours: Sun - Sat 6:30 AM - 11:00 PM
+          airport_location: false
+          address:
+            address_line_1: 420 East 90th Street
+            address_line_2: NA
+            city: New York City
+            state_name: NY
+            postal_code: '10028'
+            country_code: US
+            lat: '40.778609'
+            long: '-73.945975'
+        - brand: Avis
+          location_code: H8K
+          location_name: Hoboken, NJ Hudson Tea Parking Garage
+          telephone: '(1) 201-876-2871              '
+          hours: Sun 8:00 AM - 6:00 PM; Mon - Fri 7:30 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 1450 Bloomfield Street
+            address_line_2: Hudson Tea Parking Garage
+            city: Hoboken
+            state_name: NJ
+            postal_code: '07030'
+            country_code: US
+            lat: '40.75404'
+            long: '-74.02716'
+        - brand: Avis
+          location_code: J75
+          location_name: Uptown (West 97th Street & Columbus Ave)
+          telephone: '(1) 212-666-3593              '
+          hours: Sun 6:30 AM - 3:00 PM; Mon - Fri 6:30 AM - 5:00 PM; Sat 6:30 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 808 Columbus Avenue (at West 97th St)
+            address_line_2: Columbus Square Apts Parking Garage
+            city: New York City
+            state_name: NY
+            postal_code: '10025'
+            country_code: US
+            lat: '40.794252'
+            long: '-73.967175'
+        - brand: Avis
+          location_code: N3J
+          location_name: North Bergen, NJ
+          telephone: '(1) 201-223-5936              '
+          hours: Sun 8:00 AM - 1:00 PM; Mon - Fri 7:30 AM - 6:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 501 Kennedy Boulevard
+            address_line_2: NA
+            city: North Bergen
+            state_name: NJ
+            postal_code: '07047'
+            country_code: US
+            lat: '40.757568'
+            long: '-74.045917'
+        - brand: Avis
+          location_code: JC3
+          location_name: Newport Centre Mall
+          telephone: '(1) 201-217-8209              '
+          hours: Sun 8:00 AM - 6:00 PM; Mon - Sat 7:30 AM - 9:30 PM
+          airport_location: false
+          address:
+            address_line_1: 30 Mall Drive West
+            address_line_2: (Main level Center by Elevator)
+            city: Jersey City
+            state_name: NJ
+            postal_code: '07310'
+            country_code: US
+            lat: '40.727036'
+            long: '-74.037935'
+        - brand: Avis
+          location_code: XB4
+          location_name: Brooklyn, NY
+          telephone: '(1) 718-858-4395              '
+          hours: Sun - Sat 7:00 AM - 9:00 PM
+          airport_location: false
+          address:
+            address_line_1: 210 State Street
+            address_line_2: (Between Court Street & Boerum Place)
+            city: Brooklyn
+            state_name: NY
+            postal_code: '11201'
+            country_code: US
+            lat: '40.690141'
+            long: '-73.991776'
+        - brand: Avis
+          location_code: LGA
+          location_name: La Guardia Airport
+          telephone: '(1) 718-507-3608              '
+          hours: Sun - Sat open 24 hrs
+          airport_location: true
+          address:
+            address_line_1: 25 Bowery Bay Boulevard
+            address_line_2: NA
+            city: Flushing
+            state_name: NY
+            postal_code: '11371'
+            country_code: US
+            lat: '40.76892'
+            long: '-73.887434'
+        - brand: Avis
+          location_code: F1L
+          location_name: Fort Lee, NJ
+          telephone: '(1) 201-944-0634              '
+          hours: Sun 9:00 AM - 3:00 PM; Mon - Fri 7:30 AM - 6:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 2121 Lemoine Avenue
+            address_line_2: NA
+            city: Fort Lee
+            state_name: NJ
+            postal_code: '07024'
+            country_code: US
+            lat: '40.855538'
+            long: '-73.967587'
+        - brand: Avis
+          location_code: LTF
+          location_name: Little Ferry, NJ
+          telephone: '(1) 201-440-3330              '
+          hours: Mon - Thu 7:00 AM - 6:00 PM; Fri 7:00 AM - 6:30 PM; Sat 8:00 AM - 5:00 PM
+          airport_location: false
+          address:
+            address_line_1: 332 US Highway 46 West
+            address_line_2: NA
+            city: Little Ferry
+            state_name: NJ
+            postal_code: '07643'
+            country_code: US
+            lat: '40.855492'
+            long: '-74.044699'
+        - brand: Avis
+          location_code: RU3
+          location_name: Rutherford, NJ
+          telephone: '(1) 201-438-2195              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:30 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 1 Orient Way
+            address_line_2: NA
+            city: Rutherford
+            state_name: NJ
+            postal_code: '07070'
+            country_code: US
+            lat: '40.827366'
+            long: '-74.100904'
+        - brand: Avis
+          location_code: EG3
+          location_name: Englewood, NJ
+          telephone: '(1) 201-871-3429              '
+          hours: Sun 8:00 AM - 1:00 PM; Mon - Fri 7:00 AM - 6:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 318 South Dean Street
+            address_line_2: NA
+            city: Englewood
+            state_name: NJ
+            postal_code: '07631'
+            country_code: US
+            lat: '40.88414'
+            long: '-73.98126'
+        - brand: Avis
+          location_code: L7H
+          location_name: Lyndhurst, NJ
+          telephone: '(1) 201-933-4028              '
+          hours: Sun 8:00 AM - 12:00 PM; Mon - Fri 7:30 AM - 6:00 PM; Sat 8:00 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 310 Riverside Avenue
+            address_line_2: NA
+            city: Lyndhurst
+            state_name: NJ
+            postal_code: '07071'
+            country_code: US
+            lat: '40.816068'
+            long: '-74.132413'
+        - brand: Avis
+          location_code: L3N
+          location_name: Lodi
+          telephone: '(1) 973-773-1350              '
+          hours: Sun 8:00 AM - 5:00 PM; Mon - Fri 7:00 AM - 6:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 160 Route 46 East
+            address_line_2: NA
+            city: Lodi
+            state_name: NJ
+            postal_code: '07644'
+            country_code: US
+            lat: '40.879932'
+            long: '-74.079389'
+        - brand: Avis
+          location_code: H5J
+          location_name: All American Ford
+          telephone: '(1) 201-342-3102              '
+          hours: Mon - Fri 9:00 AM - 8:30 PM; Sat 9:00 AM - 5:30 PM
+          airport_location: false
+          address:
+            address_line_1: 55 Hackensack Avenue
+            address_line_2: All American Ford
+            city: Hackensack
+            state_name: NJ
+            postal_code: '07601'
+            country_code: US
+            lat: '40.897148'
+            long: '-74.038633'
+        - brand: Avis
+          location_code: JFK
+          location_name: John F Kennedy Intl Airport
+          telephone: (1) 718-244-5400
+          hours: Sun - Sat open 24 hrs
+          airport_location: true
+          address:
+            address_line_1: 305 Federal Circle
+            address_line_2: NA
+            city: Jamaica
+            state_name: NY
+            postal_code: '11430'
+            country_code: US
+            lat: '40.66007'
+            long: '-73.804065'
+        - brand: Avis
+          location_code: EWR
+          location_name: Newark Liberty Intl Airport
+          telephone: (1) 973-961-4300
+          hours: Sun - Sat open 24 hrs
+          airport_location: true
+          address:
+            address_line_1: 28 Newark Airport
+            address_line_2: NA
+            city: Newark
+            state_name: NJ
+            postal_code: '07114'
+            country_code: US
+            lat: '40.690022'
+            long: '-74.187506'
+        - brand: Avis
+          location_code: MTC
+          location_name: Montclair
+          telephone: '(1) 973-746-1214              '
+          hours: Mon - Fri 8:00 AM - 5:00 PM; Sat 9:00 AM - 12:00 PM
+          airport_location: false
+          address:
+            address_line_1: 575 Valley Road
+            address_line_2: NA
+            city: Montclair
+            state_name: NJ
+            postal_code: '07043'
+            country_code: US
+            lat: '40.84004'
+            long: '-74.20747'
+        - brand: Avis
+          location_code: H7I
+          location_name: Staten Island - Hampton Inn
+          telephone: '(1) 718-698-1470              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:30 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 1120 South Avenue
+            address_line_2: Hampton Inn
+            city: Staten Island
+            state_name: NY
+            postal_code: '10314'
+            country_code: US
+            lat: '40.613194'
+            long: '-74.178699'
+        - brand: Avis
+          location_code: CH8
+          location_name: New Rochelle Train Station
+          telephone: '(1) 914-576-1316              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:00 AM - 9:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 24 Station Plaza North
+            address_line_2: Train Station
+            city: New Rochelle
+            state_name: NY
+            postal_code: '10801'
+            country_code: US
+            lat: '40.912235'
+            long: '-73.783891'
+        - brand: Avis
+          location_code: LD1
+          location_name: Linden F & R Rentals
+          telephone: '(1) 908-925-1700              '
+          hours: Mon - Tue 7:30 AM - 6:00 PM; Wed - Fri 8:00 AM - 6:00 PM; Sat 8:00 AM - 1:00 PM
+          airport_location: false
+          address:
+            address_line_1: 2419 East Edgar Road (Rt 1)
+            address_line_2: NA
+            city: Linden
+            state_name: NJ
+            postal_code: '07036'
+            country_code: US
+            lat: '40.64821'
+            long: '-74.22452'
+        - brand: Avis
+          location_code: AB8
+          location_name: New Hyde Park - BP Gas Station
+          telephone: '(1) 516-328-3376              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:00 AM - 6:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 2050 New Hyde Park Road
+            address_line_2: BP Gas Station
+            city: New Hyde Park
+            state_name: NY
+            postal_code: '11040'
+            country_code: US
+            lat: '40.75448'
+            long: '-73.68716'
+        - brand: Avis
+          location_code: IUS
+          location_name: Paramus, NJ
+          telephone: '(1) 201-444-4272              '
+          hours: Sun 8:00 AM - 2:00 PM; Mon - Fri 7:30 AM - 6:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 833 Highway 17
+            address_line_2: NA
+            city: Paramus
+            state_name: NJ
+            postal_code: '07652'
+            country_code: US
+            lat: '40.97592'
+            long: '-74.08243'
+        - brand: Avis
+          location_code: N9J
+          location_name: Caldwell, NJ
+          telephone: '(1) 973-228-1315              '
+          hours: Sun 9:00 AM - 3:00 PM; Mon - Fri 7:30 AM - 6:00 PM; Sat 8:00 AM - 2:00 PM
+          airport_location: false
+          address:
+            address_line_1: 105 Bloomfield Avenue
+            address_line_2: NA
+            city: Caldwell
+            state_name: NJ
+            postal_code: '07006'
+            country_code: US
+            lat: '40.83577'
+            long: '-74.268347'
+        - brand: Avis
+          location_code: R2Y
+          location_name: Roslyn, NY Harbourview Shoppes
+          telephone: '(1) 516-626-1291              '
+          hours: Sun 9:00 AM - 3:00 PM; Mon - Fri 7:30 AM - 6:30 PM; Sat 9:00 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 1500 Old Northern Boulevard
+            address_line_2: Harbourview Shoppes
+            city: Roslyn
+            state_name: NY
+            postal_code: '11576'
+            country_code: US
+            lat: '40.803178'
+            long: '-73.645613'
+        - brand: Avis
+          location_code: RGW
+          location_name: Ridgewood Park N Ride
+          telephone: '(1) 201-652-7220              '
+          hours: Mon - Fri 8:00 AM - 3:00 PM; Sat 8:00 AM - 12:00 PM
+          airport_location: false
+          address:
+            address_line_1: 565 Route 17 South
+            address_line_2: Ridgewood Park N Ride
+            city: Ridgewood
+            state_name: NJ
+            postal_code: '07450'
+            country_code: US
+            lat: '40.99096'
+            long: '-74.09778'
+        - brand: Avis
+          location_code: W9E
+          location_name: Sears Merchandise Pickup-Willowbrook Mal
+          telephone: '(1) 973-785-3710              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:30 AM - 6:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 50 Route 46
+            address_line_2: Sears Store
+            city: Wayne
+            state_name: NJ
+            postal_code: '07470'
+            country_code: US
+            lat: '40.890309'
+            long: '-74.261218'
+        - brand: Avis
+          location_code: RKC
+          location_name: Rockville Center
+          telephone: '(1) 516-599-0800              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:00 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 55 Sunrise Highway
+            address_line_2: NA
+            city: Lynbrook
+            state_name: NY
+            postal_code: '11563'
+            country_code: US
+            lat: '40.65665'
+            long: '-73.659324'
+        - brand: Avis
+          location_code: S6Y
+          location_name: Scarsdale Shell Service Station
+          telephone: '(1) 914-722-0591              '
+          hours: Mon - Fri 7:00 AM - 8:00 PM; Sat 7:00 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 852 Scarsdale Avenue
+            address_line_2: (by train station)
+            city: Scarsdale
+            state_name: NY
+            postal_code: '10583'
+            country_code: US
+            lat: '40.986882'
+            long: '-73.808588'
+        - brand: Avis
+          location_code: W0E
+          location_name: Closed to Public - BAE Systems Only
+          telephone: '(1) 973-785-3710              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:30 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 150 Parish Drive
+            address_line_2: (Wayne)
+            city: Bae Systems Only/wayne
+            state_name: NJ
+            postal_code: '07470'
+            country_code: US
+            lat: '40.91269'
+            long: '-74.25619'
+        - brand: Avis
+          location_code: S4J
+          location_name: Springfield Plaza
+          telephone: '(1) 973-376-5480              '
+          hours: Mon - Fri 8:00 AM - 5:00 PM; Sat 8:00 AM - 2:00 PM
+          airport_location: false
+          address:
+            address_line_1: 275 Route 22 East
+            address_line_2: Springfield Plaza
+            city: Springfield
+            state_name: NJ
+            postal_code: 07081
+            country_code: US
+            lat: '40.68452'
+            long: '-74.32346'
+        - brand: Avis
+          location_code: W6N
+          location_name: Wayne, NJ Downtown
+          telephone: '(1) 973-696-2847              '
+          hours: Sun 8:00 AM - 1:00 PM; Mon - Fri 7:30 AM - 6:00 PM; Sat 8:00 AM - 3:00 PM
+          airport_location: false
+          address:
+            address_line_1: 1105 State Route 23 South
+            address_line_2: NA
+            city: Wayne
+            state_name: NJ
+            postal_code: '07470'
+            country_code: US
+            lat: '40.921251'
+            long: '-74.268689'
+        - brand: Avis
+          location_code: WBY
+          location_name: Holiday Inn of Westbury/Carle Place
+          telephone: '(1) 516-997-1566              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:00 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 369 Old Country Road
+            address_line_2: Holiday Inn
+            city: Carle Place
+            state_name: NY
+            postal_code: '11514'
+            country_code: US
+            lat: '40.746334'
+            long: '-73.602199'
+        - brand: Avis
+          location_code: W8F
+          location_name: Westfield STS Service Center
+          telephone: '(1) 908-928-9448              '
+          hours: Mon - Fri 8:00 AM - 5:00 PM; Sat 8:00 AM - 12:00 PM
+          airport_location: false
+          address:
+            address_line_1: 343 South Avenue East
+            address_line_2: STS Service Center
+            city: Westfield
+            state_name: NJ
+            postal_code: 07090
+            country_code: US
+            lat: '40.65005'
+            long: '-74.33722'
+        - brand: Avis
+          location_code: MA2
+          location_name: Hilton Short Hills
+          telephone: '(1) 973-258-4095              '
+          hours: Mon - Fri 7:30 AM - 4:30 PM; Sat 8:00 AM - 12:00 PM
+          airport_location: false
+          address:
+            address_line_1: 41 John F Kennedy Parkway
+            address_line_2: Hilton Hotel
+            city: Short Hills
+            state_name: NJ
+            postal_code: 07078
+            country_code: US
+            lat: '40.742788'
+            long: '-74.36636'
+        - brand: Avis
+          location_code: SU2
+          location_name: Grand Summit Hotel
+          telephone: '(1) 908-277-1991              '
+          hours: Mon - Fri 7:30 AM - 5:00 PM; Sat 8:00 AM - 12:00 PM
+          airport_location: false
+          address:
+            address_line_1: 570 Springfield Avenue
+            address_line_2: Grand Summit Hotel
+            city: Summit
+            state_name: NJ
+            postal_code: 07901
+            country_code: US
+            lat: '40.715092'
+            long: '-74.367018'
+        - brand: Avis
+          location_code: WT4
+          location_name: White Plains
+          telephone: '(1) 914-948-0277              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 7:00 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 116 Westchester Avenue
+            address_line_2: NA
+            city: White Plains
+            state_name: NY
+            postal_code: '10601'
+            country_code: US
+            lat: '41.033019'
+            long: '-73.758426'
+        - brand: Avis
+          location_code: P3E
+          location_name: North Edison/MetroPark
+          telephone: '(1) 732-494-2686              '
+          hours: Sun 8:00 AM - 11:00 AM; Mon - Fri 8:00 AM - 5:00 PM; Sat 8:00 AM - 12:00 PM
+          airport_location: false
+          address:
+            address_line_1: 15 Wood Avenue
+            address_line_2: North Edison MetroPark
+            city: Edison
+            state_name: NJ
+            postal_code: 08820
+            country_code: US
+            lat: '40.56682'
+            long: '-74.333649'
+        - brand: Avis
+          location_code: HI8
+          location_name: Hicksville Broadway Mall
+          telephone: '(1) 516-942-8216              '
+          hours: Sun 8:00 AM - 4:00 PM; Mon - Fri 8:00 AM - 7:00 PM; Sat 8:00 AM - 4:00 PM
+          airport_location: false
+          address:
+            address_line_1: 358B N Broadway Mall
+            address_line_2: Broadway Mall
+            city: Hicksville
+            state_name: NY
+            postal_code: '11801'
+            country_code: US
+            lat: '40.772974'
+            long: '-73.529564'
+        - brand: Avis
+          location_code: NA2
+          location_name: Sears Appliance Department-Nanuet Mall
+          telephone: '(1) 845-624-6239              '
+          hours: Sun 10:00 AM - 5:00 PM; Mon - Fri 7:00 AM - 6:00 PM; Sat 8:00 AM - 6:00 PM
+          airport_location: false
+          address:
+            address_line_1: 3000 Fashion Drive
+            address_line_2: Sears Store
+            city: Nanuet
+            state_name: NY
+            postal_code: '10954'
+            country_code: US
+            lat: '41.096407'
+            long: '-74.017541'
+        - brand: Avis
+          location_code: P9M
+          location_name: Parsippany West
+          telephone: '(1) 973-428-3900              '
+          hours: Mon - Fri 7:30 AM - 5:30 PM; Sat 9:00 AM - 1:00 PM
+          airport_location: false
+          address:
+            address_line_1: 379 Parsippany Road
+            address_line_2: NA
+            city: Parsippany
+            state_name: NJ
+            postal_code: '07054'
+            country_code: US
+            lat: '40.853794'
+            long: '-74.426556'
+    locations_error_response:
+      title: Locations Error Response
+      required:
+      - status
+      - transaction
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/locations_error_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+    unauthorized_error:
+      title: Unauthorized Error
+      description: Unauthorized error details.
+      type: object
+      properties:
+        error:
+          description: Error type.
+          type: string
+        error_description:
+          description: Error description.
+          type: string
+    success_status:
+      title: Success Status
+      description: Success Status object
+      required:
+      - request_time
+      - success
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        success:
+          description: Success Details
+          type: array
+          items:
+            $ref: '#/components/schemas/success_detail'
+    locations_error_status:
+      title: Locations Error Status
+      description: A container for the error details
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          $ref: '#/components/schemas/date_time'
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          $ref: '#/components/schemas/locations_error_details'
+    locations_error_details:
+      title: Locations Error Details
+      description: The following describes the elements that can appear in the response body of an error.
+      type: array
+      items:
+        type: object
+        properties:
+          code:
+            description: The error code value
+            type: string
+          message:
+            description: The HTTP status code message
+            type: string
+          reason:
+            description: The reason the request has failed
+            type: string
+          details:
+            description: Description of the error
+            type: string
+    holiday_hours:
+      title: Holiday/Seasonal Hours
+      description: The holiday/seasonal operational schedule.
+      type: array
+      items:
+        $ref: '#/components/schemas/holiday_hours_schedule'
+    success_detail:
+      title: Success Detail
+      description: A container for the success/error details.
+      required:
+      - code
+      - message
+      - details
+      properties:
+        code:
+          description: The HTTP status code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        details:
+          description: Description of the success status
+          type: string
+    location_address:
+      title: Location Address
+      description: Address information that you would like to associate to the user that is requesting the rental vehicle reservation, including geographic coordinates (if applicable)
+      type: object
+      properties:
+        address_line_1:
+          description: Address (line 1) of the user.
+          type: string
+        address_line_2:
+          description: Address (line 2) of the user.
+          type: string
+        address_line_3:
+          description: Address (line 3) of the user.
+          type: string
+        city:
+          description: City name of the user.
+          type: string
+          example: Boston.
+        state_name:
+          description: State name of the user (if applicable).
+          type: string
+          example: Massachusetts
+        postal_code:
+          description: Numeric or alphanumeric postal code of the user, which varies by country (02128 or CT3).
+          type: string
+          example: W16PR
+        country_code:
+          description: 2-letter ISO 3166 country code of the user.
+          type: string
+          example: US
+        lat:
+          description: Geographic latitude of the location.
+          type: string
+          example: '40.690022'
+        long:
+          description: Geographic longitude of the location.
+          type: string
+          example: '-74.187506'
+    holiday_hours_schedule:
+      title: Holiday Hours of Operation Schedule
+      description: The holiday and seasonal hours of operation schedule
+      type: object
+      properties:
+        description:
+          title: Holiday/Season Description
+          description: Holiday/Seasonal day desciption
+          type: string
+        start_date:
+          title: Start Date
+          description: The holiday or seasonal start date
+          type: string
+        end_date:
+          title: End Date
+          description: The holiday or seasonal start date
+          type: string
+        first_slot_open_time:
+          title: The First Slot Opening Time
+          description: The first slot opening hours of the location.
+          type: string
+        first_slot_close_time:
+          title: The First Slot Closing Time
+          description: The first slot closing hours of the location.
+          type: string
+        second_slot_open_time:
+          title: The Second Slot Opening Time
+          description: The second slot opening hours of the location.
+          type: string
+        second_slot_close_time:
+          title: The Second Slot Closing Time
+          description: The second slot closing hours of the location.
+          type: string
+    hours_of_operation_day:
+      title: Operating Hour for a Day
+      description: The hours of operation for the day.
+      type: object
+      properties:
+        day:
+          title: Day of the Week
+          description: Day of the week
+          enum:
+          - Sun
+          - Mon
+          - Tue
+          - Wed
+          - Thu
+          - Fri
+          - Sat
+        first_slot_open_time:
+          title: The First Slot Opening Time
+          description: The first slot opening hours of the location.
+          type: string
+        first_slot_close_time:
+          title: The First Slot Closing Time
+          description: The first slot closing hours of the location.
+          type: string
+        second_slot_open_time:
+          title: The Second Slot Opening Time
+          description: The second slot opening hours of the location.
+          type: string
+        second_slot_close_time:
+          title: The Second Slot Closing Time
+          description: The second slot closing hours of the location.
+          type: string
+  parameters:
+    transaction_id:
+      name: transaction_id
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      schema:
+        type: string
+      in: query
+      required: false
+    client_id:
+      name: client_id
+      description: Your client identifier.
+      schema:
+        maxLength: 50
+        minLength: 8
+        type: string
+      in: header
+      required: true
+  securitySchemes:
+    ABG-Access-Token:
+      type: oauth2
+      description: OAuth 2.0 client credentials flow used to authenticate all API requests in this package.
+      flows:
+        clientCredentials:
+          tokenUrl: https://stage.abgapiservices.com/oauth/token/v2
+          scopes: {}
+x-refined-from:
+- avis-budget-rental-cars-openapi.json
+- avis-budget-rental-cars-openapi.yml
+x-api-owner:
+  team: Partner API Team
+  email:
+  - EnterpriseAPISupport@avisbudget.com
+  - partner-api@avisbudget.com

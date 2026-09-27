@@ -1,0 +1,29 @@
+{
+  "provider": "avis-budget",
+  "sources": [
+    "_original/avis-budget-rental-cars-openapi.json",
+    "avis-budget-rental-cars-openapi.yml"
+  ],
+  "outputs": [
+    "avis-budget-car-availability-api-openapi.yml",
+    "avis-budget-car-locations-api-openapi.yml",
+    "avis-budget-car-reservation-api-openapi.yml",
+    "avis-budget-terms-and-conditions-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/avis-budget-rental-cars-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "avis-budget-rental-cars-openapi.json: upgraded openapi 3.0.2 -> OpenAPI 3.2.0",
+    "avis-budget-rental-cars-openapi.yml: upgraded openapi 3.0.2 -> OpenAPI 3.2.0",
+    "tag 'Car Availability' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
+    "tag 'Car Locations' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
+    "tag 'Car Reservation' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
+    "tag 'Terms_and_Conditions' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
+    "apis.yml register: written (+4 apis, 4 total)"
+  ],
+  "skipped": []
+}

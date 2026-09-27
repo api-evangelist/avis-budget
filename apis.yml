@@ -31,44 +31,26 @@ accessModel:
   method: derived
 modified: '2026-09-18'
 apis:
-- name: Avis Budget Group Rental Cars API
-  description: 'REST API (v2) for the Avis, Budget and Payless rental car brands: keyword search of rental locations, vehicle
-    availability and rate shopping (including inclusive rates, coupons, memberships and secondary-currency pricing), reservation
-    create, view, update, partial-modify and cancel (including paperless-voucher processing), and location terms and conditions.
-    OAuth 2.0 client-credentials bearer tokens; every endpoint documented on the portal runs in the staging/pre-prod environment
-    and production credentials are issued after ABG approval.'
-  humanURL: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+- aid: avis-budget:avis-budget-car-availability-api
+  name: Avis Budget Group Car Availability API
+  description: Car Availability API
+  humanURL: >-
+    https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
   baseURL: https://stage.abgapiservices.com
   tags:
-  - Car Rental
-  - Reservations
-  - Travel
-  - Vehicle Rental
-  - Location
-  - Rates
-  tags_raw:
-  - Car Rental
-  - Reservations
-  - Travel
-  - Vehicle Rental
-  - Locations
-  - Rates
+  - Car Availability
   properties:
   - type: OpenAPI
-    url: openapi/avis-budget-rental-cars-openapi.yml
-  - type: OpenAPI
-    url: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903.md
-    name: Provider-hosted spec (embedded in the portal markdown twin)
+    url: openapi/avis-budget-car-availability-api-openapi.yml
   - type: Documentation
     url: https://developer.avis.com/docs
   - type: APIReference
-    url: https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+    url: >-
+      https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
   - type: GettingStarted
     url: https://developer.avis.com/getting-started
   - type: Postman
     url: https://documenter.getpostman.com/view/1524765/SzKWudFC
-  - type: Overlay
-    url: overlays/avis-budget-rental-cars-overlay.yaml
   - type: ErrorCatalog
     url: errors/avis-budget-problem-types.yml
   - type: DataModel
@@ -91,14 +73,139 @@ apis:
     url: changelog/avis-budget-changelog.yml
   - type: X-MCPServerCandidate
     url: mcp/avis-budget-mcp.yml
-  - type: AgentSkill
-    url: skills/_index.yml
-  - type: AgentSkill
-    url: skills/avis-budget-shop-and-book-a-rental-car.md
-  - type: AgentSkill
-    url: skills/avis-budget-manage-a-reservation.md
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/avis-budget.png
+- aid: avis-budget:avis-budget-car-locations-api
+  name: Avis Budget Group Car Locations API
+  description: Keyword Search API
+  humanURL: >-
+    https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  baseURL: https://stage.abgapiservices.com
+  tags:
+  - Car Locations
+  properties:
+  - type: OpenAPI
+    url: openapi/avis-budget-car-locations-api-openapi.yml
+  - type: Documentation
+    url: https://developer.avis.com/docs
+  - type: APIReference
+    url: >-
+      https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  - type: GettingStarted
+    url: https://developer.avis.com/getting-started
+  - type: Postman
+    url: https://documenter.getpostman.com/view/1524765/SzKWudFC
+  - type: ErrorCatalog
+    url: errors/avis-budget-problem-types.yml
+  - type: DataModel
+    url: data-model/avis-budget-data-model.yml
+  - type: Conventions
+    url: conventions/avis-budget-conventions.yml
+  - type: Authentication
+    url: authentication/avis-budget-authentication.yml
+  - type: OAuthScopes
+    url: scopes/avis-budget-scopes.yml
+  - type: RateLimits
+    url: rate-limits/avis-budget-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/avis-budget-sandbox.yml
+  - type: Lifecycle
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: Deprecation
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/avis-budget-changelog.yml
+  - type: X-MCPServerCandidate
+    url: mcp/avis-budget-mcp.yml
+- aid: avis-budget:avis-budget-car-reservation-api
+  name: Avis Budget Group Car Reservation API
+  description: Car Reservation API
+  humanURL: >-
+    https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  baseURL: https://stage.abgapiservices.com
+  tags:
+  - Car Reservation
+  properties:
+  - type: OpenAPI
+    url: openapi/avis-budget-car-reservation-api-openapi.yml
+  - type: Documentation
+    url: https://developer.avis.com/docs
+  - type: APIReference
+    url: >-
+      https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  - type: GettingStarted
+    url: https://developer.avis.com/getting-started
+  - type: Postman
+    url: https://documenter.getpostman.com/view/1524765/SzKWudFC
+  - type: ErrorCatalog
+    url: errors/avis-budget-problem-types.yml
+  - type: DataModel
+    url: data-model/avis-budget-data-model.yml
+  - type: Conventions
+    url: conventions/avis-budget-conventions.yml
+  - type: Authentication
+    url: authentication/avis-budget-authentication.yml
+  - type: OAuthScopes
+    url: scopes/avis-budget-scopes.yml
+  - type: RateLimits
+    url: rate-limits/avis-budget-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/avis-budget-sandbox.yml
+  - type: Lifecycle
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: Deprecation
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/avis-budget-changelog.yml
+  - type: X-MCPServerCandidate
+    url: mcp/avis-budget-mcp.yml
+- aid: avis-budget:avis-budget-terms-and-conditions-api
+  name: Avis Budget Group Terms And Conditions API
+  description: Terms and Conditions API
+  humanURL: >-
+    https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  baseURL: https://stage.abgapiservices.com
+  tags:
+  - Terms_and_Conditions
+  properties:
+  - type: OpenAPI
+    url: openapi/avis-budget-terms-and-conditions-api-openapi.yml
+  - type: Documentation
+    url: https://developer.avis.com/docs
+  - type: APIReference
+    url: >-
+      https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
+  - type: GettingStarted
+    url: https://developer.avis.com/getting-started
+  - type: Postman
+    url: https://documenter.getpostman.com/view/1524765/SzKWudFC
+  - type: ErrorCatalog
+    url: errors/avis-budget-problem-types.yml
+  - type: DataModel
+    url: data-model/avis-budget-data-model.yml
+  - type: Conventions
+    url: conventions/avis-budget-conventions.yml
+  - type: Authentication
+    url: authentication/avis-budget-authentication.yml
+  - type: OAuthScopes
+    url: scopes/avis-budget-scopes.yml
+  - type: RateLimits
+    url: rate-limits/avis-budget-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/avis-budget-sandbox.yml
+  - type: Lifecycle
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: Deprecation
+    url: lifecycle/avis-budget-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/avis-budget-changelog.yml
+  - type: X-MCPServerCandidate
+    url: mcp/avis-budget-mcp.yml
 common:
+- type: Overlay
+  url: overlays/avis-budget-rental-cars-overlay.yaml
+- type: AgentSkill
+  url: skills/avis-budget-shop-and-book-a-rental-car.md
+- type: AgentSkill
+  url: skills/avis-budget-manage-a-reservation.md
 - type: Website
   url: https://www.avisbudgetgroup.com/
 - type: DeveloperPortal
