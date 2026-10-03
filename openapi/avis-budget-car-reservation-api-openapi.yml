@@ -1,9 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Avis Budget Car Reservation API
+  title: Rental Cars Car Reservation API
   version: 2.0.0
+  description: '## Car Locations V2
+
+
+    The Car Locations suite allows a user to retrieve rental car locations.'
   x-short-description: 'Combined ABG Rental Cars API package: vehicle availability & rates, reservations, location search, and terms & conditions.'
-  description: 'Operations tagged Car Reservation across 2 of this provider''s published API definitions: avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://stage.abgapiservices.com
   description: Stage Environment
@@ -1886,9 +1889,6 @@ paths:
       description: The rental vehicle update reservation details, including the rate, insurance coverage, rental extras (such as GPS), passenger, and payment information.
       operationId: patchCarsReservationV2
       x-operation-id-source: derived
-    servers:
-    - url: https://stage.abgapiservices.com
-      description: Stage Environment
   /cars/reservation/v2/partial-modify:
     patch:
       requestBody:
@@ -1974,59 +1974,442 @@ paths:
       description: Allows a partner to submit a partial modification transaction for an existing reservation.
       operationId: patchCarsReservationV2PartialModify
       x-operation-id-source: derived
-    servers:
-    - url: https://stage.abgapiservices.com
-      description: Stage Environment
 components:
-  parameters:
-    brand:
-      name: brand
-      description: The Avis, Budget, or Payless brand name.
-      schema:
-        enum:
-        - Avis
-        - Budget
-        - Payless
-        type: string
-      in: query
-      required: true
-    client_id:
-      name: client_id
-      description: Your client identifier.
-      schema:
-        maxLength: 50
-        minLength: 8
-        type: string
-      in: header
-      required: true
-    confirmation_number:
-      name: confirmation_number
-      description: The confirmation number of the rental car reservation. The confirmation number is retrieved from the Create Reservation endpoint.
-      schema:
-        type: string
-      in: query
-      required: true
   schemas:
-    insurance_selection_note:
-      title: Insurance Selection Note
-      description: Indicates whether rental vehicle insurance coverage is included by DEFAULT (as applicable in select countries), or whether additional coverage specified by the user has been ACCEPTED, or DECLINED. There may be some countries that include the cost of insurance by DEFAULT. If a value of DEFAULT is returned, then the value in total_owed will be 0. If the user specifies additional insurance coverage, then the value in this field will be returned as ACCEPTED or DECLINED.
-      enum:
-      - DEFAULT
-      - ACCEPTED
-      - DECLINED
-      type: string
-      example: DEFAULT
-    dropoff_location:
-      title: Dropoff Location
-      description: Rental car dropoff location and address information.
+    rental_experience:
+      title: Rentalexperience
+      description: Defines the rental experience type and associated details.
       required:
-      - address
+      - type
       type: object
       properties:
-        location:
-          $ref: '#/components/schemas/location'
+        type:
+          description: Indicates the type of rental experience. Controlled vocabulary for consistency across APIs.
+          type: string
+          example: AvisFirst
+        benefits:
+          description: Collection of benefits and premium services included with the rental experience.
+          type: array
+          items:
+            type: string
+          example:
+          - Curbside vehicle delivery by a personal concierge.
+          - 2025 model year vehicles with low mileage.
+          - Chat with your personal concierge for any in-trip issues.
+          - Skip the pump — pay only for fuel used, at market price.
+          - Curbside drop-off with your concierge.
+        code:
+          description: Avis First location code, returned only when type = AvisFirst. Matches vendor location code format
+          type: string
+    method_of_payment:
+      title: Method of Payment
+      description: Specifies the primary form used by the customer for the transaction. **CASH** - Cash as the method of payment. **LOYALTY_POINTS** - Loyalty points as the method of payment.
+      enum:
+      - CASH
+      - LOYALTY_POINTS
+      type: string
+      example: CASH
+    discount:
+      title: Brand Discounts
+      description: The rental vehicle brand rewards program code (also known as discount code) to be applied to the rate of the reservation.
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/discount_code'
+      example: R566100
+    cancel_reservation_v2_request:
+      title: Cancel Vehicle Reservation Request
+      description: The rental vehicle reservation that the user would like to cancel.
+      required:
+      - product
+      - reservation
+      - customer
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/product'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+        reservation:
+          $ref: '#/components/schemas/cancel_request'
+        customer:
+          $ref: '#/components/schemas/customer_only_contact'
+      example:
+        product:
+          brand: Avis
+        transaction:
+          transaction_id: '89474934'
+        reservation:
+          email_notification: true
+          confirmation:
+            number: 10768985US3
+        customer:
+          contact:
+            last_name: STEPHEN
+    vehicle_capacity:
+      title: Vehicle Capacity
+      description: Rental vehicle passenger seat and luggage capacity information.
+      type: object
+      properties:
+        doors:
+          description: The number of vehicle doors.
+          type: string
+          example: '4'
+        seats:
+          description: The number of passenger seats in the rental vehicle.
+          type: string
+          example: '5'
+        mpg:
+          description: Miles per gallon (MPG) of the vehicle.
+          type: string
+          example: 27/35
+        luggage_capacity:
+          $ref: '#/components/schemas/luggage_capacity'
+        fuel_type:
+          $ref: '#/components/schemas/fuel_type'
+    reservation_rate_totals_response:
+      title: Reservation Rate Totals
+      description: The fees, rates, and discounts applied to the reservation, with a breakdown of the reservation total.
+      required:
+      - rate
+      type: object
+      properties:
+        rate:
+          $ref: '#/components/schemas/reservation_rate_response'
+        totals:
+          $ref: '#/components/schemas/totals'
+    reservation_customer:
+      title: Reservation Customer
+      description: Information about the rental car customer. Only one customer can be specified in the request.
+      required:
+      - contact
+      properties:
+        contact:
+          $ref: '#/components/schemas/reservation_contact'
+        type:
+          $ref: '#/components/schemas/customer_type'
+        driver:
+          $ref: '#/components/schemas/driver'
         address:
           $ref: '#/components/schemas/address'
+        delivery_address:
+          $ref: '#/components/schemas/address'
+        collection_address:
+          $ref: '#/components/schemas/address'
+    reservation_vehicle_category:
+      title: Reservation Vehicle Category
+      description: Identifying information and details about the rental vehicle.
+      type: object
+      properties:
+        name:
+          title: Name
+          description: The name of the vehicle.
+          type: string
+          example: Volvo XC 60
+        make:
+          title: Make
+          description: Make of the vehicle.
+          type: string
+          example: Volvo
+        model:
+          title: Make Model
+          description: Model of the vehicle.
+          type: string
+          example: XC60
+        sipp_code:
+          $ref: '#/components/schemas/sipp_code'
+        vehicle_status:
+          $ref: '#/components/schemas/vehicle_status'
+        vehicle_class_code:
+          $ref: '#/components/schemas/vehicle_class_code'
+        vehicle_class_name:
+          title: Vehicle Class Name
+          description: The name of the vehicle class.
+          type: string
+          example: Economy
+        vehicle_transmission:
+          $ref: '#/components/schemas/transmission'
+        image_url:
+          $ref: '#/components/schemas/url'
+        mpg:
+          description: Vehicle MPG
+          type: string
+        vehicle_onrequest_status:
+          $ref: '#/components/schemas/vehicle_onrequest_status'
+    product:
+      title: Product Brand
+      description: The rental car product brand name information for the reservation.
+      required:
+      - brand
+      type: object
+      properties:
+        brand:
+          $ref: '#/components/schemas/brand'
+        iata_number:
+          $ref: '#/components/schemas/iata_number'
+    vehicle_status:
+      title: Vehicle Status
+      description: Vehicle Status Information.
+      enum:
+      - OnRequest
+      - Available
+      type: string
+      example: Available
+    loyalty_redemption:
+      title: Loyalty Redemption
+      description: Loyalty Redemption
+      type: object
+      properties:
+        method_of_payment:
+          $ref: '#/components/schemas/method_of_payment'
+        redemption_points:
+          title: Redemption Points
+          description: The number of loyalty points used for the payment.
+          type: integer
+          example: 500
+        currency_value:
+          description: The monetary value equivalent to the redeemed loyalty points.
+          type: number
+          example: 50
+        currency:
+          description: The currency in which the equivalent value is calculated.
+          type: string
+          example: USD
+    availability_loyalty:
+      title: Availability Loyalty Program
+      description: The Frequent Traveler Program (FTP) to be applied to the reservation. This entitles the user the opportunity to earn miles or points with ABG partners, such as airlines, hotels and other select companies. For example, the Lufthansa Miles & More Rewards Program. Surcharges may apply.
+      type: object
+      properties:
+        company_id:
+          description: The Frequent Traveler Program identifier of the airline, hotel, or other select company.
+          type: string
+          example: AD
+        code:
+          description: The unique Frequent Traveler Program (FTP) number of the traveler.
+          type: string
+          example: M21R322
+      example:
+        company_id: some text
+        code: some text
+    quote_id:
+      title: Quote Identifier
+      description: A unique identifier representing a specific rate quote. This ID is required for re-shop and booking requests to retain the originally quoted rate.
+      type: string
+      example: abc123xyz-456def789-ghijk012
+    discount_code:
+      title: Discount Code
+      description: The rental vehicle brand discount code. This field can be an Avis Worldwide Discount (AWD), Budget Car Discount (BCD), or a Payless Discount Number (PDN) code.
+      type: string
+      example: R566100
+    taxes_fees:
+      title: Rental Taxes and Fees
+      description: All available rental taxes and fees applied to the reservation.
+      type: object
+      properties:
+        taxes:
+          title: Rental Taxes
+          description: Taxes applied to the reservation in the localized currency.
+          type: array
+          items:
+            $ref: '#/components/schemas/tax'
+        fees:
+          title: Fees
+          description: Fees applied to the reservation. All available fees and surcharges are returned in the response. Some of these fees are included in the rate, and others are for information purposes only, as they may apply but are not included in the total tax amount.
+          type: array
+          items:
+            $ref: '#/components/schemas/fee'
+    reservation_request:
+      title: Reservation Request
+      description: Reservation information for the rental vehicle reservation, including the pickup, dropoff, and vehicle class.
+      required:
+      - pickup_date
+      - pickup_location
+      - dropoff_location
+      - dropoff_date
+      - vehicle_sipp_code
+      type: object
+      properties:
+        email_notification:
+          description: Indicates the email notifications for create, modify and cancel can be sent or suppressed for a user.
+          type: boolean
+          example: true
+        pickup_date:
+          description: ISO 8601 date and time of pickup.
+          type: string
+          example: '2017-11-15T18:00:00.000'
+        pickup_location:
+          description: Rental car pickup location code.
+          type: string
+          example: EWR
+        dropoff_date:
+          description: ISO 8601 date and time of dropoff.
+          type: string
+          example: '2017-11-15T18:00:00.000'
+        dropoff_location:
+          description: Rental car dropoff location and address information.
+          type: string
+        confirmation:
+          $ref: '#/components/schemas/reservation_confirmation'
+        vehicle_sipp_code:
+          $ref: '#/components/schemas/reservation_vehicle_sipp_code'
+        vehicle_status:
+          $ref: '#/components/schemas/vehicle_status'
+        rental_experience:
+          $ref: '#/components/schemas/rental_experience'
+        email_language:
+          description: Language for email. Applicable to North America email template.
+          enum:
+          - ENGLISH
+          - FRENCH
+          - SPANISH
+          type: string
+        travel_agent_id:
+          description: Travel Agent Id
+          type: string
+        travel_agent_company:
+          description: Travel Agent Company
+          type: string
+        remark:
+          description: Reservation remarks
+          type: string
+    airline_code:
+      title: Airline Code
+      description: 2-character IATA airline code.
+      type: string
+      example: BA
+    reservation_customer_response:
+      title: Reservation Customer Response
+      description: Information about the rental car customer. Only one customer can be specified in the request.
+      properties:
+        contact:
+          $ref: '#/components/schemas/reservation_contact'
+        driver:
+          $ref: '#/components/schemas/driver'
+        address:
+          $ref: '#/components/schemas/address'
+        delivery_address:
+          $ref: '#/components/schemas/address'
+        collection_address:
+          $ref: '#/components/schemas/address'
+        digital_experience:
+          $ref: '#/components/schemas/customer_experience'
+    luggage_capacity:
+      title: Luggage Capacity
+      type: object
+      properties:
+        large_suitcase:
+          description: The number of large suitcases that can be accommodated in the rental vehicle.
+          type: string
+        small_suitcase:
+          description: The number of small suitcases that can be accommodated in the rental vehicle.
+          type: string
+    transaction_id:
+      title: Transaction Identifier
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      type: string
+      example: 391117cf-4470-4353-8b51-f00c3c098943
+    tax:
+      title: Tax
+      description: Taxes applied to the reservation in the localized currency.
+      type: object
+      properties:
+        type:
+          description: The type of taxation to be applied.
+          type: string
+        amount:
+          description: The cost of taxes for the reservation.
+          type: number
+        included_in_total:
+          description: The flag to indicate whether the fees or charges are included in the Total Reservation cost.
+          type: boolean
+    central_billing_membership:
+      title: Brand Membership
+      description: Central billing account profile identification information.
+      type: object
+      properties:
+        code:
+          description: Corporate membership code for central billing account profile.
+          type: string
+          example: M21R322
+    create_modify_request:
+      title: Create Modify Reservation Request
+      description: The rental vehicle reservation details, including the rate, insurance coverage, rental extras (such as GPS), passenger, and payment information.
+      required:
+      - product
+      - reservation
+      - rate_totals
+      - customer
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/product'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+        reservation:
+          $ref: '#/components/schemas/reservation_request'
+        rate_totals:
+          $ref: '#/components/schemas/rate_totals_request'
+        insurance:
+          title: Rental Insurance Coverage
+          description: The insurance coverage to be applied to the entirety of the reservation. Types of insurance includes Cover The Car (CDW), Cover My Liability (ALI), Cover Myself (PAI), and Cover My Belongings (PEP), Package (PKG). If insurance coverage is specified in the request, taxes are included in the total cost (in total_owed). Any preselected insurance coverage specified by a user within their wizard profile should be passed in the request. For example, if the user has selected Cover My Belongings (PEP) in their profile, then pass PEP.
+          type: array
+          items:
+            $ref: '#/components/schemas/insurance'
+        extras:
+          $ref: '#/components/schemas/extras'
+        arrival_flight:
+          $ref: '#/components/schemas/arrival_flight'
+        payment_preference:
+          $ref: '#/components/schemas/payment_preference'
+        customer:
+          $ref: '#/components/schemas/reservation_customer'
+      example:
+        product:
+          brand: Avis
+        transaction:
+          transaction_id: '2423423467'
+        reservation:
+          email_notification: true
+          pickup_date: '2020-12-30T04:00:00'
+          pickup_location: LHR
+          dropoff_date: '2020-12-31T04:00:00'
+          dropoff_location: LHR
+          vehicle_sipp_code: MBMR
+        rate_totals:
+          rate:
+            rate_code: IC
+            country_code: GB
+        customer:
+          contact:
+            title: MR
+            first_name: BRADLEY
+            last_name: STEPHEN
+            telephone: '123456789900000'
+            email: BRADLEY.STEPHEN@abgservices.com
+            age: 28
+            date_of_birth: '1991-12-31'
+          address:
+            address_line_1: 696 Block A
+            address_line_2: Ellis St
+            address_line_3: ''
+            city: San Francisco
+            postal_code: '94110'
+            country_code: GB
+        insurance:
+        - code: PEP
+        - code: ALI
+        extras:
+        - code: GPS
+          quantity: 1
+        - code: CSS
+          quantity: 1
+        payment_preference:
+          type: Voucher
+          id: '12313434'
+          fixed_value: FixedValue
+          electronic_indicator: true
+          amount: 183.34
+          currency: GBP
     reservation_rate_response:
       title: Rate
       description: The reservation qualifiers that determine the rate of the reservation in the localized currency.
@@ -2076,184 +2459,270 @@ components:
           $ref: '#/components/schemas/rate_guarantee_blob'
         credit_card_guarantee:
           $ref: '#/components/schemas/credit_card_guarantee'
-    taxes_fees:
-      title: Rental Taxes and Fees
-      description: All available rental taxes and fees applied to the reservation.
+    reservation_membership:
+      title: Reservation Membership
+      description: The customer membership information
       type: object
       properties:
-        taxes:
-          title: Rental Taxes
-          description: Taxes applied to the reservation in the localized currency.
-          type: array
-          items:
-            $ref: '#/components/schemas/tax'
-        fees:
-          title: Fees
-          description: Fees applied to the reservation. All available fees and surcharges are returned in the response. Some of these fees are included in the rate, and others are for information purposes only, as they may apply but are not included in the total tax amount.
-          type: array
-          items:
-            $ref: '#/components/schemas/fee'
-    transaction_id:
-      title: Transaction Identifier
-      description: The transaction identifier used to identify and troubleshoot a given request.
-      type: string
-      example: 391117cf-4470-4353-8b51-f00c3c098943
-    payment_preference:
-      title: Payment Preference
-      description: The payment preferences for the reservation. This could be a Customer's payment card details or a Booking Voucher or a Central Billing Account with the value of the reservation.
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          description: 'This could be either Voucher, Central Billing Account, Customer Credit Card, Cash or MIXED.
-
-
-            ** Voucher - Voucher issued that have a predetermined monetary value or discounts. ** CentralBillingAccount - Central Billing Account setup with the partnership. ** CustomerPaymentCard - Customer Payment Card. ** Cash - Cash as the method of payment.'
-          enum:
-          - Voucher
-          - CentralBillingAccount
-          - CustomerPaymentCard
-          - Cash
-          type: string
-        id:
-          description: This is a 6-8 digit number for vouchers. This could be static e.g. 12345678 for all reservations made. If the partner has their own internal reference number it should be passed in as the voucher number as a unique identifier for reconciliation.
-          type: string
-        billing_account_number:
-          description: For Central Billing Accounts, companies that have signed a contract with Avis have an AV account number and Budget has BU account number that can be used by the company employees for renting cars at Avis or Budget for business purposes AV accounts are attached to an AWD/BCD number carrying the discounts, rates and further information for rental conditions to the specific company. e.g AV1236352973000 **Note** Pass ONLY the billing account number without AV or BU prefix.
-          type: string
-        fixed_value:
-          description: The reservation value could be either Fixed or Full Credit. For Voucher based reservation, this should be passed as Fixed always. Represents the Voucher type.
-          enum:
-          - FixedValue
-          - FullCredit
-          - ACTO
-          type: string
-        electronic_indicator:
-          description: This identifies the partner as a paperless supplier and needs to be marked as true
-          type: boolean
-        amount:
-          description: This is the gross retail rate inclusive of tax and other prepaid charges and is returned in rate totals response as reservation total.
-          type: number
-        currency:
-          $ref: '#/components/schemas/currency'
-        payment_method:
-          $ref: '#/components/schemas/payment'
-        cost_control:
-          description: Also known as CCI. This field is used to store cost control information from a travel order, purchase order number or company reference.
-          type: string
-    availability_loyalty:
-      title: Availability Loyalty Program
-      description: The Frequent Traveler Program (FTP) to be applied to the reservation. This entitles the user the opportunity to earn miles or points with ABG partners, such as airlines, hotels and other select companies. For example, the Lufthansa Miles & More Rewards Program. Surcharges may apply.
-      type: object
-      properties:
-        company_id:
-          description: The Frequent Traveler Program identifier of the airline, hotel, or other select company.
-          type: string
-          example: AD
         code:
-          description: The unique Frequent Traveler Program (FTP) number of the traveler.
+          description: The brand membership program code. This can be an Avis wizard number, Budget customer number, or Payless Perks number.
           type: string
           example: M21R322
-      example:
-        company_id: some text
-        code: some text
-    reservation_contact:
-      title: Reservation Contact
-      description: The personal and contact information of the user you would like to associate to the user profile. If you would like to create a basic profile, you can provide the minimal contact information along with an indication of the desired brand. If you would like to create a preferred profile, you are required to provide many more parameters including driver license, payment information, and an election of several required options. If you do not provide this additional information, you will be unable to create a preferred profile.
-      required:
-      - last_name
-      - first_name
-      type: object
-      properties:
-        title:
-          description: Title of the user.
+        partner_membership_code:
+          description: Customer's partner membership code associated with partner membership program.
           type: string
-        first_name:
-          description: First name of the user.
+        partner_membership_loyalty_level:
+          description: The partner membership loyalty level or status.
           type: string
-        last_name:
-          description: Last name of the user.
+        benefits_applied:
+          description: Indicates whether the partner membership benefits are applied
+          type: boolean
+        description:
+          description: Details of the membership, acknowledging the benefits associated
           type: string
-        email:
-          description: Email address of the user.
-          type: string
-        telephone:
-          description: Telephone number of the user.
-          type: string
-        age:
-          description: Driver’s age. This might influence the rates. Will be superseded by date of birth found in the profile provided in “membership_code”.
-          type: number
-        date_of_birth:
-          format: date
-          title: Date of Birth
-          description: Driver’s date of birth. This might influence the rates. Will be superseded by “age” parameter or date of birth found in the profile provided in “membership_code”.
-          type: string
-          example: '1991-12-31'
-    coupon:
-      title: Coupon Codes
-      description: A promotional coupon that can be applied to a reservation for discounts, upgrades, free days, or other promotional offers.
-      required:
-      - code
+    extras:
+      title: Rental Extras
+      description: The ancillary products, special equipment, and other extras selected as part of reservation.
+      type: array
+      items:
+        $ref: '#/components/schemas/availability_extra'
+    rate_guarantee_blob:
+      title: Rate Guarantee Binary Large Object
+      description: A Rate Guarantee blob that represents the guaranteed rate associated with the booking.
+      type: string
+      example: Y| 365        B             DFW12004020900DFW1200403090012004011204  75 1501050                         150  75                7351    9800   68600  294000    9800                                            7351        2A  GA    1                NNNNNNNNNYNNNNNNNYNYNNNNNNNNNNNNYYYNNNNNNNNNNNNN 130                  30NNNNNNNN        NNNNNNNNNNNNNNNN    NNNNNNNNUSD  12   000NYNNNNNN
+    location:
+      title: Rental Location
+      description: Rental car address information of the product location.
       type: object
       properties:
         code:
-          description: The coupon code to be applied to the reservation rate.
+          description: 3-5 character alphanumeric location or airport code.
           type: string
-          example: MUZZ014
-        type:
-          $ref: '#/components/schemas/coupon_type'
-        quantity:
-          title: Quantity
-          description: The number of coupon codes to apply to the reservation.
-          type: number
-          example: 1
-        coupon_applied:
-          title: Coupon Applied Flag
-          description: Indicates that a coupon code is valid and was successfully applied for the reservation.
+          example: BOS
+        name:
+          description: Name of the product location.
+          type: string
+          example: Boston Logan Intl Airport
+        telephone:
+          description: Phone number of the product location.
+          type: string
+          example: 617-568-6600
+        hours:
+          description: Operating hours of the product location.
+          type: string
+          example: Sun-Sat 0:00 AM - 12:00 AM and 0:00 AM - 12:00 AM
+        airport_location:
+          description: Indicates whether the product location is an airport.
           type: boolean
-          example: false
-        coupon_amount:
-          description: The amount of the coupon discount applied to the cost of the reservation.
-          type: number
-          example: 0
-        secondary_coupon_amount:
-          description: The secondary amount of the coupon discount applied to the cost of the reservation.
-          type: number
-          example: 0
-        coupon_extras:
-          $ref: '#/components/schemas/extras'
-        description:
-          description: Description of the coupon code that was specified in the request.
-          type: string
+          example: true
+    insurance_code:
+      title: Insurance Code
+      description: 3-character code of the insurance coverage.
+      enum:
+      - ALI
+      - CDW
+      - LDW
+      - PAI
+      - LI
+      - PEP
+      - SCDW
+      - SPAI
+      - STP
+      - TP
+      - PKG
+      type: string
+      example: CDW
+    create_modify_reservation_v2_response:
+      title: 201 Created Response
+      description: The following demonstrates an example of a successful request for this endpoint.
+      required:
+      - status
+      - transaction
+      - product
+      - reservation
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/success_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+        product:
+          $ref: '#/components/schemas/product'
+        reservation:
+          $ref: '#/components/schemas/reservation'
       example:
-        code: some text
-        type: Upgrade
-        quantity: 13.21
-        coupon_applied: true
-        coupon_amount: 90.01
-        coupon_extras:
-        - - type: Upgrade
-            code: XMR
-            quantity: 24.64
-            amount: 6.1
-            total_owed: 68.22
-          - type: DaysOff
-            code: BBS
-            quantity: 10.33
-            amount: 12.95
-            total_owed: 46.59
-        - - type: DaysOff
-            code: ADR
-            quantity: 17.09
-            amount: 38.26
-            total_owed: 98.75
-          - type: Upgrade
-            code: SNW
-            quantity: 24.2
-            amount: 53.96
-            total_owed: 3.34
-        description: some text
+        status:
+          request_time: '2022-03-01T12:01:54Z'
+          success:
+          - code: '201'
+            message: Created
+            details: The reservation was  successfully created.
+        transaction:
+          transaction_id: '24234234'
+        product:
+          brand: Avis
+          iata_number: '763729382'
+        reservation:
+          confirmation:
+            number: 09449519US3
+            pickup_date: '2019-02-01T09:00:00'
+            dropoff_date: '2019-02-07T09:00:00'
+          distance:
+            unlimited_distance: false
+            distance_covered: 400
+            distance_unit: Miles
+            distance_overage: 0.15
+          pickup_location:
+            location:
+              code: EWR
+              name: Newark Liberty Intl Airport
+              telephone: (1) 973-961-4300
+              hours: Sun-Sat 0:00 AM - 12:00 AM and 0:00 AM - 12:00 AM
+              airport_location: true
+            address:
+              address_line_1: 28 Newark Airport
+              address_line_2: Na
+              address_line_3: Na
+              city: Newark
+              state_name: New Jersey
+              postal_code: '07114'
+              country_code: US
+              lat: '40.690022'
+              long: '-74.187506'
+          dropoff_location:
+            location:
+              code: EWR
+              name: Newark Liberty Intl Airport
+              telephone: (1) 973-961-4300
+              hours: Sun-Sat 0:00 AM - 12:00 AM and 0:00 AM - 12:00 AM
+              airport_location: true
+            address:
+              address_line_1: 28 Newark Airport
+              address_line_2: Na
+              address_line_3: Na
+              city: Newark
+              state_name: New Jersey
+              postal_code: '07114'
+              country_code: US
+              lat: '40.690022'
+              long: -74.187506
+          rate_totals:
+            rate:
+              currency: USD
+              rate_code: LC
+              days: 5
+              hours: 0
+              amount: 40
+              discount:
+                code: R566100
+              loyalty:
+                company_id: AD
+                code: '2459804582'
+              membership:
+                code: S3Z91K
+              coupon:
+                code: MUZZ014
+                type: MoneyOff
+                description: 25USD Off with Rental of CSS/Paperless Coupon
+                quantity: 1
+                coupon_applied: true
+                coupon_amount: 25
+                coupon_extras:
+                - code: CSS
+                  type: COUNTER_PROD
+              taxes_fees:
+                taxes:
+                - type: Standard
+                  amount: 60.67
+                  included_in_total: true
+                - type: GST
+                  amount: 60.67
+                  included_in_total: true
+                fees:
+                - amount: 56.24
+                  name: Concession Recovery Fee
+                  included_in_total: true
+                - amount: 1.5
+                  name: Concession Recovery Fee Sch
+                  included_in_total: true
+                - amount: 15
+                  name: Domestic Security Fee
+                  included_in_total: true
+                - amount: 1.8
+                  name: Energy Recovery Fee
+                  included_in_total: true
+                - amount: 7.5
+                  name: Transportation Facility Charge
+                  included_in_total: true
+                - amount: 3.03
+                  name: Vehicle License Fee
+                  included_in_total: true
+            totals:
+              vehicle_total: 276
+              taxes_fees_total: 145.74
+              insurance_total: 148.92
+              extras_total: 76.45
+              discount_total: 25
+              reservation_total: 622.1
+          vehicle:
+            category:
+              name: Group A - Ford Fiesta or similar
+              make: Ford
+              model: Fiesta
+              vehicle_class_code: A
+              vehicle_class_name: Economy
+              vehicle_transmission: Automatic
+              mpg: 27/35
+              image_url: https://www.avis.com/content/dam/cars/l/2019/chevrolet/2019-chevrolet-cruze-premier-sedan-white.png
+            features:
+              bluetooth_equipped: false
+              smoke_free: true
+              air_conditioned: false
+              connected_car: false
+            capacity:
+              doors: '4'
+              seats: '5'
+              luggage_capacity:
+                large_suitcase: '1'
+          insurance:
+          - code: CDW
+            name: Cover The Car (CDW)
+            amount: 15
+            total_owed: 75
+            selection_note: DEFAULT
+            selected: true
+            tax_included: false
+          - code: ALI
+            name: Cover My Liability (ALI)
+            amount: 10
+            total_owed: 50
+            selection_note: DEFAULT
+            selected: true
+            tax_included: false
+          extras:
+          - code: GPS
+            quantity: 1
+            type: COUNTER_PROD
+            amount: 13
+            total_owed: 65
+          - code: CSS
+            quantity: 1
+            type: COUNTER_PROD
+            amount: 7
+            total_owed: 35
+          terms:
+          - type: rental
+            method: GET
+            endpoint: https://docs.abgcarrental.com/rental/avis/UK/en/?rentalCountry=UK
+          - type: location
+            method: GET
+            endpoint: https://docs.abgcarrental.com/location/avis/UK/UK/en
+          disclaimers:
+          - type: Fuel Policy
+            description: FUEL POLICY IS FULL TO FULL
+          - type: Underage Surcharge
+            description: Under Age restrictions and fees apply. Please review location terms and conditions or contact location to confirm rental policies and fees.
     error_400:
       title: Error 400
       description: Bad Request
@@ -2533,27 +3002,576 @@ components:
             message: Bad Request
             reason: A One-Way Rental between given pickup_location and dropoff_location is not available
             details: A One-Way Rental between these 2  locations cannot be booked online.
-    vehicle_capacity:
-      title: Vehicle Capacity
-      description: Rental vehicle passenger seat and luggage capacity information.
+    success_detail:
+      title: Success Detail
+      description: A container for the success/error details.
+      required:
+      - code
+      - message
+      - details
+      properties:
+        code:
+          description: The HTTP status code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        details:
+          description: Description of the success status
+          type: string
+    error:
+      title: Error
+      description: The following describes the elements that can appear in the response body of an error.
+      required:
+      - code
+      - details
+      - message
+      - reason
+      properties:
+        code:
+          description: The error code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        reason:
+          description: The reason the request has failed
+          type: string
+        details:
+          description: Description of the error
+          type: string
+    view_reservation_v2_response:
+      title: View Reservation V2 Response
+      description: ''
+      required:
+      - reservation
+      - product
+      - status
+      - transaction
       type: object
       properties:
-        doors:
-          description: The number of vehicle doors.
+        status:
+          $ref: '#/components/schemas/success_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+        product:
+          $ref: '#/components/schemas/product'
+        reservation:
+          $ref: '#/components/schemas/reservation'
+    rate_totals_request:
+      title: Rate Totals Request
+      description: The fees, rates, and discounts applied to the reservation, with a breakdown of the reservation total.
+      required:
+      - rate
+      type: object
+      properties:
+        requested_rate_currency:
+          $ref: '#/components/schemas/requested_rate_currency'
+        rate:
+          $ref: '#/components/schemas/availability_rate_request'
+        totals:
+          $ref: '#/components/schemas/totals'
+    term:
+      title: Term
+      description: Term
+      required:
+      - method
+      - endpoint
+      - type
+      type: object
+      properties:
+        type:
+          description: Type
+          enum:
+          - location
+          - rental
+          - reservation
           type: string
-          example: '4'
-        seats:
-          description: The number of passenger seats in the rental vehicle.
+        method:
+          description: ''
+          enum:
+          - GET
           type: string
-          example: '5'
-        mpg:
-          description: Miles per gallon (MPG) of the vehicle.
+        endpoint:
+          description: End Point to call to get the terms and condition. Host name will be chnaged based on environment
           type: string
-          example: 27/35
-        luggage_capacity:
-          $ref: '#/components/schemas/luggage_capacity'
-        fuel_type:
-          $ref: '#/components/schemas/fuel_type'
+          example: https://test.abgapiservices.com/terms/v2/location/avis/US/EWR/en_US
+      example:
+        type: reservation
+        method: GET
+        endpoint: https://test.abgapiservices.com/terms/v2/location/avis/US/EWR/en_US
+    basic_contact:
+      title: Basic Contact
+      description: The personal and contact information of the user you would like to associate to the user profile. If you would like to create a basic profile, you can provide the minimal contact information along with an indication of the desired brand. If you would like to create a preferred profile, you are required to provide many more parameters including driver license, payment information, and an election of several required options. If you do not provide this additional information, you will be unable to create a preferred profile.
+      required:
+      - last_name
+      type: object
+      properties:
+        last_name:
+          description: Last name of the user.
+          type: string
+        email:
+          description: Email address of the user.
+          type: string
+    credit_card_guarantee:
+      title: Credit Card Required Indicator
+      description: Indicates whether a credit card is required to complete the booking.
+      type: boolean
+    requested_rate_currency:
+      title: Requested Rate Currency
+      description: Requested rate currency for secondary rates. The Secondary currency is driven by the request or through
+      type: string
+      example: USD
+    reservation_loyalty:
+      title: Reservation Loyalty Program
+      description: The Frequent Traveler Program (FTP) to be applied to the reservation. This entitles the user the opportunity to earn miles or points with ABG partners, such as airlines, hotels and other select companies. For example, the Lufthansa Miles & More Rewards Program. Surcharges may apply.
+      type: object
+      properties:
+        company_id:
+          description: The Frequent Traveler Program identifier of the airline, hotel, or other select company.
+          type: string
+          example: AD
+        code:
+          description: The unique Frequent Traveler Program (FTP) number of the traveler.
+          type: string
+          example: M21R322
+        redemption:
+          $ref: '#/components/schemas/loyalty_redemption'
+      example:
+        company_id: some text
+        code: some text
+    error_500:
+      title: Error 500
+      description: Internal Server Error
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+      example:
+        status:
+          request_time: '2019-01-04T15:15:30Z'
+          request_errors: 1
+          errors:
+          - code: '40018'
+            message: Service exception
+            reason: Service exception
+            details: Socket timeout from IMS Connect
+          - code: '610'
+            message: Service exception
+            reason: System exception from e-com backend.
+            details: System Exception occurred during location search.Please check the log for details.
+    customer_type:
+      title: Customer Type
+      description: Customer type representing the Customer or Driver. Used primarily for the delivery and collection.
+      enum:
+      - CUSTOMER
+      - DRIVER
+      type: string
+      example: CUSTOMER
+    partial_modify_reservation_request:
+      title: Partial Modify Reservation
+      description: Reservation information for the rental vehicle reservation, including the pickup, dropoff, and vehicle class.
+      type: object
+      properties:
+        confirmation:
+          $ref: '#/components/schemas/partial_modify_confirmation'
+    coupon:
+      title: Coupon Codes
+      description: A promotional coupon that can be applied to a reservation for discounts, upgrades, free days, or other promotional offers.
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          description: The coupon code to be applied to the reservation rate.
+          type: string
+          example: MUZZ014
+        type:
+          $ref: '#/components/schemas/coupon_type'
+        quantity:
+          title: Quantity
+          description: The number of coupon codes to apply to the reservation.
+          type: number
+          example: 1
+        coupon_applied:
+          title: Coupon Applied Flag
+          description: Indicates that a coupon code is valid and was successfully applied for the reservation.
+          type: boolean
+          example: false
+        coupon_amount:
+          description: The amount of the coupon discount applied to the cost of the reservation.
+          type: number
+          example: 0
+        secondary_coupon_amount:
+          description: The secondary amount of the coupon discount applied to the cost of the reservation.
+          type: number
+          example: 0
+        coupon_extras:
+          $ref: '#/components/schemas/extras'
+        description:
+          description: Description of the coupon code that was specified in the request.
+          type: string
+      example:
+        code: some text
+        type: Upgrade
+        quantity: 13.21
+        coupon_applied: true
+        coupon_amount: 90.01
+        coupon_extras:
+        - - type: Upgrade
+            code: XMR
+            quantity: 24.64
+            amount: 6.1
+            total_owed: 68.22
+          - type: DaysOff
+            code: BBS
+            quantity: 10.33
+            amount: 12.95
+            total_owed: 46.59
+        - - type: DaysOff
+            code: ADR
+            quantity: 17.09
+            amount: 38.26
+            total_owed: 98.75
+          - type: Upgrade
+            code: SNW
+            quantity: 24.2
+            amount: 53.96
+            total_owed: 3.34
+        description: some text
+    sipp_code:
+      title: Sipp Code
+      description: Standard Interline Passenger Procedure (SIPP) code of the vehicle. A compact 4 door manual air conditioned car will have a SIPP Code CMDR.
+      maxLength: 4
+      minLength: 4
+      pattern: ^[A-Z]{4}$
+      type: string
+      example: CMDR
+    customer_only_contact:
+      title: Customer Only Contact
+      description: Contact information of the rental customer for the reservation you would like to cancel.
+      required:
+      - contact
+      type: object
+      properties:
+        contact:
+          $ref: '#/components/schemas/basic_contact'
+    rate_code:
+      title: Vehicle Rate Code
+      description: The rental vehicle rate code used to determine the rate of the rental vehicle reservation
+      type: string
+      example: G3
+    reservation_error_404:
+      title: Reservation Error 404
+      description: Not Found
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+      example:
+        status:
+          request_time: '2019-01-04T15:15:30Z'
+          request_errors: 1
+          errors:
+          - code: '404'
+            message: Resource Not Found
+            reason: resource_failure
+            details: Server cannot find the requested resource. This may be due to incorrect URI or a resource that is not available.
+          - code: '223'
+            message: Not Found
+            reason: Invalid pickup_location.
+            details: The pick-up location entered is Sold Out for the dates you have entered
+          - code: '14036'
+            message: Not Found
+            reason: Reservation already cancelled
+            details: Reservation is already cancelled for the given confirmation_number.
+          - code: '14381'
+            message: Not Found
+            reason: 'A One-Way Rental between given pickup_location and dropoff_location is not available '
+            details: 'A One-Way Rental between given pickup_location and dropoff_location is not available '
+    error_415:
+      title: Error 415
+      description: Not Found
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+      example:
+        status:
+          request_time: '2018-10-17T13:05:10Z'
+          request_errors: 1
+          errors:
+          - code: '415'
+            message: Unsupported Media Type
+            reason: Unsupported Media Type
+            details: org.springframework.web.HttpMediaTypeNotSupportedException
+    reservation_vehicle_sipp_code:
+      title: Reservation Vehicle Sipp Code
+      description: The vehicle SIPP code used to identify individual cars and trucks according to size, axle numbers and type.
+      type: string
+      example: CIMR
+    coupon_type:
+      title: Coupon Type
+      description: The type of coupon that corresponds to the coupon code.
+      enum:
+      - MoneyOff
+      - GasOff
+      - DaysOff
+      - Upgrade
+      type: string
+      example: Upgrade
+    error_403:
+      title: Error 403
+      description: Forbidden
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+    insurance:
+      title: Rental Insurance Coverage
+      description: The insurance coverage to be applied to the entirety of the reservation. Types of insurance includes Cover The Car (CDW), Cover My Liability (ALI), Cover Myself (PAI), and Cover My Belongings (PEP), Package (PKG). If insurance coverage is specified in the request, taxes are included in the total cost (in total_owed). Any preselected insurance coverage specified by a user within their wizard profile should be passed in the request. For example, if the user has selected Cover My Belongings (PEP) in their profile, then pass PEP.
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/insurance_code'
+        name:
+          $ref: '#/components/schemas/insurance_name'
+        amount:
+          description: The daily cost of the specified insurance coverage.
+          type: number
+        excess_amount:
+          description: The insurance excess amount available as a part of the coverage.
+          type: number
+        currency:
+          $ref: '#/components/schemas/currency'
+        total_owed:
+          description: Total owed of the specified insurance coverage for the entirety of the reservation.
+          type: number
+        secondary_amount:
+          description: The daily cost of the specified insurance coverage.
+          type: number
+        secondary_excess_amount:
+          description: The insurance excess amount available as a part of the coverage.
+          type: number
+        secondary_currency:
+          $ref: '#/components/schemas/currency'
+        secondary_total_owed:
+          description: Total owed of the specified insurance coverage for the entirety of the reservation.
+          type: number
+        included_in_rate:
+          description: Indicates whether price of Insurance product is included in reservation_total.
+          type: boolean
+          example: true
+        selection_note:
+          $ref: '#/components/schemas/insurance_selection_note'
+        selected:
+          description: Indicates whether insurance coverage has been selected by the user for the reservation. If the specified insurance coverage is accepted, a value of ACCEPTED will be returned in selection_note.
+          type: boolean
+          example: true
+        tax_included:
+          description: Indicates whether taxes are included in the cost (in total_owed).
+          type: boolean
+          example: true
+    vehicle_features:
+      title: Vehicle Features
+      description: Vehicle equipment and available features (such as bluetooth connectivity).
+      properties:
+        bluetooth_equipped:
+          description: Indicates that the rental vehicle is equipped with bluetooth connectivity.
+          type: boolean
+          example: true
+        smoke_free:
+          description: Indicates that the rental vehicle is a smoke-free vehicle.
+          type: boolean
+          example: true
+        air_conditioned:
+          description: Indicates that the rental vehicle is air conditioned.
+          type: boolean
+          example: true
+        connected_car:
+          description: Indicates that the rental vehicle is equipped with Connected Car technology (which generally includes Internet access and a wireless local area network).
+          type: boolean
+          example: true
+    iata_number:
+      title: IATA Number
+      description: International Air Transport Association (IATA) number. This is an identifier used by travel agents that allows the rental car company to pay the agent a commission for the rental.
+      type: string
+      example: '91212019'
+    availability_rate_request:
+      title: Availability Rate Request
+      description: The reservation rate qualifiers that determine the rate of the reservation in the localized currency.
+      required:
+      - rate_code
+      - country_code
+      type: object
+      properties:
+        rate_code:
+          $ref: '#/components/schemas/rate_code'
+        currency:
+          $ref: '#/components/schemas/currency'
+        country_code:
+          description: 2-character ISO 3166 customer country code.
+          maxLength: 2
+          minLength: 2
+          type: string
+        loyalty:
+          $ref: '#/components/schemas/availability_loyalty'
+        discount:
+          $ref: '#/components/schemas/discount'
+        membership:
+          $ref: '#/components/schemas/availability_membership'
+        coupon:
+          $ref: '#/components/schemas/coupon'
+        central_billing_membership:
+          $ref: '#/components/schemas/central_billing_membership'
+        quote_id:
+          $ref: '#/components/schemas/quote_id'
+        rate_guarantee_blob:
+          $ref: '#/components/schemas/rate_guarantee_blob'
+    insurance_name:
+      title: Insurance Name
+      description: Name of the insurance coverage code/type.
+      enum:
+      - Additional Liability Insurance
+      - Collision Damage Waiver
+      - Loss Damage Waiver
+      - Personal Accident Insurance
+      - Additional Protection Insurance
+      - Personal Effects Protection
+      - Super Collision Damage Waiver
+      - Super Personal Accident Insurance
+      - Super Theft Protection
+      - Theft Protection
+      - Package Protection
+      type: string
+      example: Collision Damage Waiver
+    product_type:
+      title: Product Type
+      description: The type of ancillary product specified in the request. If a code of child safety seat (CSS) is specified in the request, then a value of SPEC_EQUIP will be returned in the response.
+      enum:
+      - COUNTER_PROD
+      - SPEC_EQUIP
+      - UPSELL
+      type: string
+      example: COUNTER_PROD
+    vehicle_class_code:
+      title: Vehicle Class Code
+      description: The vehicle class code used to identify individual cars and trucks according to size, axle numbers and type.
+      type: string
+      example: A, AB, XA
+    cancel_request:
+      title: Cancel Request
+      description: The rental vehicle reservation confirmation details to be cancelled.
+      required:
+      - confirmation
+      type: object
+      properties:
+        email_notification:
+          description: Indicates the email notifications for create, modify and cancel can be sent or suppressed for a user.
+          type: boolean
+        confirmation:
+          $ref: '#/components/schemas/reservation_confirmation'
+        email_language:
+          description: Language for email. Applicable to North America email template.
+          enum:
+          - ENGLISH
+          - FRENCH
+          - SPANISH
+          type: string
+    partial_modify_reservation_v2_response:
+      title: 200 Partial Modify Response
+      description: The following demonstrates an example of a successful request for this endpoint.
+      required:
+      - status
+      - transaction
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/success_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+    error_401:
+      title: Error 401
+      description: UnAuthorized
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
     reservation_confirmation:
       title: Reservation Confirmation Number
       description: Basic confirmation details for the rental vehicle reservation.
@@ -2585,27 +3603,189 @@ components:
           title: Skip the Queue Indicator
           description: Indicator to check whether the location is enabled for the skip the queue feature. This flag is available only for Create and Modify Reservation APIs.
           type: boolean
-    rate_guarantee_blob:
-      title: Rate Guarantee Binary Large Object
-      description: A Rate Guarantee blob that represents the guaranteed rate associated with the booking.
-      type: string
-      example: Y| 365        B             DFW12004020900DFW1200403090012004011204  75 1501050                         150  75                7351    9800   68600  294000    9800                                            7351        2A  GA    1                NNNNNNNNNYNNNNNNNYNYNNNNNNNNNNNNYYYNNNNNNNNNNNNN 130                  30NNNNNNNN        NNNNNNNNNNNNNNNN    NNNNNNNNUSD  12   000NYNNNNNN
-    booking_source:
-      title: Booking Source
-      description: Reservation Booking Source Info
+    transaction:
+      title: Request Transaction
+      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
       type: object
       properties:
-        travel_agent_company:
-          description: Booking Company Name
+        transaction_id:
+          $ref: '#/components/schemas/transaction_id'
+        system_id:
+          title: Internal Correlation Identifier
+          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
           type: string
-        original_booking_source:
-          description: The Original booking channel for the reservation .
+          example: i9332ffa-5250-11e9-8647-d663bd873d78
+      example:
+        transaction_id: test56
+    reservation:
+      title: Reservation
+      description: Confirmation information for the rental vehicle reservation, including the rate, distance limitations, and rental extras (such as GPS).
+      required:
+      - rate_totals
+      - dropoff_location
+      - pickup_location
+      - vehicle
+      - insurance
+      - extras
+      type: object
+      properties:
+        distance:
+          $ref: '#/components/schemas/distance'
+        confirmation:
+          $ref: '#/components/schemas/reservation_confirmation'
+        customer:
+          $ref: '#/components/schemas/reservation_customer_response'
+        arrival_flight:
+          $ref: '#/components/schemas/arrival_flight'
+        terms:
+          title: Terms and Condition
+          type: array
+          items:
+            $ref: '#/components/schemas/term'
+        disclaimers:
+          title: Disclaimers.
+          type: array
+          items:
+            $ref: '#/components/schemas/disclaimer'
+        pickup_location:
+          $ref: '#/components/schemas/pickup_location'
+        dropoff_location:
+          $ref: '#/components/schemas/dropoff_location'
+        rate_totals:
+          $ref: '#/components/schemas/reservation_rate_totals_response'
+        secondary_rate_totals:
+          $ref: '#/components/schemas/reservation_rate_totals_response'
+        vehicle:
+          $ref: '#/components/schemas/vehicle'
+        insurance:
+          title: Rental Insurance Coverage
+          description: The insurance coverage to be applied to the entirety of the reservation. Types of insurance includes Cover The Car (CDW), Cover My Liability (ALI), Cover Myself (PAI), and Cover My Belongings (PEP), Package (PKG). If insurance coverage is specified in the request, taxes are included in the total cost (in total_owed). Any preselected insurance coverage specified by a user within their wizard profile should be passed in the request. For example, if the user has selected Cover My Belongings (PEP) in their profile, then pass PEP.
+          type: array
+          items:
+            $ref: '#/components/schemas/insurance'
+        extras:
+          $ref: '#/components/schemas/extras'
+        payment_preference:
+          $ref: '#/components/schemas/payment_preference'
+        booking_source:
+          $ref: '#/components/schemas/booking_source'
+        remark:
+          description: Reservation Remarks
           type: string
-          example: N1W
-        current_booking_source:
-          description: The latest booking channel where on the reservation record. In many cases, original booking source will be same as booking source if there are no cross channel modifications.
+        rental_experience:
+          $ref: '#/components/schemas/rental_experience'
+    customer_experience:
+      title: Customer Experience Information
+      description: Contains various indicators and attributes related to the customer's experience during the process.
+      type: object
+      properties:
+        digital_checkin_url:
+          description: Presents the customer with digital Check-in link that requires specific configuration enabled.
+          type: boolean
+          example: true
+    brand:
+      title: Brand
+      description: ABG supported brand names like Avis, Budget, or Payless
+      enum:
+      - Avis
+      - Budget
+      - Payless
+      type: string
+      example: Avis
+    availability_membership:
+      title: Availability Membership
+      description: The customer membership information.
+      type: object
+      properties:
+        code:
+          description: The membership program code, such as an Avis Wizard number, Budget customer number, or Payless Perks number.
           type: string
-          example: B2C
+          example: W4S322
+        partner_membership_code:
+          description: The customer's membership code for an associated partner program.
+          type: string
+        partner_membership_loyalty_level:
+          description: The loyalty level or status in the partner membership program.
+          type: string
+        benefits_applied:
+          description: Indicates whether the partner membership benefits are applied.
+          type: string
+        description:
+          description: Details of the membership, acknowledging the benefits associated.
+          type: string
+    address:
+      title: Customer Address
+      description: Address information that you would like to associate to the user that is requesting the rental vehicle reservation, including geographic coordinates (if applicable).
+      required:
+      - country_code
+      type: object
+      properties:
+        address_line_1:
+          description: Address (line 1) of the user.
+          type: string
+          example: 1534 Meadow Drive
+        address_line_2:
+          description: Address (line 2) of the user.
+          type: string
+          example: 2nd Floor
+        address_line_3:
+          description: Address (line 3) of the user.
+          type: string
+          example: Suite 235
+        city:
+          description: City name of the user.
+          type: string
+          example: Boston
+        state_name:
+          description: State name of the user (if applicable).
+          type: string
+          example: Massachusetts
+        postal_code:
+          description: Numeric or alphanumeric postal code of the user, which varies by country (02128 or CT3).
+          type: string
+          example: W16PR
+        country_code:
+          description: 2-letter ISO 3166 country code of the user.
+          maxLength: 2
+          minLength: 2
+          type: string
+          example: US
+        lat:
+          description: Geographic latitude of the location.
+          type: string
+          example: '40.690022'
+        long:
+          description: Geographic longitude of the location.
+          type: string
+          example: '-74.187506'
+    rate_type:
+      title: Rate Type
+      description: The Rate type representing the Corporate vs Leisure rates
+      enum:
+      - CORPORATE
+      - LEISURE
+      type: string
+    driver:
+      title: Driver License
+      description: The driver license information of the user, including license number, issuing country, and date of birth.
+      type: object
+      properties:
+        license_number:
+          description: Driver license number.
+          type: string
+        state_code:
+          description: 2-letter state code. For US country, valid combination of country and state code. For non-US country, XX is valid value.
+          type: string
+          example: TX
+        country_code:
+          description: 2-letter ISO 3166 country code.
+          maxLength: 2
+          minLength: 2
+          type: string
+          example: GB
+        license_verified:
+          description: Indicates the authenticity of the passenger's driving license.
+          type: boolean
     disclaimer:
       title: Disclaimer
       description: This contains the addtional information
@@ -2621,70 +3801,12 @@ components:
           title: Disclaimer Comment
           description: Disclaimer comment
           type: string
-    reservation_request:
-      title: Reservation Request
-      description: Reservation information for the rental vehicle reservation, including the pickup, dropoff, and vehicle class.
-      required:
-      - pickup_date
-      - pickup_location
-      - dropoff_location
-      - dropoff_date
-      - vehicle_sipp_code
-      type: object
-      properties:
-        email_notification:
-          description: Indicates the email notifications for create, modify and cancel can be sent or suppressed for a user.
-          type: boolean
-          example: true
-        pickup_date:
-          description: ISO 8601 date and time of pickup.
-          type: string
-          example: '2017-11-15T18:00:00.000'
-        pickup_location:
-          description: Rental car pickup location code.
-          type: string
-          example: EWR
-        dropoff_date:
-          description: ISO 8601 date and time of dropoff.
-          type: string
-          example: '2017-11-15T18:00:00.000'
-        dropoff_location:
-          description: Rental car dropoff location and address information.
-          type: string
-        confirmation:
-          $ref: '#/components/schemas/reservation_confirmation'
-        vehicle_sipp_code:
-          $ref: '#/components/schemas/reservation_vehicle_sipp_code'
-        vehicle_status:
-          $ref: '#/components/schemas/vehicle_status'
-        rental_experience:
-          $ref: '#/components/schemas/rental_experience'
-        email_language:
-          description: Language for email. Applicable to North America email template.
-          enum:
-          - ENGLISH
-          - FRENCH
-          - SPANISH
-          type: string
-        travel_agent_id:
-          description: Travel Agent Id
-          type: string
-        travel_agent_company:
-          description: Travel Agent Company
-          type: string
-        remark:
-          description: Reservation remarks
-          type: string
-    coupon_type:
-      title: Coupon Type
-      description: The type of coupon that corresponds to the coupon code.
-      enum:
-      - MoneyOff
-      - GasOff
-      - DaysOff
-      - Upgrade
+    url:
+      title: URL
+      description: HTTP/HTTPS endpoint.
+      pattern: ^https?://.*
       type: string
-      example: Upgrade
+      example: https://www.avis.com/content/dam/cars/l/2017/ford/2017-ford-mustang-v6-coupe-black.png
     cancel_reservation_v2_response:
       title: Cancel Reservation Response
       description: The following demonstrates an example of a successful request for this endpoint.
@@ -2711,150 +3833,128 @@ components:
           transaction_id: '89474934'
         product:
           brand: Avis
-    reservation_customer_response:
-      title: Reservation Customer Response
-      description: Information about the rental car customer. Only one customer can be specified in the request.
-      properties:
-        contact:
-          $ref: '#/components/schemas/reservation_contact'
-        driver:
-          $ref: '#/components/schemas/driver'
-        address:
-          $ref: '#/components/schemas/address'
-        delivery_address:
-          $ref: '#/components/schemas/address'
-        collection_address:
-          $ref: '#/components/schemas/address'
-        digital_experience:
-          $ref: '#/components/schemas/customer_experience'
-    reservation_membership:
-      title: Reservation Membership
-      description: The customer membership information
-      type: object
-      properties:
-        code:
-          description: The brand membership program code. This can be an Avis wizard number, Budget customer number, or Payless Perks number.
-          type: string
-          example: M21R322
-        partner_membership_code:
-          description: Customer's partner membership code associated with partner membership program.
-          type: string
-        partner_membership_loyalty_level:
-          description: The partner membership loyalty level or status.
-          type: string
-        benefits_applied:
-          description: Indicates whether the partner membership benefits are applied
-          type: boolean
-        description:
-          description: Details of the membership, acknowledging the benefits associated
-          type: string
-    success_detail:
-      title: Success Detail
-      description: A container for the success/error details.
+    partial_modify_request:
+      title: Partial Modify Reservation Request
+      description: The rental vehicle reservation details, including the rate, insurance coverage, rental extras (such as GPS), passenger, and payment information.
       required:
-      - code
-      - message
-      - details
-      properties:
-        code:
-          description: The HTTP status code value
-          type: string
-        message:
-          description: The HTTP status code message
-          type: string
-        details:
-          description: Description of the success status
-          type: string
-    fuel_type:
-      title: Fuel Type
-      description: Indicates the vehicle fuel type.
-      enum:
-      - Diesel
-      - Petrol
-      - Hybrid
-      - Electric
-      type: string
-      example: diesel
-    availability_membership:
-      title: Availability Membership
-      description: The customer membership information.
+      - product
+      - reservation
+      - rate_totals
+      - customer
       type: object
       properties:
-        code:
-          description: The membership program code, such as an Avis Wizard number, Budget customer number, or Payless Perks number.
-          type: string
-          example: W4S322
-        partner_membership_code:
-          description: The customer's membership code for an associated partner program.
-          type: string
-        partner_membership_loyalty_level:
-          description: The loyalty level or status in the partner membership program.
-          type: string
-        benefits_applied:
-          description: Indicates whether the partner membership benefits are applied.
-          type: string
-        description:
-          description: Details of the membership, acknowledging the benefits associated.
-          type: string
-    partial_modify_confirmation:
-      title: Partial Modify Confirmation
-      description: Basic confirmation details for the rental vehicle reservation.
-      required:
-      - number
+        product:
+          $ref: '#/components/schemas/product'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+        reservation:
+          $ref: '#/components/schemas/partial_modify_reservation_request'
+        arrival_flight:
+          $ref: '#/components/schemas/arrival_flight'
+        payment_preference:
+          $ref: '#/components/schemas/payment_preference'
+        customer:
+          $ref: '#/components/schemas/reservation_customer'
+    totals:
+      title: Reservation Totals
+      description: The total reservation rate, taxes and fees for the entirety of the reservation.
       type: object
       properties:
-        number:
-          description: The confirmation number of the reservation.
-          type: string
-          example: 09369988GB2
-    customer_type:
-      title: Customer Type
-      description: Customer type representing the Customer or Driver. Used primarily for the delivery and collection.
-      enum:
-      - CUSTOMER
-      - DRIVER
-      type: string
-      example: CUSTOMER
-    tax:
-      title: Tax
-      description: Taxes applied to the reservation in the localized currency.
-      type: object
-      properties:
-        type:
-          description: The type of taxation to be applied.
-          type: string
-        amount:
-          description: The cost of taxes for the reservation.
+        reservation_total:
+          description: Total cost of the reservation.
           type: number
-        included_in_total:
-          description: The flag to indicate whether the fees or charges are included in the Total Reservation cost.
-          type: boolean
-    error:
-      title: Error
-      description: The following describes the elements that can appear in the response body of an error.
-      required:
-      - code
-      - details
-      - message
-      - reason
-      properties:
-        code:
-          description: The error code value
-          type: string
-        message:
-          description: The HTTP status code message
-          type: string
-        reason:
-          description: The reason the request has failed
-          type: string
-        details:
-          description: Description of the error
-          type: string
-    currency:
-      title: Currency
-      description: Currency used for defining the amounts.
+        taxes_fees_total:
+          description: Total cost of the combined taxes and fees for the reservation.
+          type: number
+        taxes_total:
+          description: Total cost of taxes.
+          type: number
+        vehicle_total:
+          description: Total cost of the rental vehicle.
+          type: number
+        fees_total:
+          description: Total cost of fees.
+          type: number
+        extras_total:
+          description: Total cost of the specified ancillary products (such as GPS).
+          type: number
+        insurance_total:
+          description: Total cost of the specified rental insurance coverage.
+          type: number
+        discount_total:
+          description: Total discount to be applied to the total cost in reservation_total.
+          type: number
+          example: 7
+        netvoucher_total:
+          description: Total Net Voucher Amount
+          type: number
+      example:
+        reservation_total: 58.41
+        taxes_fees_total: 40.2
+        taxes_total: 99.39
+        vehicle_total: 15.16
+        fees_total: 34.98
+        extras_total: 77.68
+        insurance_total: 90.37
+        discount_total: 74.95
+    transmission:
+      title: Vehicle Transmission
+      description: The transmission of the vehicle.
+      enum:
+      - Automatic
+      - Manual
       type: string
-      example: EUR
+      example: Automatic
+    distance:
+      title: Reservation Distance Limitations
+      description: Information about rental vehicle reservation distance options and limitations. If a reservation includes limited distance, then the distance covered is returned in distance_covered and the rate if the distance is exceeded is returned in distance_overage.
+      required:
+      - unlimited_distance
+      - distance_unit
+      type: object
+      properties:
+        unlimited_distance:
+          description: Indicates whether the reservation distance is unlimited.
+          type: boolean
+          example: true
+        distance_covered:
+          description: The free distance covered for the duration of the rental period.
+          type: number
+          example: 500
+        distance_unit:
+          description: The unit of distance.
+          type: string
+          example: miles
+        distance_overage:
+          description: The cost per distance unit if the free distance in distance_covered is exceeded.
+          type: number
+          example: 0.15
+    insurance_selection_note:
+      title: Insurance Selection Note
+      description: Indicates whether rental vehicle insurance coverage is included by DEFAULT (as applicable in select countries), or whether additional coverage specified by the user has been ACCEPTED, or DECLINED. There may be some countries that include the cost of insurance by DEFAULT. If a value of DEFAULT is returned, then the value in total_owed will be 0. If the user specifies additional insurance coverage, then the value in this field will be returned as ACCEPTED or DECLINED.
+      enum:
+      - DEFAULT
+      - ACCEPTED
+      - DECLINED
+      type: string
+      example: DEFAULT
+    success_status:
+      title: Success Status
+      description: Success Status object
+      required:
+      - request_time
+      - success
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        success:
+          description: Success Details
+          type: array
+          items:
+            $ref: '#/components/schemas/success_detail'
     availability_extra:
       title: Availability Extra
       description: The ancillary products, special equipment, and other extras selected as part of reservation.
@@ -2917,132 +4017,22 @@ components:
         tax_included:
           description: Indicates whether taxes are included in the cost (in total_owed).
           type: boolean
-    error_401:
-      title: Error 401
-      description: UnAuthorized
-      required:
-      - request_time
-      - errors
-      - request_errors
+    booking_source:
+      title: Booking Source
+      description: Reservation Booking Source Info
       type: object
       properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
+        travel_agent_company:
+          description: Booking Company Name
           type: string
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          title: Errors Details
-          description: The following describes the elements that can appear in the response body of an error.
-          type: array
-          items:
-            $ref: '#/components/schemas/error'
-    rate_type:
-      title: Rate Type
-      description: The Rate type representing the Corporate vs Leisure rates
-      enum:
-      - CORPORATE
-      - LEISURE
-      type: string
-    vehicle:
-      title: Rental Vehicle
-      description: Identifying information about the vehicle, including vehicle category (make/model), features, luggage capacity and the total cost.
-      required:
-      - capacity
-      - category
-      - features
-      type: object
-      properties:
-        category:
-          $ref: '#/components/schemas/reservation_vehicle_category'
-        features:
-          $ref: '#/components/schemas/vehicle_features'
-        capacity:
-          $ref: '#/components/schemas/vehicle_capacity'
-    vehicle_features:
-      title: Vehicle Features
-      description: Vehicle equipment and available features (such as bluetooth connectivity).
-      properties:
-        bluetooth_equipped:
-          description: Indicates that the rental vehicle is equipped with bluetooth connectivity.
-          type: boolean
-          example: true
-        smoke_free:
-          description: Indicates that the rental vehicle is a smoke-free vehicle.
-          type: boolean
-          example: true
-        air_conditioned:
-          description: Indicates that the rental vehicle is air conditioned.
-          type: boolean
-          example: true
-        connected_car:
-          description: Indicates that the rental vehicle is equipped with Connected Car technology (which generally includes Internet access and a wireless local area network).
-          type: boolean
-          example: true
-    method_of_payment:
-      title: Method of Payment
-      description: Specifies the primary form used by the customer for the transaction. **CASH** - Cash as the method of payment. **LOYALTY_POINTS** - Loyalty points as the method of payment.
-      enum:
-      - CASH
-      - LOYALTY_POINTS
-      type: string
-      example: CASH
-    partial_modify_reservation_request:
-      title: Partial Modify Reservation
-      description: Reservation information for the rental vehicle reservation, including the pickup, dropoff, and vehicle class.
-      type: object
-      properties:
-        confirmation:
-          $ref: '#/components/schemas/partial_modify_confirmation'
-    totals:
-      title: Reservation Totals
-      description: The total reservation rate, taxes and fees for the entirety of the reservation.
-      type: object
-      properties:
-        reservation_total:
-          description: Total cost of the reservation.
-          type: number
-        taxes_fees_total:
-          description: Total cost of the combined taxes and fees for the reservation.
-          type: number
-        taxes_total:
-          description: Total cost of taxes.
-          type: number
-        vehicle_total:
-          description: Total cost of the rental vehicle.
-          type: number
-        fees_total:
-          description: Total cost of fees.
-          type: number
-        extras_total:
-          description: Total cost of the specified ancillary products (such as GPS).
-          type: number
-        insurance_total:
-          description: Total cost of the specified rental insurance coverage.
-          type: number
-        discount_total:
-          description: Total discount to be applied to the total cost in reservation_total.
-          type: number
-          example: 7
-        netvoucher_total:
-          description: Total Net Voucher Amount
-          type: number
-      example:
-        reservation_total: 58.41
-        taxes_fees_total: 40.2
-        taxes_total: 99.39
-        vehicle_total: 15.16
-        fees_total: 34.98
-        extras_total: 77.68
-        insurance_total: 90.37
-        discount_total: 74.95
-    airline_code:
-      title: Airline Code
-      description: 2-character IATA airline code.
-      type: string
-      example: BA
+        original_booking_source:
+          description: The Original booking channel for the reservation .
+          type: string
+          example: N1W
+        current_booking_source:
+          description: The latest booking channel where on the reservation record. In many cases, original booking source will be same as booking source if there are no cross channel modifications.
+          type: string
+          example: B2C
     vehicle_onrequest_status:
       title: Vehicle Onrequest Status
       description: Vehicle OnRequest Status Information.
@@ -3052,76 +4042,22 @@ components:
       - Denied
       type: string
       example: Available
-    reservation:
-      title: Reservation
-      description: Confirmation information for the rental vehicle reservation, including the rate, distance limitations, and rental extras (such as GPS).
+    currency:
+      title: Currency
+      description: Currency used for defining the amounts.
+      type: string
+      example: EUR
+    dropoff_location:
+      title: Dropoff Location
+      description: Rental car dropoff location and address information.
       required:
-      - rate_totals
-      - dropoff_location
-      - pickup_location
-      - vehicle
-      - insurance
-      - extras
+      - address
       type: object
       properties:
-        distance:
-          $ref: '#/components/schemas/distance'
-        confirmation:
-          $ref: '#/components/schemas/reservation_confirmation'
-        customer:
-          $ref: '#/components/schemas/reservation_customer_response'
-        arrival_flight:
-          $ref: '#/components/schemas/arrival_flight'
-        terms:
-          title: Terms and Condition
-          type: array
-          items:
-            $ref: '#/components/schemas/term'
-        disclaimers:
-          title: Disclaimers.
-          type: array
-          items:
-            $ref: '#/components/schemas/disclaimer'
-        pickup_location:
-          $ref: '#/components/schemas/pickup_location'
-        dropoff_location:
-          $ref: '#/components/schemas/dropoff_location'
-        rate_totals:
-          $ref: '#/components/schemas/reservation_rate_totals_response'
-        secondary_rate_totals:
-          $ref: '#/components/schemas/reservation_rate_totals_response'
-        vehicle:
-          $ref: '#/components/schemas/vehicle'
-        insurance:
-          title: Rental Insurance Coverage
-          description: The insurance coverage to be applied to the entirety of the reservation. Types of insurance includes Cover The Car (CDW), Cover My Liability (ALI), Cover Myself (PAI), and Cover My Belongings (PEP), Package (PKG). If insurance coverage is specified in the request, taxes are included in the total cost (in total_owed). Any preselected insurance coverage specified by a user within their wizard profile should be passed in the request. For example, if the user has selected Cover My Belongings (PEP) in their profile, then pass PEP.
-          type: array
-          items:
-            $ref: '#/components/schemas/insurance'
-        extras:
-          $ref: '#/components/schemas/extras'
-        payment_preference:
-          $ref: '#/components/schemas/payment_preference'
-        booking_source:
-          $ref: '#/components/schemas/booking_source'
-        remark:
-          description: Reservation Remarks
-          type: string
-        rental_experience:
-          $ref: '#/components/schemas/rental_experience'
-    rate_totals_request:
-      title: Rate Totals Request
-      description: The fees, rates, and discounts applied to the reservation, with a breakdown of the reservation total.
-      required:
-      - rate
-      type: object
-      properties:
-        requested_rate_currency:
-          $ref: '#/components/schemas/requested_rate_currency'
-        rate:
-          $ref: '#/components/schemas/availability_rate_request'
-        totals:
-          $ref: '#/components/schemas/totals'
+        location:
+          $ref: '#/components/schemas/location'
+        address:
+          $ref: '#/components/schemas/address'
     pickup_location:
       title: Pickup Location
       description: Rental car pickup location and address information.
@@ -3133,308 +4069,6 @@ components:
           $ref: '#/components/schemas/location'
         address:
           $ref: '#/components/schemas/address'
-    product_type:
-      title: Product Type
-      description: The type of ancillary product specified in the request. If a code of child safety seat (CSS) is specified in the request, then a value of SPEC_EQUIP will be returned in the response.
-      enum:
-      - COUNTER_PROD
-      - SPEC_EQUIP
-      - UPSELL
-      type: string
-      example: COUNTER_PROD
-    arrival_flight:
-      title: Arrival Flight
-      description: Arrival Flight information including the arrival datetime, location and travel preference.
-      type: object
-      properties:
-        airline_code:
-          $ref: '#/components/schemas/airline_code'
-        airline_number:
-          description: Identifying number assigned to the airline carrier flight segment.
-          type: string
-      example: '349723'
-    rental_experience:
-      title: Rentalexperience
-      description: Defines the rental experience type and associated details.
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          description: Indicates the type of rental experience. Controlled vocabulary for consistency across APIs.
-          type: string
-          example: AvisFirst
-        benefits:
-          description: Collection of benefits and premium services included with the rental experience.
-          type: array
-          items:
-            type: string
-          example:
-          - Curbside vehicle delivery by a personal concierge.
-          - 2025 model year vehicles with low mileage.
-          - Chat with your personal concierge for any in-trip issues.
-          - Skip the pump — pay only for fuel used, at market price.
-          - Curbside drop-off with your concierge.
-        code:
-          description: Avis First location code, returned only when type = AvisFirst. Matches vendor location code format
-          type: string
-    luggage_capacity:
-      title: Luggage Capacity
-      type: object
-      properties:
-        large_suitcase:
-          description: The number of large suitcases that can be accommodated in the rental vehicle.
-          type: string
-        small_suitcase:
-          description: The number of small suitcases that can be accommodated in the rental vehicle.
-          type: string
-    insurance:
-      title: Rental Insurance Coverage
-      description: The insurance coverage to be applied to the entirety of the reservation. Types of insurance includes Cover The Car (CDW), Cover My Liability (ALI), Cover Myself (PAI), and Cover My Belongings (PEP), Package (PKG). If insurance coverage is specified in the request, taxes are included in the total cost (in total_owed). Any preselected insurance coverage specified by a user within their wizard profile should be passed in the request. For example, if the user has selected Cover My Belongings (PEP) in their profile, then pass PEP.
-      type: object
-      properties:
-        code:
-          $ref: '#/components/schemas/insurance_code'
-        name:
-          $ref: '#/components/schemas/insurance_name'
-        amount:
-          description: The daily cost of the specified insurance coverage.
-          type: number
-        excess_amount:
-          description: The insurance excess amount available as a part of the coverage.
-          type: number
-        currency:
-          $ref: '#/components/schemas/currency'
-        total_owed:
-          description: Total owed of the specified insurance coverage for the entirety of the reservation.
-          type: number
-        secondary_amount:
-          description: The daily cost of the specified insurance coverage.
-          type: number
-        secondary_excess_amount:
-          description: The insurance excess amount available as a part of the coverage.
-          type: number
-        secondary_currency:
-          $ref: '#/components/schemas/currency'
-        secondary_total_owed:
-          description: Total owed of the specified insurance coverage for the entirety of the reservation.
-          type: number
-        included_in_rate:
-          description: Indicates whether price of Insurance product is included in reservation_total.
-          type: boolean
-          example: true
-        selection_note:
-          $ref: '#/components/schemas/insurance_selection_note'
-        selected:
-          description: Indicates whether insurance coverage has been selected by the user for the reservation. If the specified insurance coverage is accepted, a value of ACCEPTED will be returned in selection_note.
-          type: boolean
-          example: true
-        tax_included:
-          description: Indicates whether taxes are included in the cost (in total_owed).
-          type: boolean
-          example: true
-    credit_card_guarantee:
-      title: Credit Card Required Indicator
-      description: Indicates whether a credit card is required to complete the booking.
-      type: boolean
-    url:
-      title: URL
-      description: HTTP/HTTPS endpoint.
-      pattern: ^https?://.*
-      type: string
-      example: https://www.avis.com/content/dam/cars/l/2017/ford/2017-ford-mustang-v6-coupe-black.png
-    address:
-      title: Customer Address
-      description: Address information that you would like to associate to the user that is requesting the rental vehicle reservation, including geographic coordinates (if applicable).
-      required:
-      - country_code
-      type: object
-      properties:
-        address_line_1:
-          description: Address (line 1) of the user.
-          type: string
-          example: 1534 Meadow Drive
-        address_line_2:
-          description: Address (line 2) of the user.
-          type: string
-          example: 2nd Floor
-        address_line_3:
-          description: Address (line 3) of the user.
-          type: string
-          example: Suite 235
-        city:
-          description: City name of the user.
-          type: string
-          example: Boston
-        state_name:
-          description: State name of the user (if applicable).
-          type: string
-          example: Massachusetts
-        postal_code:
-          description: Numeric or alphanumeric postal code of the user, which varies by country (02128 or CT3).
-          type: string
-          example: W16PR
-        country_code:
-          description: 2-letter ISO 3166 country code of the user.
-          maxLength: 2
-          minLength: 2
-          type: string
-          example: US
-        lat:
-          description: Geographic latitude of the location.
-          type: string
-          example: '40.690022'
-        long:
-          description: Geographic longitude of the location.
-          type: string
-          example: '-74.187506'
-    partial_modify_request:
-      title: Partial Modify Reservation Request
-      description: The rental vehicle reservation details, including the rate, insurance coverage, rental extras (such as GPS), passenger, and payment information.
-      required:
-      - product
-      - reservation
-      - rate_totals
-      - customer
-      type: object
-      properties:
-        product:
-          $ref: '#/components/schemas/product'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-        reservation:
-          $ref: '#/components/schemas/partial_modify_reservation_request'
-        arrival_flight:
-          $ref: '#/components/schemas/arrival_flight'
-        payment_preference:
-          $ref: '#/components/schemas/payment_preference'
-        customer:
-          $ref: '#/components/schemas/reservation_customer'
-    location:
-      title: Rental Location
-      description: Rental car address information of the product location.
-      type: object
-      properties:
-        code:
-          description: 3-5 character alphanumeric location or airport code.
-          type: string
-          example: BOS
-        name:
-          description: Name of the product location.
-          type: string
-          example: Boston Logan Intl Airport
-        telephone:
-          description: Phone number of the product location.
-          type: string
-          example: 617-568-6600
-        hours:
-          description: Operating hours of the product location.
-          type: string
-          example: Sun-Sat 0:00 AM - 12:00 AM and 0:00 AM - 12:00 AM
-        airport_location:
-          description: Indicates whether the product location is an airport.
-          type: boolean
-          example: true
-    transaction:
-      title: Request Transaction
-      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
-      type: object
-      properties:
-        transaction_id:
-          $ref: '#/components/schemas/transaction_id'
-        system_id:
-          title: Internal Correlation Identifier
-          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
-          type: string
-          example: i9332ffa-5250-11e9-8647-d663bd873d78
-      example:
-        transaction_id: test56
-    extras:
-      title: Rental Extras
-      description: The ancillary products, special equipment, and other extras selected as part of reservation.
-      type: array
-      items:
-        $ref: '#/components/schemas/availability_extra'
-    iata_number:
-      title: IATA Number
-      description: International Air Transport Association (IATA) number. This is an identifier used by travel agents that allows the rental car company to pay the agent a commission for the rental.
-      type: string
-      example: '91212019'
-    reservation_error_404:
-      title: Reservation Error 404
-      description: Not Found
-      required:
-      - request_time
-      - errors
-      - request_errors
-      type: object
-      properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
-          type: string
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          title: Errors Details
-          description: The following describes the elements that can appear in the response body of an error.
-          type: array
-          items:
-            $ref: '#/components/schemas/error'
-      example:
-        status:
-          request_time: '2019-01-04T15:15:30Z'
-          request_errors: 1
-          errors:
-          - code: '404'
-            message: Resource Not Found
-            reason: resource_failure
-            details: Server cannot find the requested resource. This may be due to incorrect URI or a resource that is not available.
-          - code: '223'
-            message: Not Found
-            reason: Invalid pickup_location.
-            details: The pick-up location entered is Sold Out for the dates you have entered
-          - code: '14036'
-            message: Not Found
-            reason: Reservation already cancelled
-            details: Reservation is already cancelled for the given confirmation_number.
-          - code: '14381'
-            message: Not Found
-            reason: 'A One-Way Rental between given pickup_location and dropoff_location is not available '
-            details: 'A One-Way Rental between given pickup_location and dropoff_location is not available '
-    product:
-      title: Product Brand
-      description: The rental car product brand name information for the reservation.
-      required:
-      - brand
-      type: object
-      properties:
-        brand:
-          $ref: '#/components/schemas/brand'
-        iata_number:
-          $ref: '#/components/schemas/iata_number'
-    partial_modify_reservation_v2_response:
-      title: 200 Partial Modify Response
-      description: The following demonstrates an example of a successful request for this endpoint.
-      required:
-      - status
-      - transaction
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/success_status'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-    customer_experience:
-      title: Customer Experience Information
-      description: Contains various indicators and attributes related to the customer's experience during the process.
-      type: object
-      properties:
-        digital_checkin_url:
-          description: Presents the customer with digital Check-in link that requires specific configuration enabled.
-          type: boolean
-          example: true
     fee:
       title: Fee
       description: Fees applied to the reservation. All available fees and surcharges are returned in the response. Some of these fees are included in the rate, and others are for information purposes only, as they may apply but are not included in the total tax amount.
@@ -3452,474 +4086,6 @@ components:
       example:
         amount: 13.26
         name: Domestic Security Fee
-    payment:
-      title: Payment
-      description: User's payment details.
-      required:
-      - card_holder_name
-      - card_number
-      - card_type
-      - expiry_date
-      type: object
-      properties:
-        card_type:
-          description: One of the supported Credit/Debit card types.
-          enum:
-          - VI
-          - MC
-          - AX
-          - DN
-          - CB
-          - CC
-          - JCB
-          - CN
-          - CP
-          - DS
-          - CT
-          - PA
-          type: string
-          example: VI
-        card_number:
-          description: Card Number that's valid for the selected card_type.
-          type: string
-          example: 37473483483484220
-        card_holder_name:
-          description: Name presented in the payment card.
-          type: string
-          example: BRADLEY STEPHEN
-        expiry_date:
-          description: Expiry Date as found printed on the card.
-          type: string
-          example: 213
-    vehicle_status:
-      title: Vehicle Status
-      description: Vehicle Status Information.
-      enum:
-      - OnRequest
-      - Available
-      type: string
-      example: Available
-    insurance_code:
-      title: Insurance Code
-      description: 3-character code of the insurance coverage.
-      enum:
-      - ALI
-      - CDW
-      - LDW
-      - PAI
-      - LI
-      - PEP
-      - SCDW
-      - SPAI
-      - STP
-      - TP
-      - PKG
-      type: string
-      example: CDW
-    distance:
-      title: Reservation Distance Limitations
-      description: Information about rental vehicle reservation distance options and limitations. If a reservation includes limited distance, then the distance covered is returned in distance_covered and the rate if the distance is exceeded is returned in distance_overage.
-      required:
-      - unlimited_distance
-      - distance_unit
-      type: object
-      properties:
-        unlimited_distance:
-          description: Indicates whether the reservation distance is unlimited.
-          type: boolean
-          example: true
-        distance_covered:
-          description: The free distance covered for the duration of the rental period.
-          type: number
-          example: 500
-        distance_unit:
-          description: The unit of distance.
-          type: string
-          example: miles
-        distance_overage:
-          description: The cost per distance unit if the free distance in distance_covered is exceeded.
-          type: number
-          example: 0.15
-    central_billing_membership:
-      title: Brand Membership
-      description: Central billing account profile identification information.
-      type: object
-      properties:
-        code:
-          description: Corporate membership code for central billing account profile.
-          type: string
-          example: M21R322
-    brand:
-      title: Brand
-      description: ABG supported brand names like Avis, Budget, or Payless
-      enum:
-      - Avis
-      - Budget
-      - Payless
-      type: string
-      example: Avis
-    error_500:
-      title: Error 500
-      description: Internal Server Error
-      required:
-      - request_time
-      - errors
-      - request_errors
-      type: object
-      properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
-          type: string
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          title: Errors Details
-          description: The following describes the elements that can appear in the response body of an error.
-          type: array
-          items:
-            $ref: '#/components/schemas/error'
-      example:
-        status:
-          request_time: '2019-01-04T15:15:30Z'
-          request_errors: 1
-          errors:
-          - code: '40018'
-            message: Service exception
-            reason: Service exception
-            details: Socket timeout from IMS Connect
-          - code: '610'
-            message: Service exception
-            reason: System exception from e-com backend.
-            details: System Exception occurred during location search.Please check the log for details.
-    quote_id:
-      title: Quote Identifier
-      description: A unique identifier representing a specific rate quote. This ID is required for re-shop and booking requests to retain the originally quoted rate.
-      type: string
-      example: abc123xyz-456def789-ghijk012
-    reservation_vehicle_sipp_code:
-      title: Reservation Vehicle Sipp Code
-      description: The vehicle SIPP code used to identify individual cars and trucks according to size, axle numbers and type.
-      type: string
-      example: CIMR
-    error_403:
-      title: Error 403
-      description: Forbidden
-      required:
-      - request_time
-      - errors
-      - request_errors
-      type: object
-      properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
-          type: string
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          title: Errors Details
-          description: The following describes the elements that can appear in the response body of an error.
-          type: array
-          items:
-            $ref: '#/components/schemas/error'
-    loyalty_redemption:
-      title: Loyalty Redemption
-      description: Loyalty Redemption
-      type: object
-      properties:
-        method_of_payment:
-          $ref: '#/components/schemas/method_of_payment'
-        redemption_points:
-          title: Redemption Points
-          description: The number of loyalty points used for the payment.
-          type: integer
-          example: 500
-        currency_value:
-          description: The monetary value equivalent to the redeemed loyalty points.
-          type: number
-          example: 50
-        currency:
-          description: The currency in which the equivalent value is calculated.
-          type: string
-          example: USD
-    create_modify_reservation_v2_response:
-      title: 201 Created Response
-      description: The following demonstrates an example of a successful request for this endpoint.
-      required:
-      - status
-      - transaction
-      - product
-      - reservation
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/success_status'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-        product:
-          $ref: '#/components/schemas/product'
-        reservation:
-          $ref: '#/components/schemas/reservation'
-      example:
-        status:
-          request_time: '2022-03-01T12:01:54Z'
-          success:
-          - code: '201'
-            message: Created
-            details: The reservation was  successfully created.
-        transaction:
-          transaction_id: '24234234'
-        product:
-          brand: Avis
-          iata_number: '763729382'
-        reservation:
-          confirmation:
-            number: 09449519US3
-            pickup_date: '2019-02-01T09:00:00'
-            dropoff_date: '2019-02-07T09:00:00'
-          distance:
-            unlimited_distance: false
-            distance_covered: 400
-            distance_unit: Miles
-            distance_overage: 0.15
-          pickup_location:
-            location:
-              code: EWR
-              name: Newark Liberty Intl Airport
-              telephone: (1) 973-961-4300
-              hours: Sun-Sat 0:00 AM - 12:00 AM and 0:00 AM - 12:00 AM
-              airport_location: true
-            address:
-              address_line_1: 28 Newark Airport
-              address_line_2: Na
-              address_line_3: Na
-              city: Newark
-              state_name: New Jersey
-              postal_code: '07114'
-              country_code: US
-              lat: '40.690022'
-              long: '-74.187506'
-          dropoff_location:
-            location:
-              code: EWR
-              name: Newark Liberty Intl Airport
-              telephone: (1) 973-961-4300
-              hours: Sun-Sat 0:00 AM - 12:00 AM and 0:00 AM - 12:00 AM
-              airport_location: true
-            address:
-              address_line_1: 28 Newark Airport
-              address_line_2: Na
-              address_line_3: Na
-              city: Newark
-              state_name: New Jersey
-              postal_code: '07114'
-              country_code: US
-              lat: '40.690022'
-              long: -74.187506
-          rate_totals:
-            rate:
-              currency: USD
-              rate_code: LC
-              days: 5
-              hours: 0
-              amount: 40
-              discount:
-                code: R566100
-              loyalty:
-                company_id: AD
-                code: '2459804582'
-              membership:
-                code: S3Z91K
-              coupon:
-                code: MUZZ014
-                type: MoneyOff
-                description: 25USD Off with Rental of CSS/Paperless Coupon
-                quantity: 1
-                coupon_applied: true
-                coupon_amount: 25
-                coupon_extras:
-                - code: CSS
-                  type: COUNTER_PROD
-              taxes_fees:
-                taxes:
-                - type: Standard
-                  amount: 60.67
-                  included_in_total: true
-                - type: GST
-                  amount: 60.67
-                  included_in_total: true
-                fees:
-                - amount: 56.24
-                  name: Concession Recovery Fee
-                  included_in_total: true
-                - amount: 1.5
-                  name: Concession Recovery Fee Sch
-                  included_in_total: true
-                - amount: 15
-                  name: Domestic Security Fee
-                  included_in_total: true
-                - amount: 1.8
-                  name: Energy Recovery Fee
-                  included_in_total: true
-                - amount: 7.5
-                  name: Transportation Facility Charge
-                  included_in_total: true
-                - amount: 3.03
-                  name: Vehicle License Fee
-                  included_in_total: true
-            totals:
-              vehicle_total: 276
-              taxes_fees_total: 145.74
-              insurance_total: 148.92
-              extras_total: 76.45
-              discount_total: 25
-              reservation_total: 622.1
-          vehicle:
-            category:
-              name: Group A - Ford Fiesta or similar
-              make: Ford
-              model: Fiesta
-              vehicle_class_code: A
-              vehicle_class_name: Economy
-              vehicle_transmission: Automatic
-              mpg: 27/35
-              image_url: https://www.avis.com/content/dam/cars/l/2019/chevrolet/2019-chevrolet-cruze-premier-sedan-white.png
-            features:
-              bluetooth_equipped: false
-              smoke_free: true
-              air_conditioned: false
-              connected_car: false
-            capacity:
-              doors: '4'
-              seats: '5'
-              luggage_capacity:
-                large_suitcase: '1'
-          insurance:
-          - code: CDW
-            name: Cover The Car (CDW)
-            amount: 15
-            total_owed: 75
-            selection_note: DEFAULT
-            selected: true
-            tax_included: false
-          - code: ALI
-            name: Cover My Liability (ALI)
-            amount: 10
-            total_owed: 50
-            selection_note: DEFAULT
-            selected: true
-            tax_included: false
-          extras:
-          - code: GPS
-            quantity: 1
-            type: COUNTER_PROD
-            amount: 13
-            total_owed: 65
-          - code: CSS
-            quantity: 1
-            type: COUNTER_PROD
-            amount: 7
-            total_owed: 35
-          terms:
-          - type: rental
-            method: GET
-            endpoint: https://docs.abgcarrental.com/rental/avis/UK/en/?rentalCountry=UK
-          - type: location
-            method: GET
-            endpoint: https://docs.abgcarrental.com/location/avis/UK/UK/en
-          disclaimers:
-          - type: Fuel Policy
-            description: FUEL POLICY IS FULL TO FULL
-          - type: Underage Surcharge
-            description: Under Age restrictions and fees apply. Please review location terms and conditions or contact location to confirm rental policies and fees.
-    reservation_customer:
-      title: Reservation Customer
-      description: Information about the rental car customer. Only one customer can be specified in the request.
-      required:
-      - contact
-      properties:
-        contact:
-          $ref: '#/components/schemas/reservation_contact'
-        type:
-          $ref: '#/components/schemas/customer_type'
-        driver:
-          $ref: '#/components/schemas/driver'
-        address:
-          $ref: '#/components/schemas/address'
-        delivery_address:
-          $ref: '#/components/schemas/address'
-        collection_address:
-          $ref: '#/components/schemas/address'
-    reservation_loyalty:
-      title: Reservation Loyalty Program
-      description: The Frequent Traveler Program (FTP) to be applied to the reservation. This entitles the user the opportunity to earn miles or points with ABG partners, such as airlines, hotels and other select companies. For example, the Lufthansa Miles & More Rewards Program. Surcharges may apply.
-      type: object
-      properties:
-        company_id:
-          description: The Frequent Traveler Program identifier of the airline, hotel, or other select company.
-          type: string
-          example: AD
-        code:
-          description: The unique Frequent Traveler Program (FTP) number of the traveler.
-          type: string
-          example: M21R322
-        redemption:
-          $ref: '#/components/schemas/loyalty_redemption'
-      example:
-        company_id: some text
-        code: some text
-    rate_code:
-      title: Vehicle Rate Code
-      description: The rental vehicle rate code used to determine the rate of the rental vehicle reservation
-      type: string
-      example: G3
-    success_status:
-      title: Success Status
-      description: Success Status object
-      required:
-      - request_time
-      - success
-      type: object
-      properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
-          type: string
-        success:
-          description: Success Details
-          type: array
-          items:
-            $ref: '#/components/schemas/success_detail'
-    sipp_code:
-      title: Sipp Code
-      description: Standard Interline Passenger Procedure (SIPP) code of the vehicle. A compact 4 door manual air conditioned car will have a SIPP Code CMDR.
-      maxLength: 4
-      minLength: 4
-      pattern: ^[A-Z]{4}$
-      type: string
-      example: CMDR
-    customer_only_contact:
-      title: Customer Only Contact
-      description: Contact information of the rental customer for the reservation you would like to cancel.
-      required:
-      - contact
-      type: object
-      properties:
-        contact:
-          $ref: '#/components/schemas/basic_contact'
-    requested_rate_currency:
-      title: Requested Rate Currency
-      description: Requested rate currency for secondary rates. The Secondary currency is driven by the request or through
-      type: string
-      example: USD
-    vehicle_class_code:
-      title: Vehicle Class Code
-      description: The vehicle class code used to identify individual cars and trucks according to size, axle numbers and type.
-      type: string
-      example: A, AB, XA
     product_code:
       title: Product Code
       description: The rental ancillary code used to identify and add rental vehicle equipment and features to the reservation (such as GPS).
@@ -4093,365 +4259,196 @@ components:
       - OOH
       type: string
       example: GPS
-    discount_code:
-      title: Discount Code
-      description: The rental vehicle brand discount code. This field can be an Avis Worldwide Discount (AWD), Budget Car Discount (BCD), or a Payless Discount Number (PDN) code.
+    partial_modify_confirmation:
+      title: Partial Modify Confirmation
+      description: Basic confirmation details for the rental vehicle reservation.
+      required:
+      - number
+      type: object
+      properties:
+        number:
+          description: The confirmation number of the reservation.
+          type: string
+          example: 09369988GB2
+    fuel_type:
+      title: Fuel Type
+      description: Indicates the vehicle fuel type.
+      enum:
+      - Diesel
+      - Petrol
+      - Hybrid
+      - Electric
       type: string
-      example: R566100
-    basic_contact:
-      title: Basic Contact
+      example: diesel
+    reservation_contact:
+      title: Reservation Contact
       description: The personal and contact information of the user you would like to associate to the user profile. If you would like to create a basic profile, you can provide the minimal contact information along with an indication of the desired brand. If you would like to create a preferred profile, you are required to provide many more parameters including driver license, payment information, and an election of several required options. If you do not provide this additional information, you will be unable to create a preferred profile.
       required:
       - last_name
+      - first_name
       type: object
       properties:
+        title:
+          description: Title of the user.
+          type: string
+        first_name:
+          description: First name of the user.
+          type: string
         last_name:
           description: Last name of the user.
           type: string
         email:
           description: Email address of the user.
           type: string
-    reservation_vehicle_category:
-      title: Reservation Vehicle Category
-      description: Identifying information and details about the rental vehicle.
-      type: object
-      properties:
-        name:
-          title: Name
-          description: The name of the vehicle.
+        telephone:
+          description: Telephone number of the user.
           type: string
-          example: Volvo XC 60
-        make:
-          title: Make
-          description: Make of the vehicle.
+        age:
+          description: Driver’s age. This might influence the rates. Will be superseded by date of birth found in the profile provided in “membership_code”.
+          type: number
+        date_of_birth:
+          format: date
+          title: Date of Birth
+          description: Driver’s date of birth. This might influence the rates. Will be superseded by “age” parameter or date of birth found in the profile provided in “membership_code”.
           type: string
-          example: Volvo
-        model:
-          title: Make Model
-          description: Model of the vehicle.
-          type: string
-          example: XC60
-        sipp_code:
-          $ref: '#/components/schemas/sipp_code'
-        vehicle_status:
-          $ref: '#/components/schemas/vehicle_status'
-        vehicle_class_code:
-          $ref: '#/components/schemas/vehicle_class_code'
-        vehicle_class_name:
-          title: Vehicle Class Name
-          description: The name of the vehicle class.
-          type: string
-          example: Economy
-        vehicle_transmission:
-          $ref: '#/components/schemas/transmission'
-        image_url:
-          $ref: '#/components/schemas/url'
-        mpg:
-          description: Vehicle MPG
-          type: string
-        vehicle_onrequest_status:
-          $ref: '#/components/schemas/vehicle_onrequest_status'
-    discount:
-      title: Brand Discounts
-      description: The rental vehicle brand rewards program code (also known as discount code) to be applied to the rate of the reservation.
-      type: object
-      properties:
-        code:
-          $ref: '#/components/schemas/discount_code'
-      example: R566100
-    cancel_request:
-      title: Cancel Request
-      description: The rental vehicle reservation confirmation details to be cancelled.
+          example: '1991-12-31'
+    vehicle:
+      title: Rental Vehicle
+      description: Identifying information about the vehicle, including vehicle category (make/model), features, luggage capacity and the total cost.
       required:
-      - confirmation
+      - capacity
+      - category
+      - features
       type: object
       properties:
-        email_notification:
-          description: Indicates the email notifications for create, modify and cancel can be sent or suppressed for a user.
-          type: boolean
-        confirmation:
-          $ref: '#/components/schemas/reservation_confirmation'
-        email_language:
-          description: Language for email. Applicable to North America email template.
-          enum:
-          - ENGLISH
-          - FRENCH
-          - SPANISH
-          type: string
-    cancel_reservation_v2_request:
-      title: Cancel Vehicle Reservation Request
-      description: The rental vehicle reservation that the user would like to cancel.
+        category:
+          $ref: '#/components/schemas/reservation_vehicle_category'
+        features:
+          $ref: '#/components/schemas/vehicle_features'
+        capacity:
+          $ref: '#/components/schemas/vehicle_capacity'
+    payment_preference:
+      title: Payment Preference
+      description: The payment preferences for the reservation. This could be a Customer's payment card details or a Booking Voucher or a Central Billing Account with the value of the reservation.
       required:
-      - product
-      - reservation
-      - customer
-      type: object
-      properties:
-        product:
-          $ref: '#/components/schemas/product'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-        reservation:
-          $ref: '#/components/schemas/cancel_request'
-        customer:
-          $ref: '#/components/schemas/customer_only_contact'
-      example:
-        product:
-          brand: Avis
-        transaction:
-          transaction_id: '89474934'
-        reservation:
-          email_notification: true
-          confirmation:
-            number: 10768985US3
-        customer:
-          contact:
-            last_name: STEPHEN
-    reservation_rate_totals_response:
-      title: Reservation Rate Totals
-      description: The fees, rates, and discounts applied to the reservation, with a breakdown of the reservation total.
-      required:
-      - rate
-      type: object
-      properties:
-        rate:
-          $ref: '#/components/schemas/reservation_rate_response'
-        totals:
-          $ref: '#/components/schemas/totals'
-    view_reservation_v2_response:
-      title: View Reservation V2 Response
-      description: ''
-      required:
-      - reservation
-      - product
-      - status
-      - transaction
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/success_status'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-        product:
-          $ref: '#/components/schemas/product'
-        reservation:
-          $ref: '#/components/schemas/reservation'
-    availability_rate_request:
-      title: Availability Rate Request
-      description: The reservation rate qualifiers that determine the rate of the reservation in the localized currency.
-      required:
-      - rate_code
-      - country_code
-      type: object
-      properties:
-        rate_code:
-          $ref: '#/components/schemas/rate_code'
-        currency:
-          $ref: '#/components/schemas/currency'
-        country_code:
-          description: 2-character ISO 3166 customer country code.
-          maxLength: 2
-          minLength: 2
-          type: string
-        loyalty:
-          $ref: '#/components/schemas/availability_loyalty'
-        discount:
-          $ref: '#/components/schemas/discount'
-        membership:
-          $ref: '#/components/schemas/availability_membership'
-        coupon:
-          $ref: '#/components/schemas/coupon'
-        central_billing_membership:
-          $ref: '#/components/schemas/central_billing_membership'
-        quote_id:
-          $ref: '#/components/schemas/quote_id'
-        rate_guarantee_blob:
-          $ref: '#/components/schemas/rate_guarantee_blob'
-    driver:
-      title: Driver License
-      description: The driver license information of the user, including license number, issuing country, and date of birth.
-      type: object
-      properties:
-        license_number:
-          description: Driver license number.
-          type: string
-        state_code:
-          description: 2-letter state code. For US country, valid combination of country and state code. For non-US country, XX is valid value.
-          type: string
-          example: TX
-        country_code:
-          description: 2-letter ISO 3166 country code.
-          maxLength: 2
-          minLength: 2
-          type: string
-          example: GB
-        license_verified:
-          description: Indicates the authenticity of the passenger's driving license.
-          type: boolean
-    term:
-      title: Term
-      description: Term
-      required:
-      - method
-      - endpoint
       - type
       type: object
       properties:
         type:
-          description: Type
+          description: 'This could be either Voucher, Central Billing Account, Customer Credit Card, Cash or MIXED.
+
+
+            ** Voucher - Voucher issued that have a predetermined monetary value or discounts. ** CentralBillingAccount - Central Billing Account setup with the partnership. ** CustomerPaymentCard - Customer Payment Card. ** Cash - Cash as the method of payment.'
           enum:
-          - location
-          - rental
-          - reservation
+          - Voucher
+          - CentralBillingAccount
+          - CustomerPaymentCard
+          - Cash
           type: string
-        method:
-          description: ''
+        id:
+          description: This is a 6-8 digit number for vouchers. This could be static e.g. 12345678 for all reservations made. If the partner has their own internal reference number it should be passed in as the voucher number as a unique identifier for reconciliation.
+          type: string
+        billing_account_number:
+          description: For Central Billing Accounts, companies that have signed a contract with Avis have an AV account number and Budget has BU account number that can be used by the company employees for renting cars at Avis or Budget for business purposes AV accounts are attached to an AWD/BCD number carrying the discounts, rates and further information for rental conditions to the specific company. e.g AV1236352973000 **Note** Pass ONLY the billing account number without AV or BU prefix.
+          type: string
+        fixed_value:
+          description: The reservation value could be either Fixed or Full Credit. For Voucher based reservation, this should be passed as Fixed always. Represents the Voucher type.
           enum:
-          - GET
+          - FixedValue
+          - FullCredit
+          - ACTO
           type: string
-        endpoint:
-          description: End Point to call to get the terms and condition. Host name will be chnaged based on environment
+        electronic_indicator:
+          description: This identifies the partner as a paperless supplier and needs to be marked as true
+          type: boolean
+        amount:
+          description: This is the gross retail rate inclusive of tax and other prepaid charges and is returned in rate totals response as reservation total.
+          type: number
+        currency:
+          $ref: '#/components/schemas/currency'
+        payment_method:
+          $ref: '#/components/schemas/payment'
+        cost_control:
+          description: Also known as CCI. This field is used to store cost control information from a travel order, purchase order number or company reference.
           type: string
-          example: https://test.abgapiservices.com/terms/v2/location/avis/US/EWR/en_US
-      example:
-        type: reservation
-        method: GET
-        endpoint: https://test.abgapiservices.com/terms/v2/location/avis/US/EWR/en_US
-    insurance_name:
-      title: Insurance Name
-      description: Name of the insurance coverage code/type.
-      enum:
-      - Additional Liability Insurance
-      - Collision Damage Waiver
-      - Loss Damage Waiver
-      - Personal Accident Insurance
-      - Additional Protection Insurance
-      - Personal Effects Protection
-      - Super Collision Damage Waiver
-      - Super Personal Accident Insurance
-      - Super Theft Protection
-      - Theft Protection
-      - Package Protection
-      type: string
-      example: Collision Damage Waiver
-    error_415:
-      title: Error 415
-      description: Not Found
-      required:
-      - request_time
-      - errors
-      - request_errors
+    arrival_flight:
+      title: Arrival Flight
+      description: Arrival Flight information including the arrival datetime, location and travel preference.
       type: object
       properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
+        airline_code:
+          $ref: '#/components/schemas/airline_code'
+        airline_number:
+          description: Identifying number assigned to the airline carrier flight segment.
           type: string
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          title: Errors Details
-          description: The following describes the elements that can appear in the response body of an error.
-          type: array
-          items:
-            $ref: '#/components/schemas/error'
-      example:
-        status:
-          request_time: '2018-10-17T13:05:10Z'
-          request_errors: 1
-          errors:
-          - code: '415'
-            message: Unsupported Media Type
-            reason: Unsupported Media Type
-            details: org.springframework.web.HttpMediaTypeNotSupportedException
-    create_modify_request:
-      title: Create Modify Reservation Request
-      description: The rental vehicle reservation details, including the rate, insurance coverage, rental extras (such as GPS), passenger, and payment information.
+      example: '349723'
+    payment:
+      title: Payment
+      description: User's payment details.
       required:
-      - product
-      - reservation
-      - rate_totals
-      - customer
+      - card_holder_name
+      - card_number
+      - card_type
+      - expiry_date
       type: object
       properties:
-        product:
-          $ref: '#/components/schemas/product'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-        reservation:
-          $ref: '#/components/schemas/reservation_request'
-        rate_totals:
-          $ref: '#/components/schemas/rate_totals_request'
-        insurance:
-          title: Rental Insurance Coverage
-          description: The insurance coverage to be applied to the entirety of the reservation. Types of insurance includes Cover The Car (CDW), Cover My Liability (ALI), Cover Myself (PAI), and Cover My Belongings (PEP), Package (PKG). If insurance coverage is specified in the request, taxes are included in the total cost (in total_owed). Any preselected insurance coverage specified by a user within their wizard profile should be passed in the request. For example, if the user has selected Cover My Belongings (PEP) in their profile, then pass PEP.
-          type: array
-          items:
-            $ref: '#/components/schemas/insurance'
-        extras:
-          $ref: '#/components/schemas/extras'
-        arrival_flight:
-          $ref: '#/components/schemas/arrival_flight'
-        payment_preference:
-          $ref: '#/components/schemas/payment_preference'
-        customer:
-          $ref: '#/components/schemas/reservation_customer'
-      example:
-        product:
-          brand: Avis
-        transaction:
-          transaction_id: '2423423467'
-        reservation:
-          email_notification: true
-          pickup_date: '2020-12-30T04:00:00'
-          pickup_location: LHR
-          dropoff_date: '2020-12-31T04:00:00'
-          dropoff_location: LHR
-          vehicle_sipp_code: MBMR
-        rate_totals:
-          rate:
-            rate_code: IC
-            country_code: GB
-        customer:
-          contact:
-            title: MR
-            first_name: BRADLEY
-            last_name: STEPHEN
-            telephone: '123456789900000'
-            email: BRADLEY.STEPHEN@abgservices.com
-            age: 28
-            date_of_birth: '1991-12-31'
-          address:
-            address_line_1: 696 Block A
-            address_line_2: Ellis St
-            address_line_3: ''
-            city: San Francisco
-            postal_code: '94110'
-            country_code: GB
-        insurance:
-        - code: PEP
-        - code: ALI
-        extras:
-        - code: GPS
-          quantity: 1
-        - code: CSS
-          quantity: 1
-        payment_preference:
-          type: Voucher
-          id: '12313434'
-          fixed_value: FixedValue
-          electronic_indicator: true
-          amount: 183.34
-          currency: GBP
-    transmission:
-      title: Vehicle Transmission
-      description: The transmission of the vehicle.
-      enum:
-      - Automatic
-      - Manual
-      type: string
-      example: Automatic
+        card_type:
+          description: One of the supported Credit/Debit card types.
+          enum:
+          - VI
+          - MC
+          - AX
+          - DN
+          - CB
+          - CC
+          - JCB
+          - CN
+          - CP
+          - DS
+          - CT
+          - PA
+          type: string
+          example: VI
+        card_number:
+          description: Card Number that's valid for the selected card_type.
+          type: string
+          example: 37473483483484220
+        card_holder_name:
+          description: Name presented in the payment card.
+          type: string
+          example: BRADLEY STEPHEN
+        expiry_date:
+          description: Expiry Date as found printed on the card.
+          type: string
+          example: 213
+  parameters:
+    brand:
+      name: brand
+      description: The Avis, Budget, or Payless brand name.
+      schema:
+        enum:
+        - Avis
+        - Budget
+        - Payless
+        type: string
+      in: query
+      required: true
+    client_id:
+      name: client_id
+      description: Your client identifier.
+      schema:
+        maxLength: 50
+        minLength: 8
+        type: string
+      in: header
+      required: true
+    confirmation_number:
+      name: confirmation_number
+      description: The confirmation number of the rental car reservation. The confirmation number is retrieved from the Create Reservation endpoint.
+      schema:
+        type: string
+      in: query
+      required: true
   securitySchemes:
     ABG-Access-Token:
       type: oauth2
@@ -4460,9 +4457,6 @@ components:
         clientCredentials:
           tokenUrl: https://stage.abgapiservices.com/oauth/token/v2
           scopes: {}
-x-refined-from:
-- avis-budget-rental-cars-openapi.json
-- avis-budget-rental-cars-openapi.yml
 x-api-owner:
   team: Partner API Team
   email:

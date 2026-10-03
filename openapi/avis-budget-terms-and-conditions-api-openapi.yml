@@ -1,9 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Avis Budget Terms And Conditions API
+  title: Rental Cars Terms And Conditions API
   version: 2.0.0
+  description: '## Car Locations V2
+
+
+    The Car Locations suite allows a user to retrieve rental car locations.'
   x-short-description: 'Combined ABG Rental Cars API package: vehicle availability & rates, reservations, location search, and terms & conditions.'
-  description: 'Operations tagged Terms_and_Conditions across 2 of this provider''s published API definitions: avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://stage.abgapiservices.com
   description: Stage Environment
@@ -152,36 +155,28 @@ paths:
       summary: Location Terms and Conditions (V2)
       operationId: getTermsV2LocationByBrandByCountryCodeByLocationCodeByLocale
       x-operation-id-source: derived
-    servers:
-    - url: https://stage.abgapiservices.com
-      description: Stage Environment
 components:
   schemas:
-    date_time:
-      title: Date Time
-      format: date-time
-      description: ISO 8601 representation of the date time.
-      type: string
-      example: '2015-07-04T21:00:00.000Z'
-    transaction_id:
-      title: Transaction Identifier
-      description: The transaction identifier used to identify and troubleshoot a given request.
-      type: string
-      example: 391117cf-4470-4353-8b51-f00c3c098943
-    transaction:
-      title: Request Transaction
-      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
+    terms_error_details:
+      title: Terms Error Status
+      description: A container for the error details
+      required:
+      - request_time
+      - errors
+      - request_errors
       type: object
       properties:
-        transaction_id:
-          $ref: '#/components/schemas/transaction_id'
-        system_id:
-          title: Internal Correlation Identifier
-          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
-          type: string
-          example: i9332ffa-5250-11e9-8647-d663bd873d78
-      example:
-        transaction_id: test56
+        request_time:
+          $ref: '#/components/schemas/date_time'
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
     terms_term:
       title: Terms Content
       description: Terms and Condition.
@@ -207,44 +202,27 @@ components:
           content:
             type: string
         additionalProperties: true
-    error:
-      title: Error
-      description: The following describes the elements that can appear in the response body of an error.
-      required:
-      - code
-      - details
-      - message
-      - reason
-      properties:
-        code:
-          description: The error code value
-          type: string
-        message:
-          description: The HTTP status code message
-          type: string
-        reason:
-          description: The reason the request has failed
-          type: string
-        details:
-          description: Description of the error
-          type: string
-    success_status:
-      title: Success Status
-      description: Success Status object
-      required:
-      - request_time
-      - success
+    transaction:
+      title: Request Transaction
+      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
       type: object
       properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
+        transaction_id:
+          $ref: '#/components/schemas/transaction_id'
+        system_id:
+          title: Internal Correlation Identifier
+          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
           type: string
-        success:
-          description: Success Details
-          type: array
-          items:
-            $ref: '#/components/schemas/success_detail'
+          example: i9332ffa-5250-11e9-8647-d663bd873d78
+      example:
+        transaction_id: test56
+    terms_error_response:
+      title: Terms Error Response
+      description: A container for the error details
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/terms_error_details'
     terms_and_conditions_v2_response:
       title: Terms and Conditions Response
       description: The following demonstrates an example of successful request for this endpoint.
@@ -297,33 +275,55 @@ components:
         details:
           description: Description of the success status
           type: string
-    terms_error_response:
-      title: Terms Error Response
-      description: A container for the error details
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/terms_error_details'
-    terms_error_details:
-      title: Terms Error Status
-      description: A container for the error details
+    success_status:
+      title: Success Status
+      description: Success Status object
       required:
       - request_time
-      - errors
-      - request_errors
+      - success
       type: object
       properties:
         request_time:
-          $ref: '#/components/schemas/date_time'
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          title: Errors Details
-          description: The following describes the elements that can appear in the response body of an error.
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        success:
+          description: Success Details
           type: array
           items:
-            $ref: '#/components/schemas/error'
+            $ref: '#/components/schemas/success_detail'
+    transaction_id:
+      title: Transaction Identifier
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      type: string
+      example: 391117cf-4470-4353-8b51-f00c3c098943
+    error:
+      title: Error
+      description: The following describes the elements that can appear in the response body of an error.
+      required:
+      - code
+      - details
+      - message
+      - reason
+      properties:
+        code:
+          description: The error code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        reason:
+          description: The reason the request has failed
+          type: string
+        details:
+          description: Description of the error
+          type: string
+    date_time:
+      title: Date Time
+      format: date-time
+      description: ISO 8601 representation of the date time.
+      type: string
+      example: '2015-07-04T21:00:00.000Z'
   parameters:
     client_id:
       name: client_id
@@ -342,9 +342,6 @@ components:
         clientCredentials:
           tokenUrl: https://stage.abgapiservices.com/oauth/token/v2
           scopes: {}
-x-refined-from:
-- avis-budget-rental-cars-openapi.json
-- avis-budget-rental-cars-openapi.yml
 x-api-owner:
   team: Partner API Team
   email:

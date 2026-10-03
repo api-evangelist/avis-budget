@@ -1,9 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Avis Budget Car Locations API
+  title: Rental Cars Car Locations API
   version: 2.0.0
+  description: '## Car Locations V2
+
+
+    The Car Locations suite allows a user to retrieve rental car locations.'
   x-short-description: 'Combined ABG Rental Cars API package: vehicle availability & rates, reservations, location search, and terms & conditions.'
-  description: 'Operations tagged Car Locations across 2 of this provider''s published API definitions: avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://stage.abgapiservices.com
   description: Stage Environment
@@ -2134,28 +2137,30 @@ paths:
       summary: Keyword Search
       operationId: getCarsLocationsV2Keyword
       x-operation-id-source: derived
-    servers:
-    - url: https://stage.abgapiservices.com
-      description: Stage Environment
 components:
   schemas:
-    date_time:
-      title: Date Time
-      format: date-time
-      description: ISO 8601 representation of the date time.
-      type: string
-      example: '2015-07-04T21:00:00.000Z'
-    transaction_id:
-      title: Transaction Identifier
-      description: The transaction identifier used to identify and troubleshoot a given request.
-      type: string
-      example: 391117cf-4470-4353-8b51-f00c3c098943
-    hours_of_operation:
-      title: Detailed Operation Hours
-      description: The detailed hours of operation with opening slots.
+    holiday_hours:
+      title: Holiday/Seasonal Hours
+      description: The holiday/seasonal operational schedule.
       type: array
       items:
-        $ref: '#/components/schemas/hours_of_operation_day'
+        $ref: '#/components/schemas/holiday_hours_schedule'
+    locations_error_status:
+      title: Locations Error Status
+      description: A container for the error details
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          $ref: '#/components/schemas/date_time'
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          $ref: '#/components/schemas/locations_error_details'
     locations_locations:
       title: Location Search Result
       description: The list of available locations within a certain radius of the specified latitude/longitude
@@ -2213,6 +2218,86 @@ components:
           example: i9332ffa-5250-11e9-8647-d663bd873d78
       example:
         transaction_id: test56
+    locations_error_details:
+      title: Locations Error Details
+      description: The following describes the elements that can appear in the response body of an error.
+      type: array
+      items:
+        type: object
+        properties:
+          code:
+            description: The error code value
+            type: string
+          message:
+            description: The HTTP status code message
+            type: string
+          reason:
+            description: The reason the request has failed
+            type: string
+          details:
+            description: Description of the error
+            type: string
+    location_address:
+      title: Location Address
+      description: Address information that you would like to associate to the user that is requesting the rental vehicle reservation, including geographic coordinates (if applicable)
+      type: object
+      properties:
+        address_line_1:
+          description: Address (line 1) of the user.
+          type: string
+        address_line_2:
+          description: Address (line 2) of the user.
+          type: string
+        address_line_3:
+          description: Address (line 3) of the user.
+          type: string
+        city:
+          description: City name of the user.
+          type: string
+          example: Boston.
+        state_name:
+          description: State name of the user (if applicable).
+          type: string
+          example: Massachusetts
+        postal_code:
+          description: Numeric or alphanumeric postal code of the user, which varies by country (02128 or CT3).
+          type: string
+          example: W16PR
+        country_code:
+          description: 2-letter ISO 3166 country code of the user.
+          type: string
+          example: US
+        lat:
+          description: Geographic latitude of the location.
+          type: string
+          example: '40.690022'
+        long:
+          description: Geographic longitude of the location.
+          type: string
+          example: '-74.187506'
+    locations_error_response:
+      title: Locations Error Response
+      required:
+      - status
+      - transaction
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/locations_error_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+    date_time:
+      title: Date Time
+      format: date-time
+      description: ISO 8601 representation of the date time.
+      type: string
+      example: '2015-07-04T21:00:00.000Z'
+    hours_of_operation:
+      title: Detailed Operation Hours
+      description: The detailed hours of operation with opening slots.
+      type: array
+      items:
+        $ref: '#/components/schemas/hours_of_operation_day'
     car_location_v2_response:
       title: Location Search Response
       description: The following demonstrates an example of successful request for this endpoint.
@@ -2948,28 +3033,6 @@ components:
             country_code: US
             lat: '40.853794'
             long: '-74.426556'
-    locations_error_response:
-      title: Locations Error Response
-      required:
-      - status
-      - transaction
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/locations_error_status'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-    unauthorized_error:
-      title: Unauthorized Error
-      description: Unauthorized error details.
-      type: object
-      properties:
-        error:
-          description: Error type.
-          type: string
-        error_description:
-          description: Error description.
-          type: string
     success_status:
       title: Success Status
       description: Success Status object
@@ -2987,47 +3050,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/success_detail'
-    locations_error_status:
-      title: Locations Error Status
-      description: A container for the error details
-      required:
-      - request_time
-      - errors
-      - request_errors
-      type: object
-      properties:
-        request_time:
-          $ref: '#/components/schemas/date_time'
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          $ref: '#/components/schemas/locations_error_details'
-    locations_error_details:
-      title: Locations Error Details
-      description: The following describes the elements that can appear in the response body of an error.
-      type: array
-      items:
-        type: object
-        properties:
-          code:
-            description: The error code value
-            type: string
-          message:
-            description: The HTTP status code message
-            type: string
-          reason:
-            description: The reason the request has failed
-            type: string
-          details:
-            description: Description of the error
-            type: string
-    holiday_hours:
-      title: Holiday/Seasonal Hours
-      description: The holiday/seasonal operational schedule.
-      type: array
-      items:
-        $ref: '#/components/schemas/holiday_hours_schedule'
+    transaction_id:
+      title: Transaction Identifier
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      type: string
+      example: 391117cf-4470-4353-8b51-f00c3c098943
     success_detail:
       title: Success Detail
       description: A container for the success/error details.
@@ -3045,76 +3072,16 @@ components:
         details:
           description: Description of the success status
           type: string
-    location_address:
-      title: Location Address
-      description: Address information that you would like to associate to the user that is requesting the rental vehicle reservation, including geographic coordinates (if applicable)
+    unauthorized_error:
+      title: Unauthorized Error
+      description: Unauthorized error details.
       type: object
       properties:
-        address_line_1:
-          description: Address (line 1) of the user.
+        error:
+          description: Error type.
           type: string
-        address_line_2:
-          description: Address (line 2) of the user.
-          type: string
-        address_line_3:
-          description: Address (line 3) of the user.
-          type: string
-        city:
-          description: City name of the user.
-          type: string
-          example: Boston.
-        state_name:
-          description: State name of the user (if applicable).
-          type: string
-          example: Massachusetts
-        postal_code:
-          description: Numeric or alphanumeric postal code of the user, which varies by country (02128 or CT3).
-          type: string
-          example: W16PR
-        country_code:
-          description: 2-letter ISO 3166 country code of the user.
-          type: string
-          example: US
-        lat:
-          description: Geographic latitude of the location.
-          type: string
-          example: '40.690022'
-        long:
-          description: Geographic longitude of the location.
-          type: string
-          example: '-74.187506'
-    holiday_hours_schedule:
-      title: Holiday Hours of Operation Schedule
-      description: The holiday and seasonal hours of operation schedule
-      type: object
-      properties:
-        description:
-          title: Holiday/Season Description
-          description: Holiday/Seasonal day desciption
-          type: string
-        start_date:
-          title: Start Date
-          description: The holiday or seasonal start date
-          type: string
-        end_date:
-          title: End Date
-          description: The holiday or seasonal start date
-          type: string
-        first_slot_open_time:
-          title: The First Slot Opening Time
-          description: The first slot opening hours of the location.
-          type: string
-        first_slot_close_time:
-          title: The First Slot Closing Time
-          description: The first slot closing hours of the location.
-          type: string
-        second_slot_open_time:
-          title: The Second Slot Opening Time
-          description: The second slot opening hours of the location.
-          type: string
-        second_slot_close_time:
-          title: The Second Slot Closing Time
-          description: The second slot closing hours of the location.
+        error_description:
+          description: Error description.
           type: string
     hours_of_operation_day:
       title: Operating Hour for a Day
@@ -3148,14 +3115,40 @@ components:
           title: The Second Slot Closing Time
           description: The second slot closing hours of the location.
           type: string
+    holiday_hours_schedule:
+      title: Holiday Hours of Operation Schedule
+      description: The holiday and seasonal hours of operation schedule
+      type: object
+      properties:
+        description:
+          title: Holiday/Season Description
+          description: Holiday/Seasonal day desciption
+          type: string
+        start_date:
+          title: Start Date
+          description: The holiday or seasonal start date
+          type: string
+        end_date:
+          title: End Date
+          description: The holiday or seasonal start date
+          type: string
+        first_slot_open_time:
+          title: The First Slot Opening Time
+          description: The first slot opening hours of the location.
+          type: string
+        first_slot_close_time:
+          title: The First Slot Closing Time
+          description: The first slot closing hours of the location.
+          type: string
+        second_slot_open_time:
+          title: The Second Slot Opening Time
+          description: The second slot opening hours of the location.
+          type: string
+        second_slot_close_time:
+          title: The Second Slot Closing Time
+          description: The second slot closing hours of the location.
+          type: string
   parameters:
-    transaction_id:
-      name: transaction_id
-      description: The transaction identifier used to identify and troubleshoot a given request.
-      schema:
-        type: string
-      in: query
-      required: false
     client_id:
       name: client_id
       description: Your client identifier.
@@ -3165,6 +3158,13 @@ components:
         type: string
       in: header
       required: true
+    transaction_id:
+      name: transaction_id
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      schema:
+        type: string
+      in: query
+      required: false
   securitySchemes:
     ABG-Access-Token:
       type: oauth2
@@ -3173,9 +3173,6 @@ components:
         clientCredentials:
           tokenUrl: https://stage.abgapiservices.com/oauth/token/v2
           scopes: {}
-x-refined-from:
-- avis-budget-rental-cars-openapi.json
-- avis-budget-rental-cars-openapi.yml
 x-api-owner:
   team: Partner API Team
   email:

@@ -1,8 +1,7 @@
 {
   "provider": "avis-budget",
   "sources": [
-    "_original/avis-budget-rental-cars-openapi.json",
-    "avis-budget-rental-cars-openapi.yml"
+    "_original/avis-budget-rental-cars-openapi.json"
   ],
   "outputs": [
     "avis-budget-car-availability-api-openapi.yml",
@@ -10,20 +9,20 @@
     "avis-budget-car-reservation-api-openapi.yml",
     "avis-budget-terms-and-conditions-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/avis-budget-rental-cars-openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "avis-budget-rental-cars-openapi.json: upgraded openapi 3.0.2 -> OpenAPI 3.2.0",
-    "avis-budget-rental-cars-openapi.yml: upgraded openapi 3.0.2 -> OpenAPI 3.2.0",
-    "tag 'Car Availability' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
-    "tag 'Car Locations' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
-    "tag 'Car Reservation' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
-    "tag 'Terms_and_Conditions' spans 2 source specs (avis-budget-rental-cars-openapi.json, avis-budget-rental-cars-openapi.yml): per-path servers applied",
-    "apis.yml register: written (+4 apis, 4 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/avis-budget-rental-cars-openapi.yml: archived document superseded by a larger archived document",
+    "avis-budget-car-availability-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "avis-budget-car-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "avis-budget-car-reservation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "avis-budget-terms-and-conditions-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
