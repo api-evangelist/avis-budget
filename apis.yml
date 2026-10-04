@@ -164,6 +164,8 @@ apis:
     https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903
   baseURL: https://stage.abgapiservices.com
   tags:
+  - Terms And Conditions
+  tags_raw:
   - Terms_and_Conditions
   properties:
   - type: OpenAPI
