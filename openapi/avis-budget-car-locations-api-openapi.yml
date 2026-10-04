@@ -2161,6 +2161,96 @@ components:
           type: integer
         errors:
           $ref: '#/components/schemas/locations_error_details'
+    transaction_id:
+      title: Transaction Identifier
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      type: string
+      example: 391117cf-4470-4353-8b51-f00c3c098943
+    hours_of_operation_day:
+      title: Operating Hour for a Day
+      description: The hours of operation for the day.
+      type: object
+      properties:
+        day:
+          title: Day of the Week
+          description: Day of the week
+          enum:
+          - Sun
+          - Mon
+          - Tue
+          - Wed
+          - Thu
+          - Fri
+          - Sat
+        first_slot_open_time:
+          title: The First Slot Opening Time
+          description: The first slot opening hours of the location.
+          type: string
+        first_slot_close_time:
+          title: The First Slot Closing Time
+          description: The first slot closing hours of the location.
+          type: string
+        second_slot_open_time:
+          title: The Second Slot Opening Time
+          description: The second slot opening hours of the location.
+          type: string
+        second_slot_close_time:
+          title: The Second Slot Closing Time
+          description: The second slot closing hours of the location.
+          type: string
+    locations_error_details:
+      title: Locations Error Details
+      description: The following describes the elements that can appear in the response body of an error.
+      type: array
+      items:
+        type: object
+        properties:
+          code:
+            description: The error code value
+            type: string
+          message:
+            description: The HTTP status code message
+            type: string
+          reason:
+            description: The reason the request has failed
+            type: string
+          details:
+            description: Description of the error
+            type: string
+    success_status:
+      title: Success Status
+      description: Success Status object
+      required:
+      - request_time
+      - success
+      type: object
+      properties:
+        request_time:
+          format: date-time
+          description: The time stamp of the request
+          type: string
+        success:
+          description: Success Details
+          type: array
+          items:
+            $ref: '#/components/schemas/success_detail'
+    success_detail:
+      title: Success Detail
+      description: A container for the success/error details.
+      required:
+      - code
+      - message
+      - details
+      properties:
+        code:
+          description: The HTTP status code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        details:
+          description: Description of the success status
+          type: string
     locations_locations:
       title: Location Search Result
       description: The list of available locations within a certain radius of the specified latitude/longitude
@@ -2204,100 +2294,50 @@ components:
         dual_branded_location_mnemonic:
           description: Dual branded location mnemonic, used to perform Multi-branded search.
           type: string
-    transaction:
-      title: Request Transaction
-      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
+    unauthorized_error:
+      title: Unauthorized Error
+      description: Unauthorized error details.
       type: object
       properties:
-        transaction_id:
-          $ref: '#/components/schemas/transaction_id'
-        system_id:
-          title: Internal Correlation Identifier
-          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
+        error:
+          description: Error type.
           type: string
-          example: i9332ffa-5250-11e9-8647-d663bd873d78
-      example:
-        transaction_id: test56
-    locations_error_details:
-      title: Locations Error Details
-      description: The following describes the elements that can appear in the response body of an error.
-      type: array
-      items:
-        type: object
-        properties:
-          code:
-            description: The error code value
-            type: string
-          message:
-            description: The HTTP status code message
-            type: string
-          reason:
-            description: The reason the request has failed
-            type: string
-          details:
-            description: Description of the error
-            type: string
-    location_address:
-      title: Location Address
-      description: Address information that you would like to associate to the user that is requesting the rental vehicle reservation, including geographic coordinates (if applicable)
+        error_description:
+          description: Error description.
+          type: string
+    holiday_hours_schedule:
+      title: Holiday Hours of Operation Schedule
+      description: The holiday and seasonal hours of operation schedule
       type: object
       properties:
-        address_line_1:
-          description: Address (line 1) of the user.
+        description:
+          title: Holiday/Season Description
+          description: Holiday/Seasonal day desciption
           type: string
-        address_line_2:
-          description: Address (line 2) of the user.
+        start_date:
+          title: Start Date
+          description: The holiday or seasonal start date
           type: string
-        address_line_3:
-          description: Address (line 3) of the user.
+        end_date:
+          title: End Date
+          description: The holiday or seasonal start date
           type: string
-        city:
-          description: City name of the user.
+        first_slot_open_time:
+          title: The First Slot Opening Time
+          description: The first slot opening hours of the location.
           type: string
-          example: Boston.
-        state_name:
-          description: State name of the user (if applicable).
+        first_slot_close_time:
+          title: The First Slot Closing Time
+          description: The first slot closing hours of the location.
           type: string
-          example: Massachusetts
-        postal_code:
-          description: Numeric or alphanumeric postal code of the user, which varies by country (02128 or CT3).
+        second_slot_open_time:
+          title: The Second Slot Opening Time
+          description: The second slot opening hours of the location.
           type: string
-          example: W16PR
-        country_code:
-          description: 2-letter ISO 3166 country code of the user.
+        second_slot_close_time:
+          title: The Second Slot Closing Time
+          description: The second slot closing hours of the location.
           type: string
-          example: US
-        lat:
-          description: Geographic latitude of the location.
-          type: string
-          example: '40.690022'
-        long:
-          description: Geographic longitude of the location.
-          type: string
-          example: '-74.187506'
-    locations_error_response:
-      title: Locations Error Response
-      required:
-      - status
-      - transaction
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/locations_error_status'
-        transaction:
-          $ref: '#/components/schemas/transaction'
-    date_time:
-      title: Date Time
-      format: date-time
-      description: ISO 8601 representation of the date time.
-      type: string
-      example: '2015-07-04T21:00:00.000Z'
-    hours_of_operation:
-      title: Detailed Operation Hours
-      description: The detailed hours of operation with opening slots.
-      type: array
-      items:
-        $ref: '#/components/schemas/hours_of_operation_day'
     car_location_v2_response:
       title: Location Search Response
       description: The following demonstrates an example of successful request for this endpoint.
@@ -3033,122 +3073,89 @@ components:
             country_code: US
             lat: '40.853794'
             long: '-74.426556'
-    success_status:
-      title: Success Status
-      description: Success Status object
-      required:
-      - request_time
-      - success
+    hours_of_operation:
+      title: Detailed Operation Hours
+      description: The detailed hours of operation with opening slots.
+      type: array
+      items:
+        $ref: '#/components/schemas/hours_of_operation_day'
+    location_address:
+      title: Location Address
+      description: Address information that you would like to associate to the user that is requesting the rental vehicle reservation, including geographic coordinates (if applicable)
       type: object
       properties:
-        request_time:
-          format: date-time
-          description: The time stamp of the request
+        address_line_1:
+          description: Address (line 1) of the user.
           type: string
-        success:
-          description: Success Details
-          type: array
-          items:
-            $ref: '#/components/schemas/success_detail'
-    transaction_id:
-      title: Transaction Identifier
-      description: The transaction identifier used to identify and troubleshoot a given request.
+        address_line_2:
+          description: Address (line 2) of the user.
+          type: string
+        address_line_3:
+          description: Address (line 3) of the user.
+          type: string
+        city:
+          description: City name of the user.
+          type: string
+          example: Boston.
+        state_name:
+          description: State name of the user (if applicable).
+          type: string
+          example: Massachusetts
+        postal_code:
+          description: Numeric or alphanumeric postal code of the user, which varies by country (02128 or CT3).
+          type: string
+          example: W16PR
+        country_code:
+          description: 2-letter ISO 3166 country code of the user.
+          type: string
+          example: US
+        lat:
+          description: Geographic latitude of the location.
+          type: string
+          example: '40.690022'
+        long:
+          description: Geographic longitude of the location.
+          type: string
+          example: '-74.187506'
+    date_time:
+      title: Date Time
+      format: date-time
+      description: ISO 8601 representation of the date time.
       type: string
-      example: 391117cf-4470-4353-8b51-f00c3c098943
-    success_detail:
-      title: Success Detail
-      description: A container for the success/error details.
+      example: '2015-07-04T21:00:00.000Z'
+    locations_error_response:
+      title: Locations Error Response
       required:
-      - code
-      - message
-      - details
-      properties:
-        code:
-          description: The HTTP status code value
-          type: string
-        message:
-          description: The HTTP status code message
-          type: string
-        details:
-          description: Description of the success status
-          type: string
-    unauthorized_error:
-      title: Unauthorized Error
-      description: Unauthorized error details.
+      - status
+      - transaction
       type: object
       properties:
-        error:
-          description: Error type.
-          type: string
-        error_description:
-          description: Error description.
-          type: string
-    hours_of_operation_day:
-      title: Operating Hour for a Day
-      description: The hours of operation for the day.
+        status:
+          $ref: '#/components/schemas/locations_error_status'
+        transaction:
+          $ref: '#/components/schemas/transaction'
+    transaction:
+      title: Request Transaction
+      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
       type: object
       properties:
-        day:
-          title: Day of the Week
-          description: Day of the week
-          enum:
-          - Sun
-          - Mon
-          - Tue
-          - Wed
-          - Thu
-          - Fri
-          - Sat
-        first_slot_open_time:
-          title: The First Slot Opening Time
-          description: The first slot opening hours of the location.
+        transaction_id:
+          $ref: '#/components/schemas/transaction_id'
+        system_id:
+          title: Internal Correlation Identifier
+          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
           type: string
-        first_slot_close_time:
-          title: The First Slot Closing Time
-          description: The first slot closing hours of the location.
-          type: string
-        second_slot_open_time:
-          title: The Second Slot Opening Time
-          description: The second slot opening hours of the location.
-          type: string
-        second_slot_close_time:
-          title: The Second Slot Closing Time
-          description: The second slot closing hours of the location.
-          type: string
-    holiday_hours_schedule:
-      title: Holiday Hours of Operation Schedule
-      description: The holiday and seasonal hours of operation schedule
-      type: object
-      properties:
-        description:
-          title: Holiday/Season Description
-          description: Holiday/Seasonal day desciption
-          type: string
-        start_date:
-          title: Start Date
-          description: The holiday or seasonal start date
-          type: string
-        end_date:
-          title: End Date
-          description: The holiday or seasonal start date
-          type: string
-        first_slot_open_time:
-          title: The First Slot Opening Time
-          description: The first slot opening hours of the location.
-          type: string
-        first_slot_close_time:
-          title: The First Slot Closing Time
-          description: The first slot closing hours of the location.
-          type: string
-        second_slot_open_time:
-          title: The Second Slot Opening Time
-          description: The second slot opening hours of the location.
-          type: string
-        second_slot_close_time:
-          title: The Second Slot Closing Time
-          description: The second slot closing hours of the location.
-          type: string
+          example: i9332ffa-5250-11e9-8647-d663bd873d78
+      example:
+        transaction_id: test56
   parameters:
+    transaction_id:
+      name: transaction_id
+      description: The transaction identifier used to identify and troubleshoot a given request.
+      schema:
+        type: string
+      in: query
+      required: false
     client_id:
       name: client_id
       description: Your client identifier.
@@ -3158,13 +3165,6 @@ components:
         type: string
       in: header
       required: true
-    transaction_id:
-      name: transaction_id
-      description: The transaction identifier used to identify and troubleshoot a given request.
-      schema:
-        type: string
-      in: query
-      required: false
   securitySchemes:
     ABG-Access-Token:
       type: oauth2
