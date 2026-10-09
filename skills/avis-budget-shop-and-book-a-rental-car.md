@@ -4,7 +4,7 @@ method: generated
 name: Shop and book a rental car
 description: Find an Avis/Budget/Payless location by keyword, shop available vehicles and a detailed rate for the dates, read the location's terms, then create the reservation.
 api: openapi/avis-budget-rental-cars-openapi.yml
-operations: ['GET /cars/locations/v2/keyword', 'Car Availability', 'POST /cars/catalog/v2/vehicles/rates', 'GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}', 'POST /cars/reservation/v2']
+operations: ['GET /cars/locations/v2/keyword', 'CarAvailability', 'POST /cars/catalog/v2/vehicles/rates', 'GET /terms/v2/location/{brand}/{country_code}/{location_code}/{locale}', 'POST /cars/reservation/v2']
 source: >-
   Grounded in openapi/avis-budget-rental-cars-openapi.yml (OpenAPI 3.0.2). "Car Availability" is the only
   operationId the provider declares; the other steps cite method + path verbatim. Auth per
