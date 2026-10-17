@@ -157,18 +157,28 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    success_detail:
+      title: Success Detail
+      description: A container for the success/error details.
+      required:
+      - code
+      - message
+      - details
+      properties:
+        code:
+          description: The HTTP status code value
+          type: string
+        message:
+          description: The HTTP status code message
+          type: string
+        details:
+          description: Description of the success status
+          type: string
     transaction_id:
       title: Transaction Identifier
       description: The transaction identifier used to identify and troubleshoot a given request.
       type: string
       example: 391117cf-4470-4353-8b51-f00c3c098943
-    terms_error_response:
-      title: Terms Error Response
-      description: A container for the error details
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/terms_error_details'
     success_status:
       title: Success Status
       description: Success Status object
@@ -207,6 +217,20 @@ components:
         details:
           description: Description of the error
           type: string
+    transaction:
+      title: Request Transaction
+      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
+      type: object
+      properties:
+        transaction_id:
+          $ref: '#/components/schemas/transaction_id'
+        system_id:
+          title: Internal Correlation Identifier
+          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
+          type: string
+          example: i9332ffa-5250-11e9-8647-d663bd873d78
+      example:
+        transaction_id: test56
     terms_and_conditions_v2_response:
       title: Terms and Conditions Response
       description: The following demonstrates an example of successful request for this endpoint.
@@ -242,43 +266,6 @@ components:
         - header: Debit Card Policies
           content_type: text/html
           content: <div class=helpCMS>     <a name=Debit Card Policies id=Debit Card Policies></a><b>Debit Card Policies</b><br/>       <p><font size=2>This location does accept bank debit cards with the MasterCard or Visa logo at the time of rental if you have arrived by air into the metro area. The renter <strong>must</strong> present a return airline ticket with a return date at the time of rental.Â  The renter must be at least 25 years of age. You will be subject to a credit check to determine and ensure credit worthiness before releasing the car to you.</font></p>\r\n<p><font size=2>Currently, at all U.S. and Canada locations, debit cards are not acceptable as credit identification at the time of rental for all makes and models identified in the <strong>Specialty</strong> or <strong><a href=https://www.avis.com/car-rental/content/display.ac?contentId=avis-signature-US_en-042413&MID=sigvan><font color=#0000ff>Avis Signature Series</font></a> </strong>and <strong>for certain other premium vehicles</strong>.</font></p>\r\n<p><font size=2>Avis will generally request an authorization hold against your account for the estimated charges of the rental but reserves the right, in its sole discretion, to request extra value based on certain factors as we deem appropriate. <strong>THESE FUNDS WILL NOT BE AVAILABLE FOR YOUR USE.</strong> When the rental is over we will process the reversal but the bank may take time to post it back to the account.</font></p>\r\n<p><font size=2>If you fail to return the vehicle as agreed, Avis will obtain additional authorizations from your account to cover the rental charges.</font></p>\r\n<p><font size=2>Avis is not responsible for any returned checks or over-drafts based on this policy.</font></p>\r\n<p><font size=2>Positive identification in addition to your driver's license may be required.</font></p>\r\n<p><font size=2>In the United States, Debit or Check cards can be used at the end for payment of rental charges. For acceptable credit identification and payment methods in countries outside of the United States, please consult the Renter's Guide and search for the specific location.</font></p>\r\n<p><font size=2><strong>Note:</strong> Prepaid Debit/Gift cards are not acceptable methods of credit identification to pick up a car at any location. One of the above mentioned cards must be presented. Prepaid Debit/Gift cards are accepted at time of return only.</font></p> </div><div align=right><a href=#top><img src=/car-rental/images/global/en/common/backto_top.gif width=16 height=10 border=0></a><b>Top</b></div><br/>
-    success_detail:
-      title: Success Detail
-      description: A container for the success/error details.
-      required:
-      - code
-      - message
-      - details
-      properties:
-        code:
-          description: The HTTP status code value
-          type: string
-        message:
-          description: The HTTP status code message
-          type: string
-        details:
-          description: Description of the success status
-          type: string
-    terms_error_details:
-      title: Terms Error Status
-      description: A container for the error details
-      required:
-      - request_time
-      - errors
-      - request_errors
-      type: object
-      properties:
-        request_time:
-          $ref: '#/components/schemas/date_time'
-        request_errors:
-          description: The number of errors that occurred
-          type: integer
-        errors:
-          title: Errors Details
-          description: The following describes the elements that can appear in the response body of an error.
-          type: array
-          items:
-            $ref: '#/components/schemas/error'
     date_time:
       title: Date Time
       format: date-time
@@ -310,20 +297,33 @@ components:
           content:
             type: string
         additionalProperties: true
-    transaction:
-      title: Request Transaction
-      description: In the instance a request has failed, transaction identifiers allow you to quickly identify the failed request. The following request transaction identifier may be used by your application to identify a request. We recommend that you use this identifier in every request.
+    terms_error_response:
+      title: Terms Error Response
+      description: A container for the error details
       type: object
       properties:
-        transaction_id:
-          $ref: '#/components/schemas/transaction_id'
-        system_id:
-          title: Internal Correlation Identifier
-          description: A unique identifier generated internally by the application to identify the payload and troubleshoot.
-          type: string
-          example: i9332ffa-5250-11e9-8647-d663bd873d78
-      example:
-        transaction_id: test56
+        status:
+          $ref: '#/components/schemas/terms_error_details'
+    terms_error_details:
+      title: Terms Error Status
+      description: A container for the error details
+      required:
+      - request_time
+      - errors
+      - request_errors
+      type: object
+      properties:
+        request_time:
+          $ref: '#/components/schemas/date_time'
+        request_errors:
+          description: The number of errors that occurred
+          type: integer
+        errors:
+          title: Errors Details
+          description: The following describes the elements that can appear in the response body of an error.
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
   parameters:
     client_id:
       name: client_id
