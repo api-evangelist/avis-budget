@@ -1,4 +1,4 @@
-# Avis Budget (avis-budget)
+# Avis Budget Group
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,28 +64,126 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Avis Budget Group is a leading global provider of vehicle rental and mobility solutions with brands including Avis, Budget, Budget Truck, Payless, and Zipcar.
+Avis Budget Group (NASDAQ: CAR) is a global provider of vehicle rental and mobility solutions operating the Avis, Budget, Budget Truck, Payless and Zipcar brands across roughly 11,000 rental locations in about 180 countries. The Avis Budget Group Developer Portal (developer.avis.com, a Kong-hosted portal) publishes the Rental Cars 2.0.0 REST API — location keyword search, vehicle availability and rate shopping, reservation create/view/modify/cancel, and location-specific terms and conditions — for travel, airline, OTA and partner applications, secured with OAuth 2.0 client credentials and gated behind partner sign-up and ABG approval. A white-label car rental booking solution is offered alongside the API.
 
-**URL:** [https://www.avisbudgetgroup.com](https://www.avisbudgetgroup.com)
+**Areas:** Fortune 500 · Car Rental · Travel · Mobility · Fleet Management · Transportation · Reservations · Vehicle Rental · Partner API · Hospitality
 
-## Tags
+## Avis Budget Group on APIs.io
 
- - Car Rental, Travel, Mobility, Fleet Management, Transportation
+Everything profiled for Avis Budget Group is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/avis-budget/](https://apis.io/providers/avis-budget/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (4)
 
-- **Created:** 2026-01-01
-- **Modified:** 2026-04-19
+- [Avis Budget Group Car Availability API](https://apis.io/apis/avis-budget/avis-budget-car-availability-api/) — Car Availability API
+- [Avis Budget Group Car Locations API](https://apis.io/apis/avis-budget/avis-budget-car-locations-api/) — Keyword Search API
+- [Avis Budget Group Car Reservation API](https://apis.io/apis/avis-budget/avis-budget-car-reservation-api/) — Car Reservation API
+- [Avis Budget Group Terms And Conditions API](https://apis.io/apis/avis-budget/avis-budget-terms-and-conditions-api/) — Terms and Conditions API
 
-## Common Properties
+### Published properties
 
-- [Website](https://www.avisbudgetgroup.com)
-- [Portal](https://developer.avisbudgetgroup.com/)
-- [GitHubOrganization](https://github.com/avisbudgetgroup)
-- [LinkedIn](https://www.linkedin.com/company/avis-budget-group/)
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## Maintainers
+#### MCP servers (1)
 
-**FN:** Kin Lane
+Model Context Protocol servers that expose the API to agents.
 
-**Email:** kin@apievangelist.com
+- [avis-budget-rental-cars (candidate)](https://apis.io/servers/avis-budget/avis-budget-rental-cars-candidate/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Avis Budget Rental Cars Overlay](https://apis.io/overlays/avis-budget/avis-budget-rental-cars-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Avis Budget Authentication](https://apis.io/security/avis-budget/avis-budget-authentication/)
+- [Avis Budget Domain Security](https://apis.io/security/avis-budget/avis-budget-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Avis Budget Scopes](https://apis.io/scopes/avis-budget/avis-budget-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Avis Budget Plans Pricing](https://apis.io/plans/avis-budget/avis-budget-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Avis Budget Rate Limits](https://apis.io/rate-limits/avis-budget/avis-budget-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.avisbudgetgroup.com/)
+- [Documentation](https://developer.avis.com/docs)
+- [Getting started](https://developer.avis.com/getting-started)
+- [API reference](https://developer.avis.com/apis/rental-cars/versions/2fd66e15-44a2-4bc2-a96e-84b56a19c903)
+- [Sign up](https://developer.avis.com/register)
+- [Support](https://developer.avis.com/support)
+- [Changelog](https://developer.avis.com/changelog)
+- [Terms of service](https://www.avisbudgetgroup.com/home/terms-of-use)
+- [Privacy policy](https://www.avisbudgetgroup.com/home/privacy-policy)
+- [GitHub](https://github.com/avisbudgetgroup)
+
+## API Evangelist rating
+
+**Kin Score 33.8** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 74.1 |
+| Contract quality | 46.8 |
+| Contract governance | 4.5 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 25.6 |
+| Access clarity | 27.6 |
+
+**Agent readiness 39.7** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/avis-budget/](https://apis.io/providers/avis-budget/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Avis Budget Group: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/avis-budget/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
